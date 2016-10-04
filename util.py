@@ -59,7 +59,7 @@ def from_fasta(filename):
     del sequences['_']
     return sequences #[1:]
 
-def combineSeperateLines(fasta_src, fasta_dst):
+def combineSeperateLines(fasta_src, fasta_dst): #post process stringtie outputs
     seq = []
     next_name = '_'
     with open(fasta_src, 'r') as src, \
@@ -70,12 +70,50 @@ def combineSeperateLines(fasta_src, fasta_dst):
                 if next_name != '_':
                     dst.write('>%s\n%s\n'%(next_name, seq_str))
                 seq = []
-                next_name = line.split()[0][1:]
+                next_name = line.strip()[1:] #line.split()[0][1:]
             else:
                 seq.append(line.strip().upper())
         seq_str = ''.join(seq)
         if next_name != '_':
             dst.write('>%s\n%s\n'%(next_name, seq_str))
+    return
+
+def enforce_unique_tr_name(target_fasta):
+
+    tmp_fasta = target_fasta + '.tmp'
+
+    seq = []
+    next_name_line = '_'
+    names = {}
+
+    with open(target_fasta, 'r') as src, \
+         open(tmp_fasta, 'w') as dst:
+
+        for line in src:
+            if line[0] == '>':
+                seq_str = ''.join(seq)
+                if next_name_line != '_':
+                    dst.write('>%s\n%s\n'%(next_name_line, seq_str))
+                seq = []
+                next_name_line = line.strip()[1:] #line.split()[0][1:]
+                
+                part1 = next_name_line.split()[0]
+                part2 = next_name_line.split()[1:]
+                if part1 in names:
+                    names[part1]+=1
+                else:
+                    names[part1]=1
+
+                next_name_line = '%s.%d'%(part1, names[part1])+' '+''.join(part2)
+            else:
+                seq.append(line.strip().upper())
+        seq_str = ''.join(seq)
+        if next_name_line != '_':
+            dst.write('>%s\n%s\n'%(next_name_line, seq_str))
+
+    cmd = 'mv %s %s'%(tmp_fasta, target_fasta)
+    run_cmd(cmd)               
+    
     return
 
 def to_fasta(filename, seq, seq_name):

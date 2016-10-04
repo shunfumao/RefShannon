@@ -27,7 +27,7 @@ python refShannon.py --sf -Is chrs_dir [-O res_dir] [-chrs chr_a[,chr_b,...]] [-
 transcripts --> performance (per.txt, log.txt)
 
 python refShannon.py --eval -i fa_file -r ref_file [-O out_dir] [-n name_tag]
-python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag]
+python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag] [-unique_tr_name]
 
 sam --> transcripts
 
@@ -322,6 +322,11 @@ def do_eval_I(args):
     else:
         name_tag = 'reconstructed'
 
+    if '-unique_tr_name' in args: #duplicate name brings error to blat
+        unique_tr_name = True
+    else:
+        unique_tr_name = False
+
     #merge
     target_file = out_dir + '/%s_all.fasta'%name_tag #e.g. reconstructed_all.fasta, stringtie_all.fasta
     temp_file = out_dir + '/%s_temp.fasta'%name_tag
@@ -333,7 +338,7 @@ def do_eval_I(args):
             run_cmd('touch %s'%target_file)
 
         if os.path.exists(source_file)==False:
-            print('%s not found'%source_file)
+            print('%s: not found, skipped (target=%s)'%(source_file, target))
             continue
 
         cmd = 'cat %s %s > %s'%(target_file, source_file, temp_file)
@@ -341,6 +346,9 @@ def do_eval_I(args):
 
         cmd = 'mv %s %s'%(temp_file, target_file)
         run_cmd(cmd)
+
+    if unique_tr_name==True:
+        enforce_unique_tr_name(target_file)
 
     args2 = '-i %s -r %s -O %s -n %s'%(target_file, ref_file, out_dir, name_tag)
     args2 = args2.split()
@@ -506,6 +514,9 @@ def do_batch_I_G(args):
 
 def do_batch(args):
 
+    clock = Clock()
+    stt_time = clock.asctime()
+
     if '-i' in args and '-g' in args:
         do_batch_i_g(args)
     elif '-I' in args and '-g' in args:
@@ -514,6 +525,8 @@ def do_batch(args):
         do_batch_I_G(args)
     else:
         print('unexpected args for refShannon.py --batch')
+
+    print('[{}] to [{}] finish do_batch'.format(stt_time, clock.asctime()))    
 
     return
 

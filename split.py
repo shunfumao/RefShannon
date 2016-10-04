@@ -1,4 +1,5 @@
 import sys, os, pdb
+from util import *
 
 '''
 hits.sam --> chr1/hits.sam, chr2/hits.sam ...
@@ -43,7 +44,7 @@ def split():
             if (flags >> 2) & 1:
                 genome = 'chrUnmapped'
             if genome not in out_files:
-                os.mkdir(loc+genome)
+                run_cmd('mkdir -p %s/%s/'%(loc, genome)) #os.mkdir(loc+genome)
                 out_files[genome] = open("{}/hits.sam".format(loc+genome), 'w', 0)
             out_files[genome].write(line)
 

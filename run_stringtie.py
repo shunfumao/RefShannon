@@ -13,7 +13,7 @@ usage:
 
 python run_stringtie.py -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
-#chrs_dir/chr_i/hits.sam --> out_dir/chr_i/stringtie/name_tag.gtf & name_tag.fasta
+#chrs_dir/chr_i/hits.sam --> out_dir/chr_i/algo_output/name_tag.gtf & name_tag.fasta
 
 python run_stringtie.py -I chrs_dir -g multi_genomeFile [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 python run_stringtie.py -I chrs_dir -G genomeDir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
@@ -29,7 +29,7 @@ def do_stringtie_i_g(args):
     if '-O' in args:
         res_dir = args[args.index('-O')+1]
     else:
-        res_dir = parent_dir(sam_file)+'/stringtie/'
+        res_dir = parent_dir(sam_file)+'/algo_output/'
     run_cmd('mkdir -p %s'%res_dir)
 
 
@@ -87,7 +87,7 @@ def do_stringtie_i_g(args):
     else:
         FileToUse = sam_file
 
-    cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile)
+    cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile, N_jobs)
     run_cmd(cmd)
 
     cmd = 'gffread -w %s -g %s %s'%(fastaFile, genomeFile, gtfFile)
@@ -97,6 +97,7 @@ def do_stringtie_i_g(args):
         fastaFile2 = res_dir + '/%s2.fasta'%name_tag
         combineSeperateLines(fastaFile, fastaFile2)
         cmd = 'mv %s %s'%(fastaFile2, fastaFile)
+        run_cmd(cmd)
 
     #clear files
     if clear==True:
@@ -137,7 +138,7 @@ def do_stringtie_I_G(args):
         chrs_str = args[args.index('-chrs')+1]
         target_list = [itm for itm in chrs_str.split(',') if itm != '']
     else:
-        target_list = os.listdir(chrs_dir_src)
+        target_list = os.listdir(chrs_dir)
 
     if '-N' in args:
         N_jobs = int(args[args.index('-N')+1])
@@ -167,10 +168,11 @@ def do_stringtie_I_G(args):
     for target in target_list:
         sam_file = '%s/%s/hits.sam'%(chrs_dir, target)
         genomeFile = '%s/%s.fa'%(genomeDir, target)
-        res_dir = '%s/%s/stringtie/'%(out_dir, target)
+        res_dir = '%s/%s/algo_output/'%(out_dir, target)
         target_args = '-i %s -g %s -O %s -N %d -n %s %s %s %s'% \
                       (sam_file, genomeFile, res_dir, N_jobs, name_tag, addHead_str, clear_str, NoSeperatedLines_str)
         do_stringtie_i_g(target_args.split())
+        print('%s processed'%target)
 
     return
 

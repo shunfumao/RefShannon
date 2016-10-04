@@ -108,7 +108,7 @@ def gen_splice_graph2():
     if target=='':
         genome = from_fasta(genome_file)
         #del genome['_']
-        genome = genome.items()[0][1] #0-th entry is dummy
+        genome = genome.items()[0][1]
     else:
         genome = from_fasta(genome_file)[target]
     print('{:.2f} to load genome\n\tgenome_file={}'.format(clock.time(), genome_file))

@@ -1,4 +1,4 @@
-import subprocess, re, time, sys, os, shutil
+import subprocess, re, time, sys, os, shutil, pdb
 
 def run_cmd(cmd):
     #print(cmd)
@@ -224,6 +224,43 @@ def do_splitMultiFasta(args):
 
     return
 
+def do_splitRead(args):
+
+    read_file = args[args.index('-r')+1]
+    out_file = args[args.index('-o')+1]
+    #stt = int(args[args.index('-s')+1])
+    L = int(args[args.index('-l')+1])
+
+    num_lines = sum([1 for line in open(read_file)])
+    print('%d lines at%s'%(num_lines, read_file))
+    i=0; j=0; T=num_lines/100;
+
+    with open(read_file, 'r') as inf, \
+         open(out_file, 'w') as of:
+
+         for line in inf:
+            i += 1
+            if i>T: i=0; j+=1; sys.stdout.write('\r'); sys.stdout.write('%d %% processed'%j); sys.stdout.flush()
+
+            #if i>10: break #test purpose
+
+            if line.strip()=='': continue
+
+            if line[0]=='@':
+                st = line.split()[0]
+                of.write(st+'\n')
+            elif line[0]=='+':
+                of.write('+\n')
+            else:
+                if L>0:
+                    st = line.strip()[0:0+L]
+                else:
+                    st = line.strip()[L:]
+                    #pdb.set_trace()
+                of.write(st+'\n')
+    print('%s written'%(out_file))
+    return
+
 '''
 usage:
 
@@ -235,6 +272,10 @@ python util.py --copy -I chrs_dir_src -O chrs_dir_dst [-chrs chr_a[,chr_b,...]]
 
 python util.py --splitMultiFasta -i fasta_file -O out_dir
 
+#split read file into one with shorter lengths (e.g. take first 50 bases (len=50) or last 50 bases (len=-50))
+
+python util.py --splitRead -r read_file -o read_file_out -l len
+
 '''
 if __name__ == '__main__':
     args = sys.argv
@@ -242,3 +283,5 @@ if __name__ == '__main__':
         do_copy_chrs(args)
     if '--splitMultiFasta' in args:
         do_splitMultiFasta(args)
+    if '--splitRead' in args:
+        do_splitRead(args)

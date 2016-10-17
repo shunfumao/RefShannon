@@ -1,0 +1,25 @@
+
+=== sim_reads.py history (before adding to code_sgRefShannon) ===
+
+10/16
+
+add poolSamples function (--simReads --poolSamples)
+
+modify addvariation2splicingbed.py, gensimreads.py so that lines start with '#' in bed can be skipped
+
+modify process_new_transcript:
+-- 1st transcript for each chr is no longer missing
+-- record trNum and accTrLen for each chr --> each bed contains a line of "# trNum (trNum) avgTrLen (avgTrLen)"
+
+add -c readCoverage option for "--simReads -g -b" or "--simReads -G -B" modes.
+numReads = readCoverage * trNum * avgTrLen / readLength
+
+10/15
+
+sim_reads.py
+
+gtf2bed output name format: (tr).target.(chr_i).bed
+use strand specific RNA-seq (e.g. paired, rA/rB from the same/oposite strand of ref transcript)
+
+--simReads -G -B mode (including -job for parallization purpose)
+--simReads --poolChrs

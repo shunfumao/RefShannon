@@ -1,0 +1,51 @@
+% This is a LaTeX version of the sample laboratory report
+% from Virginia Tech's copyrighted 08-09 CHEM 1045/1046 lab manual.
+% Reproduction of this one appendix section for educational purposes
+% should fall under fair use.
+
+\documentclass{article}
+
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{color,soul}
+
+\title{Notes for Sim Reads}
+\author{Shunfu Mao}
+
+\begin{document}
+
+\maketitle
+
+\section{Direction/Strand of Data Storage}
+
+\subsection{sampled RNA-Seq reads}
+bed file: stores stt/stp (0-based, exclusive) and strand of sampled read\\
+
+fasta file: always stored from 5' to 3'. For example, if genome = ATCGATCG and read is [0,3) ('+'), then it's stored as ATC. if read is [0,3) ('-'), then it's stored as GAT.
+
+\subsection{annotated/reference transcripts}
+its storage at bed/fasta files are same as read. This brings the transcript strand problem highlighted in Section \ref{sec_getseqfrombed}
+
+\section{Usage of Existing Software}
+
+The software (RNASeqReadSimulator) we use is from:\\ http://alumni.cs.ucr.edu/~liw/rnaseqreadsimulator.html.
+
+\subsection{gensimreads}
+
+-b: not used. for a read to be sampled from transcript, different locations on the transcript may have different chances to be sampled. Here we assume uniform sampling and -b is not used here.\\
+
+--stranded: used. if used, for a read pair (rA, rB), rA is always on the same strand of the transcript from which rA is sampled, and rB is always on the opposite strand. In practice, stranded RNA-seq data can be more expensive, but it's good for assembly (e.g. denovo). A problem arrising from it is: \hl{how to decide transcript's strandness? If a transcript is on '-' strand but represented by '+' strand, this does not hurt evalution because it will be blat onto target reference transcript with direction information (need further verification), but the protein sequence would be different. We need to check if RNA-Seq data from Snyder/WW/Sim are strand specific or not. A issue of overlapping transcript or genes on opposite strands may also worth thinking.}\\
+
+\subsection{getseqfrombed}\label{sec_getseqfrombed}
+
+-b: not used. if used, some positions may have different chance to get an error. we don't use it and error happens with uniform chance.\\
+
+-f: not used. if used, in case generated read (bed format) is less than readLength, fill the gap with e.g. 'A's (called polyA tails, may make RNA moleculer more stable). \\
+
+\section{Read Coverage}
+
+Because we need to sample reads from transcripts from different chromosomes (e.g. different bed files), we may expect to sample more reads from larger bed files and less reads from smaller bed files. So we need to fix a read coverage quantity, and translate into read number quantity to be used by original software.
+
+The translation is: $N_r*L_r=C*N_t*L_t$ where $N_r$ - number of reads, $L_r$ - read length, $C$ - read coverage, $N_t$ and $L_t$ - number of (annotated) transcripts and average transcript length respectively for a particular bed file (or, e.g., a particular chromosome).
+
+\end{document}

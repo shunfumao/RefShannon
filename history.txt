@@ -1,3 +1,9 @@
+10/17
+
+sim_reads_rsem.py
+
+- add rsem scripts for simulated read generation
+
 
 === sim_reads.py history (before adding to code_sgRefShannon) ===
 

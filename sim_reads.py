@@ -328,12 +328,12 @@ def sim_reads_G_B(args):
 
     else:
 
-        pdb.set_trace()
+        #pdb.set_trace()
         r_str = ''.join(random.choice('0123456789') for _ in range(10))
         jobs_dir = '%s/tmp_%s/'%(OutDir, r_str)
         run_cmd('mkdir -p %s'%jobs_dir)
 
-        pdb.set_trace()
+        #pdb.set_trace()
         cnt = 0
         for j in range(numSamples): #samples
             for i in range(len(genome_trBed_list)): #chrs
@@ -355,14 +355,14 @@ def sim_reads_G_B(args):
                     ijf.write(cmd)
                 cnt += 1
 
-        pdb.set_trace()
+        #pdb.set_trace()
         pstring = ' '.join([str(i) for i in range(cnt)])
         cmd = 'time parallel --jobs %d python sim_reads.py --simReads -job %s/{}.txt ::: %s'% \
                (nJobs, jobs_dir, pstring)
         run_cmd(cmd)
 
         run_cmd('rm -r %s'%jobs_dir)
-        pdb.set_trace()
+        #pdb.set_trace()
 
     return
 

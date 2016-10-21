@@ -1,3 +1,11 @@
+10/21
+
+add analyze_realData_sensitivity.py, analyze_simData_ROC.py
+
+sim_reads_rsem.py: add filterGTF, to get a better gtf from ww data (seem not working)
+
+tester.py: update false_positive function from code_sim_0912/fp_analysis (the output fp_log.txt format is different from old one)
+
 10/17
 
 sim_reads_rsem.py

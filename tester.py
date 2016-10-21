@@ -1,4 +1,4 @@
-import operator, pdb, os
+import operator, pdb, os, sys
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
@@ -260,7 +260,7 @@ def ab_performance(log_file,exp_file):
     print('Fraction of abundance reconstuctedd: ' + str(rec_ab))
 
 
-
+'''
 def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
     tr_dict = {}
     curr_name = ''
@@ -292,11 +292,75 @@ def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
                 rec+=1
             tr_dict[tName][0] = 2
     print(str(rec)+','+str(tot))
-    '''with open(Dest_File,'w') as write_file:
-        for (tName,val) in tr_dict.iteritems():
-            write_file.write(tname+'\t'+str(val[0])+'\t'+str(val[1])+'\n')
-            print('rec,tot='+str(rec)+','+str(tot))'''
+    #with open(Dest_File,'w') as write_file:
+    #    for (tName,val) in tr_dict.iteritems():
+    #        write_file.write(tname+'\t'+str(val[0])+'\t'+str(val[1])+'\n')
+    #        print('rec,tot='+str(rec)+','+str(tot))
+'''
 
+#from code_sim_0912a fp_analysis
+def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
+    tr_dict = {}
+    tr_matches = {}; tr_attributes = {}
+    tr_ratio = {}; tr_att2 = {}
+    curr_name = ''
+
+    nLines=sum([1 for line in open(Rec_fasta)]); T=nLines/100; p=0; q=0;print('');#pdb.set_trace()
+    tot = 0
+    for lines in open(Rec_fasta):
+        p += 1
+        if p>=T:
+            p=0; q+=1;
+            sys.stdout.write('\r'); sys.stdout.write('%d %% processed (1/2)'%q); sys.stdout.flush()
+
+        tokens=lines.strip().split();
+        #pdb.set_trace()
+        #print(lines)
+        if tokens[0][0]!='>':
+            clen = tr_dict.get(curr_name,[0,0]); clen = clen[1]
+            tr_dict[curr_name] = [0,clen+len(tokens[0])]  #Code,Length
+            tr_matches[curr_name] = 0
+            tr_attributes[curr_name] = [0,0,clen+len(tokens[0]),'']  #matchSize, qSize, tSize, qName
+            tr_att2[curr_name] = [0,0,clen+len(tokens[0]),'']
+            tr_ratio[curr_name] = 0
+            continue
+        curr_name = tokens[0][1:]
+        tot += 1
+
+    nLines=sum([1 for line in open(LongReads_rec_per)]); T=nLines/100; p=0; q=0;print('');#pdb.set_trace()
+    rec = 0
+    for lines in open(LongReads_rec_per):
+        p += 1
+        if p>=T:
+            p=0; q+=1;
+            sys.stdout.write('\r'); sys.stdout.write('%d %% processed (2/2)'%q); sys.stdout.flush()
+
+        tokens=lines.strip().split();
+        qName = tokens[9]; qSize = int(tokens[10]) #need to select for the tokens[9][29:]  when having larger prefix
+        tName = tokens[13]; tSize = int(tokens[14])
+        matchSize = int(tokens[0])
+        if matchSize >= tr_matches.get(tName,0):
+            tr_matches[tName] = matchSize
+            tr_attributes[tName] = [matchSize, qSize, tSize, qName]
+
+        if float(matchSize)/float(qSize) >= tr_ratio.get(tName,0):
+            tr_att2[tName] = [matchSize, qSize, tSize, qName]            
+            tr_ratio[tName] = float(matchSize)/float(qSize)
+
+        if matchSize >= 0.9 * min(qSize,tSize):
+            if tr_dict[tName][0] == 0:
+                rec+=1
+                tr_dict[tName][0] = 1
+
+        if matchSize >= 0.9 * tSize:
+            if tr_dict[tName][0] == 0:
+                rec+=1
+            tr_dict[tName][0] = 2
+    print(str(rec)+','+str(tot))
+    with open(Dest_File,'w') as write_file:
+        for (tName,val) in tr_dict.iteritems():
+            #write_file.write(tName+'\t'+str(val[0])+'\t'+str(val[1])+'\n')
+            write_file.write(tName+'\t'+str(tr_attributes[tName][0])+'\t'+str(tr_attributes[tName][1])+ '\t' + str(tr_attributes[tName][2]) + '\t' + str(tr_attributes[tName][3])+'\t'+str(tr_att2[tName][0])+'\t'+str(tr_att2[tName][1])+ '\t' + str(tr_att2[tName][2]) + '\t' + str(tr_att2[tName][3])+'\n')
 
 def performance_plot(reconstr_log,trinity_log,plot_file,L,S,N):
     norm = 0

@@ -3,10 +3,19 @@ from cvxopt import matrix,spmatrix, solvers, spdiag, sparse
 import copy,random, numpy
 import pdb
 import sys, time
+
 from path_decompose_sparse import path_decompose
+#from path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
+#from path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
+
+modi_zero_edge_flow = False #Recommend: False
+                            #When True: if n1-->v-->n2, n1-->v has 0 in-flow,  connect n1 to end;
+                            #                           v-->n2 has 0 out-flow, connect start to n2;
+
 import os
 from time import sleep
 from util import run_cmd
+import numpy as np
 #from dump_sf import describe_one_sample
 
 sys.setrecursionlimit(100000)
@@ -28,6 +37,8 @@ debug_mode = 0
 overwrite_normalization = 0 # Set this to 1 if you want to overload the variable normalization to the copy_count of the true
 #if overwrite_normalization=1: equivalent to using original Copy counts for thresholding
 #pdb.set_trace()
+
+dump = False #True
 
 '''
 usage:
@@ -53,6 +64,7 @@ else:
     target = '.'
 
 outputGTF = True
+outputFasta = True #default, unless nodes files (including single_nodes) have seq as *
 
 edges_file = sample_name+'/edges' + comp + '.txt'
 nodes_file = sample_name+'/nodes' + comp + '.txt'
@@ -60,6 +72,9 @@ single_nodes_file = sample_name+'/single_nodes.txt'
 KnownPathsFile = sample_name+'/paths' + comp + '.txt'
 reconstr_file = sample_name_out+'/reconstructed_comp_' +str(comp) + '.fasta'
 reconstr_Y_file = sample_name_out+'/reconstructed_comp_' +str(comp) + '.fasta' # 'algo_output/reconstructed' + '.fasta'
+
+if dump == True:
+    debug_file = sample_name_out+'/debug_comp_' +str(comp) + '.dmp'
 
 if outputGTF == True:
     comp_gtf_file = sample_name_out+'/reconstructed_comp_' +str(comp) + '.gtf' # 'algo_output/reconstructed' + '.fasta'
@@ -142,6 +157,10 @@ def ParseNodeFile(NodeFile, graph):
                 t3=float(tokens[3])
             except ValueError:
                 t3 = 0
+
+            if tokens[1]=='*':
+                pdb.set_trace()
+                outputFasta = False
 
             if outputGTF==True:
                 #pdb.set_trace()
@@ -420,14 +439,33 @@ class Graph(object):    ## Graph object (used universally)
                         # pdb.set_trace()
                         #tmp_paths = []
                         #'''
+                        '''in_node_cnt = {} #key - in_node_org, val - cnt (e.g. two innodes can come from same org node)
+                        out_node_cnt = {}
+                        for (m, in_node) in enumerate(inedges):
+                            in_node_org = self.constituent_nodes[in_node][0]
+                            if in_node_org in in_node_cnt:
+                                in_node_cnt[in_node_org] += 1; #pdb.set_trace()
+                            else:
+                                in_node_cnt[in_node_org] = 1
+
+                        for (n, out_node) in enumerate(outedges):
+                            out_node_org = self.constituent_nodes[out_node][0]
+                            if out_node_org in out_node_cnt:
+                                out_node_cnt[out_node_org] += 1; #pdb.set_trace()
+                            else:
+                                out_node_cnt[out_node_org] = 1'''
+
                         for (m, in_node) in enumerate(inedges):
                             for (n, out_node) in enumerate(outedges):
-                                if '_' in in_node.name or '_' in out_node.name: continue #less P=1
+                                #if '_' in in_node.name or '_' in out_node.name: continue #less P=1
                                 in_node_org = self.constituent_nodes[in_node][0]
                                 c_node_org = self.constituent_nodes[node][0]
                                 out_node_org = self.constituent_nodes[out_node][0]
                                 if [in_node_org, c_node_org, out_node_org] in known_paths:
-                                    P[m,n]=1; #pdb_trace()
+                                    # and \
+                                    #in_node_cnt[in_node_org]<=1 and \
+                                    #out_node_cnt[out_node_org]<=1:
+                                    P[m,n]=1; #pdb.set_trace()
                         #'''
                         #            tmp_paths.append([m,n])
                         #if len(inedges)>1 and len(outedges)>1 and tmp_paths!=[]:
@@ -440,8 +478,14 @@ class Graph(object):    ## Graph object (used universally)
                         temp_matrix = output[0]
                         m = len(inedge_vector)
                         n = len(outedge_vector)
-                        in_node_flow = numpy.sum(temp_matrix, 1)
-                        out_node_flow = numpy.sum(temp_matrix, 0)
+
+                        if modi_zero_edge_flow==True:
+                            in_node_flow = numpy.sum(temp_matrix, 1)
+                            I_no_flow = [inedges[i] for i in range(m) if in_node_flow[i]==0] #list of in-nodes {r} s.t. no flow decomposed through r-->v
+                            out_node_flow = numpy.sum(temp_matrix, 0)
+                            J_no_flow = [outedges[j] for j in range(n) if out_node_flow[j]==0] #list of out-nodes {t} s.t. no flow decomposed through v-->t
+                            #if I_no_flow != [] or J_no_flow != []:
+                            #    pdb.set_trace()
                         
                         nodes_to_eliminate = [node]
                         
@@ -469,6 +513,20 @@ class Graph(object):    ## Graph object (used universally)
                             st += describe_one_sample(temp_matrix, len(inedges), len(outedges), P, inedge_vector, outedge_vector)
                             f_dmp_P_info.write(st)
                         '''
+                        if dump == True:
+                            with open(debug_file, 'a') as dbg_f:
+                                #pdb.set_trace()
+                                nonzero_P = np.count_nonzero(P)
+                                nonzero_res = np.count_nonzero(temp_matrix)
+                                #st = 'comp %s\tnode %s\tm=%d\tn=%d\tnum_known_paths=%d\tsparsity=%d\n'%(comp, node.name, \
+                                #                                                                        len(inedges), len(outedges), \
+                                #                                                                        nonzero_P, nonzero_res)
+                                st = '%s\t%s\t%d\t%d\t%d\t%d\n'%(comp, node.name, \
+                                                                 len(inedges), len(outedges), \
+                                                                 nonzero_P, nonzero_res)
+                                dbg_f.write(st)
+
+
 
                         ## For each node that was condensed into a new node, delete all it's connections.
                         for edge in node.in_edges:
@@ -478,11 +536,28 @@ class Graph(object):    ## Graph object (used universally)
                                 #if oedge[0].string == node.string:
                                     in_node_temp.out_edges.remove(oedge)
 
+                            if modi_zero_edge_flow==True \
+                               and in_node_temp in I_no_flow and len(in_node_temp.out_edges)==0 \
+                               and in_node_temp != self.start:
+                                #pdb.set_trace()
+                                in_node_temp.out_edges.append([self.end, 0, in_node_temp.weight, 0])
+                                self.end.in_edges.append([in_node_temp, 0, in_node_temp.weight, 0])
+                                self.end.weight += float(in_node_temp.weight)
+
                         for edge in node.out_edges:
                             out_node_temp = edge[0]
                             for iedge in out_node_temp.in_edges:
                                 if iedge[0] is node:
                                     out_node_temp.in_edges.remove(iedge)
+
+                            if modi_zero_edge_flow==True \
+                               and out_node_temp in J_no_flow and len(out_node_temp.in_edges)==0 \
+                               and out_node_temp != self.end:
+                                #pdb.set_trace()
+                                out_node_temp.in_edges.append([self.start, 0, out_node_temp.weight, 0])
+                                self.start.out_edges.append([out_node_temp, 0, out_node_temp.weight, 0])
+                                self.start.weight += float(out_node_temp.weight)   
+
                         if node not in self.nodes:
                             'alert'
                         else:    

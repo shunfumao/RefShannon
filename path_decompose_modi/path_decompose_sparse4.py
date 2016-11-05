@@ -162,7 +162,12 @@ def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False
 
     '''##########
 
-    ########## 2nd trial
+    ########## 4th trial
+    #change: if len(mask_indice)>0: to if 1: use formulation 4
+    #change: if len(mask_indice)>0: to if 0: use original path decompose (recommended)
+    #keep:   if len(mask_indice)>0: use combination of formulation 4 and original path decompose
+    #
+    #if formulation 4 is used, c[i] = -c[i]
 
     p = matrix(0., (m*n,1)) ## f_ij corresponds to p[jm+i]
     I0 = set() #i in I0 <--> exists j s.t. P[i,j]==1
@@ -183,7 +188,7 @@ def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False
 
     useOldPD = True
 
-    if len(mask_indice)>0:  #choice==1
+    if 0: #len(mask_indice)>0:  #choice==1
         useOldPD = False
 
         #rhs = []

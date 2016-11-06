@@ -1,7 +1,7 @@
 import os, sys
 def run_cmd(s1):
-		print(s1); 
-		os.system(s1) # + '>> temp_out.txt')
+        print(s1); 
+        os.system(s1) # + '>> temp_out.txt')
 
 
 def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file):
@@ -26,13 +26,13 @@ def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file):
 
 
 def convert_vector(l1):
-	nl = [];
-	for i in l1:
-		if nl and nl[-1][1]==(i-1): 
-			nl[-1][1]=i; continue
-		else:
-			nl.append([i,i])
-	return nl
+    nl = [];
+    for i in l1:
+        if nl and nl[-1][1]==(i-1): 
+            nl[-1][1]=i; continue
+        else:
+            nl.append([i,i])
+    return nl
 
 
 
@@ -96,11 +96,11 @@ def break_seqs_new(tr_l,tr_r,l1):
         l1 = max(curr_l[0],curr_r[0])
         u1 = min(curr_l[1],curr_r[1])
         if l1<=u1: 
-        	#There is intersection
-        	new_l1 = min(curr_l[0],curr_r[0])
-        	new_u1 = max(curr_l[1],curr_r[1])
-        	seqs.append([new_l1,new_u1])
-        	l_ptr +=1; r_ptr+=1
+            #There is intersection
+            new_l1 = min(curr_l[0],curr_r[0])
+            new_u1 = max(curr_l[1],curr_r[1])
+            seqs.append([new_l1,new_u1])
+            l_ptr +=1; r_ptr+=1
         else:
             #No intersection
             if curr_l[0] < l1: 
@@ -109,7 +109,7 @@ def break_seqs_new(tr_l,tr_r,l1):
                 r_ptr +=1
     return seqs
 
-		
+        
 
 
 def read_in(depth_file):
@@ -118,12 +118,12 @@ def read_in(depth_file):
         for line in open(depth_file): # as left_depth_file:
                 fields = line.strip().split()
                 if fields[0] == curr_name:
-                	curr_list.append(int(fields[1]))
+                    curr_list.append(int(fields[1]))
                 else:
-                	nl = convert_vector(curr_list)
-                	if curr_name: tr_dict[curr_name]=nl
-                	curr_name = fields[0]
-                	curr_list = [int(fields[1])]
+                    nl = convert_vector(curr_list)
+                    if curr_name: tr_dict[curr_name]=nl
+                    curr_name = fields[0]
+                    curr_list = [int(fields[1])]
         nl = convert_vector(curr_list)
         if curr_name: tr_dict[curr_name]=nl
         return tr_dict
@@ -147,62 +147,68 @@ def write_new_tr(ld_file, rd_file, in_tr_file, out_tr_file, log_file):
                 seq = fields[0]
                 ctr = 0
                 for (l,u) in bs:
-                	if l + MIN_SEQ <= u: 
-                		aug = '' if (l==1 and u==len(seq)) else ('_frag_' + str(ctr))
-                		tr_file.write('>' + tr_name + aug + '\n')
-                		tr_file.write(seq[l-1:u] + '\n')
-                		ctr +=1
+                    if l + MIN_SEQ <= u: 
+                        aug = '' if (l==1 and u==len(seq)) else ('_frag_' + str(ctr))
+                        tr_file.write('>' + tr_name + aug + '\n')
+                        tr_file.write(seq[l-1:u] + '\n')
+                        ctr +=1
                 lf.write(tr_name + '\t' + str(bs) + '\n')
 
 def filter_FP(rec_fasta, read_1, read_2, out_dir, flags = '-f --ff'):
-	#take rec_fasta, read_1, read_2 files of type. 
-	#Output in out_fasta. Temp dir = out_dir. 
-	#Output fasta is in out_dir/reconstructed.fasta 
-	#Flags is '-f --ff' for fasta and forward-forward
-	#Flags is '-q --fr' for fastq and forward-reverse
-	hisat_dir = '' #include dir/ if specifying directory
-	
-	#Build hisat file
-	run_cmd(hisat_dir + 'hisat-build ' + rec_fasta + ' ' + out_dir + '/rec.hisat')
+    #take rec_fasta, read_1, read_2 files of type. 
+    #Output in out_fasta. Temp dir = out_dir. 
+    #Output fasta is in out_dir/reconstructed.fasta 
+    #Flags is '-f --ff' for fasta and forward-forward
+    #Flags is '-q --fr' for fastq and forward-reverse
+    hisat_dir = '' #include dir/ if specifying directory
+    
+    #Build hisat file
+    run_cmd(hisat_dir + 'hisat-build ' + rec_fasta + ' ' + out_dir + '/rec.hisat')
 
-	#Align
-	run_cmd(hisat_dir + 'hisat --no-spliced-alignment --no-discordant '+ flags + ' -x ' + out_dir + '/rec.hisat -1 ' + read_1 +  ' -2 ' + read_2 + ' -S ' + out_dir + '/rec.sam' )
-	
-	#Process SAM / BAM file to get depth information
-	run_cmd('samtools view -bS -f 0x2 ' + out_dir + '/rec.sam > ' + out_dir + '/rec.bam')
-	#run_cmd('samtools sort '+  out_dir + '/rec.bam ' +  out_dir + '/rec_sort')
-	#run_cmd('samtools depth ' +  out_dir + '/rec_sort.bam > ' +  out_dir + '/rec.depth')
-	run_cmd('samtools view -b -f 64 ' + out_dir +  '/rec.bam > ' + out_dir + '/c1.bam')
-	run_cmd('samtools view -b -f 128 ' + out_dir +  '/rec.bam > ' + out_dir + '/c2.bam')
-	run_cmd('samtools view -b -F 16 ' + out_dir +  '/c1.bam > ' + out_dir + '/c1f.bam')
-	run_cmd('samtools view -b -f 16 ' + out_dir +  '/c1.bam > ' + out_dir + '/c1r.bam')
-	run_cmd('samtools view -b -f 32 ' + out_dir +  '/c2.bam > ' + out_dir + '/c2r.bam')
-	run_cmd('samtools view -b -F 32 ' + out_dir +  '/c2.bam > ' + out_dir + '/c2f.bam')
-	run_cmd('samtools merge ' + out_dir +  '/l.bam ' + out_dir + '/c1f.bam ' +out_dir + '/c2r.bam ' )
-	run_cmd('samtools merge ' + out_dir +  '/r.bam ' + out_dir + '/c2f.bam ' +out_dir + '/c1r.bam ' )
-	run_cmd('samtools sort '+  out_dir + '/l.bam ' +  out_dir + '/l_sort')
-	run_cmd('samtools sort '+  out_dir + '/r.bam ' +  out_dir + '/r_sort')
-	run_cmd('samtools depth ' +  out_dir + '/l_sort.bam > ' +  out_dir + '/l.depth')
-	run_cmd('samtools depth ' +  out_dir + '/r_sort.bam > ' +  out_dir + '/r.depth')
+    #Align
+    run_cmd(hisat_dir + 'hisat --no-spliced-alignment --no-discordant '+ flags + ' -x ' + out_dir + '/rec.hisat -1 ' + read_1 +  ' -2 ' + read_2 + ' -S ' + out_dir + '/rec.sam' )
+    
+    #Process SAM / BAM file to get depth information
+    run_cmd('samtools view -bS -f 0x2 ' + out_dir + '/rec.sam > ' + out_dir + '/rec.bam') #properly aligned
+    #run_cmd('samtools sort '+  out_dir + '/rec.bam ' +  out_dir + '/rec_sort')
+    #run_cmd('samtools depth ' +  out_dir + '/rec_sort.bam > ' +  out_dir + '/rec.depth')
+    run_cmd('samtools view -b -f 64 ' + out_dir +  '/rec.bam > ' + out_dir + '/c1.bam') #1st seg in template
+    run_cmd('samtools view -b -f 128 ' + out_dir +  '/rec.bam > ' + out_dir + '/c2.bam') #last seg in template
+    run_cmd('samtools view -b -F 16 ' + out_dir +  '/c1.bam > ' + out_dir + '/c1f.bam') #-F(except) 16 (rev complement)
+    run_cmd('samtools view -b -f 16 ' + out_dir +  '/c1.bam > ' + out_dir + '/c1r.bam') # rev complement
+    run_cmd('samtools view -b -f 32 ' + out_dir +  '/c2.bam > ' + out_dir + '/c2r.bam')
+    run_cmd('samtools view -b -F 32 ' + out_dir +  '/c2.bam > ' + out_dir + '/c2f.bam')
+    run_cmd('samtools merge ' + out_dir +  '/l.bam ' + out_dir + '/c1f.bam ' +out_dir + '/c2r.bam ' )
+    run_cmd('samtools merge ' + out_dir +  '/r.bam ' + out_dir + '/c2f.bam ' +out_dir + '/c1r.bam ' )
+    
+    #pdb.set_trace()
+
+    run_cmd('samtools sort '+  '-o' + out_dir + '/l_sort.bam ' +  out_dir + '/l.bam ' )
+    run_cmd('samtools sort '+  '-o' + out_dir + '/r_sort.bam ' +  out_dir + '/r.bam ' )
+
+    run_cmd('samtools depth ' +  out_dir + '/l_sort.bam > ' +  out_dir + '/l.depth')
+    run_cmd('samtools depth ' +  out_dir + '/r_sort.bam > ' +  out_dir + '/r.depth')
 
 
-	#Use the BAM file along with our tool to get new fasta file
-	ld_file = out_dir + '/l.depth'; rd_file = out_dir + '/r.depth'
-	in_tr_file = rec_fasta
-	out_tr_file = out_dir + '/rec.fasta'; 
-	log_file = out_dir + '/rec.log'
-	write_new_tr(ld_file, rd_file, in_tr_file, out_tr_file, log_file)
+    #Use the BAM file along with our tool to get new fasta file
+    ld_file = out_dir + '/l.depth'; rd_file = out_dir + '/r.depth'
+    in_tr_file = rec_fasta
+    out_tr_file = out_dir + '/rec.fasta'; 
+    log_file = out_dir + '/rec.log'
+    write_new_tr(ld_file, rd_file, in_tr_file, out_tr_file, log_file)
 
-	run_cmd('cp ' + rec_fasta + ' ' + out_dir +'/reconstructed_org.fasta')
-	run_cmd('mv ' + out_tr_file + ' ' + out_dir + '/reconstructed.fasta')
+    run_cmd('cp ' + rec_fasta + ' ' + out_dir +'/reconstructed_org.fasta')
+    run_cmd('mv ' + out_tr_file + ' ' + out_dir + '/reconstructed.fasta')
 
 
 if __name__ == '__main__':
-	rec_fasta = sys.argv[1]
-	read_1 = sys.argv[2]
-	read_2 = sys.argv[3]
-	out_dir = sys.argv[4]
-	#flags = ' '.join(sys.argv[5:])
-	filter_FP(rec_fasta, read_1, read_2, out_dir)
+    import pdb
+    rec_fasta = sys.argv[1]
+    read_1 = sys.argv[2]
+    read_2 = sys.argv[3]
+    out_dir = sys.argv[4]
+    flags = '%s %s'%(sys.argv[5], sys.argv[6]) #-f --fr etc 
+    pdb.set_trace()
+    filter_FP(rec_fasta, read_1, read_2, out_dir, flags)
 
 

@@ -1,4 +1,11 @@
-import pdb, heapq, copy
+import pdb, heapq, copy, numpy
+from numpy import linalg as LA
+from cvxopt import matrix, solvers, spmatrix, printing
+import numpy, copy
+from numpy import linalg as LA
+from numpy import array
+from numpy import zeros
+import operator
 #from path_decompose_sparse import *
 
 #'''
@@ -15,7 +22,123 @@ def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 #'''
 
-def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False):
+diable_LS = False
+
+def path_decompose5(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False):
+
+    m = len(a)  ## a is a vector of the current in edge copycount values.
+    n = len(b)  ## b is a vector of the current out edge copycount values.
+    sa = sum(a); sb = sum(b)
+
+    ## Trivial case 
+    if m==0 or n==0:
+        return [[],0]
+    if m==1:
+        answer = array(matrix(b,(m,n)))
+        return [answer,0]
+    elif n==1:
+        answer = array(matrix(a,(m,n)))
+        return [answer,0]
+
+    if sa<=0 or sb<=0:
+        answer = array(matrix(0,(m,n)))
+        return [answer,0]        
+
+    ## Make all in flow values non-zero.
+    '''for i in range(m):
+        a[i]=max(a[i],1e-10)
+    for j in range(n):
+        b[j]=max(b[j],1e-10)'''
+
+    ## If the flow in does not equal the flow out, make them equal.
+    if sa>sb:
+        const = (sa-sb)
+        b = [k+const*k/sb for k in b ]
+    else:
+        const = (sb-sa)
+        a = [k+const*k/sa for k in a ]
+
+    ##### prepare I0,J0,I1,J1 info
+    I0 = set() #i in I0 <--> exists j s.t. P[i,j]==1
+    J0 = set() #j in J0 <--> exists i s.t. P[i,j]==1
+    I0J0 = [] #(i,j) s.t. i in I0 and j in J0
+    I1 = set() #I\I0
+    J1 = set() #J\J0
+    for i in range(m):
+        for j in range(n):
+            if diable_LS==False and P[i,j]==1:
+                I0.add(i); J0.add(j)
+                I0J0.append((i,j))
+    for i in range(m):
+        if i not in I0: I1.add(i)
+    for j in range(n):
+        if j not in J0: J1.add(j)
+
+    I0 = list(I0); J0 = list(J0); I1 = list(I1); J1 = list(J1)
+
+    ##### results to be returned
+    answer = numpy.zeros((m,n))
+    non_unique = 0
+
+    ##### LS approach
+    if len(I0J0)>0:
+        #pdb.set_trace()
+
+        A = []; B = []; nCol = len(I0J0); row_id = 0;
+
+        for i in I0:
+            row = [0]*nCol
+            for j in range(nCol):
+                if I0J0[j][0]==i:
+                    row[j]=1
+            A.append(row)
+            B.append(a[i])
+            row_id += 1
+
+        for j in J0:
+            row = [0]*nCol
+            for i in range(nCol):
+                if I0J0[i][1]==j:
+                    row[i]=1
+            A.append(row)
+            B.append(b[j])
+            row_id += 1
+
+        A = numpy.array(A)
+        B = numpy.array(B)
+        est_f_I0J0 = LS_sol(A, B); #pdb.set_trace()
+        for k in range(nCol):
+            idx_i = I0J0[k][0]
+            idx_j = I0J0[k][1]
+            answer[idx_i][idx_j] = est_f_I0J0[k]
+
+    if len(I1)>0 and len(J1)>0:
+        #pdb.set_trace()
+
+        if sum([1 for i in I1 if a[i]<0])>0 \
+           or sum([1 for j in J1 if b[j]<0]):
+           pdb.set_trace()
+
+        aa = [a[i] for i in I1]
+        bb = [b[j] for j in J1]
+        if diable_LS == False:
+            PP = numpy.zeros((len(I1), len(J1)))
+        else:
+            PP = P
+        [sub_answer, sub_non_unique] = path_decompose4_copy(aa,bb,aa,bb,overwrite_norm,PP,use_GLPK, sparsity)
+
+        for i in range(len(I1)):
+            for j in range(len(J1)):
+                idx_i = I1[i]
+                idx_j = J1[j]
+                answer[idx_i, idx_j] = sub_answer[i,j]
+
+        non_unique = sub_non_unique
+
+    return [answer,non_unique]
+
+#a copy of path_decompose4, to be called by path_decompose5
+def path_decompose4_copy(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False):
     '''This function takes in a node's information in the attempt to decompose it into the lowest number of paths that
     accounts for the flow constraints.  
     Thhe algorithm uses many trials of a randomizaed optimization model and takes the best result seen.  
@@ -29,12 +152,12 @@ def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False
     '''
 
     #mb_check = 1 #if this parameter is set to 1, if the data can be set using MB, then it
-    from cvxopt import matrix, solvers, spmatrix, printing
-    import numpy, copy
-    from numpy import linalg as LA
-    from numpy import array
-    from numpy import zeros
-    import operator
+    #from cvxopt import matrix, solvers, spmatrix, printing
+    #import numpy, copy
+    #from numpy import linalg as LA
+    #from numpy import array
+    #from numpy import zeros
+    #import operator
     solvers.options['msg_lev'] = 'GLP_MSG_OFF'
     solvers.options['show_progress'] = False
     m = len(a)  ## a is a vector of the current in edge copycount values.
@@ -340,11 +463,17 @@ def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False
         if use_GLPK: 
             sol = solvers.lp(c =c ,G=G,h=h,A=A,b=rhs/scale,solver='glpk')
         else:
-            if useOldPD == True:
-                sol = solvers.lp(c =c ,G=G,h=h,A=A,b=rhs/scale)
-            else:
-                sol = solvers.lp(c =c ,G=G,h=h)
-        temp_sol = array(sol['x'])*scale
+            try:
+                if useOldPD == True:
+                    sol = solvers.lp(c =c ,G=G,h=h,A=A,b=rhs/scale)
+                else:
+                    sol = solvers.lp(c =c ,G=G,h=h)
+            except:
+                pdb.set_trace()
+        try:
+            temp_sol = array(sol['x'])*scale
+        except:
+            pdb.set_trace()
         another_sol = copy.deepcopy(temp_sol)
         #print('useOldPD=%s temp_sol=\n%s'%(str(useOldPD), str(temp_sol)))
         if overwrite_norm: ## Do not use right now because a_true and b_true are wrong.
@@ -423,10 +552,41 @@ def path_decompose4(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False
             answer = new_ans 
     return [answer,non_unique]
 
+def LS_sol(A, b):
 
-#'''#Test Case
-if __name__ == '__main__':
+    #pdb.set_trace()
 
+    C=LA.pinv(A.T.dot(A))
+    est_f = C.dot(A.T).dot(b)
+
+    #pdb.set_trace()
+
+    return est_f
+
+def test_LS():
+
+    pdb.set_trace()
+
+    A = [[1,   1,  0],
+         [0,   1,  1],
+         [1,   0,  1]]
+
+    f = [[2],
+         [3],
+         [4]]
+
+    A = numpy.array(A)
+    f = numpy.array(f)
+
+    b = A.dot(f)
+
+    est_f = LS_sol(A,b)
+
+    pdb.set_trace()
+
+    return
+
+def test_pd5():
     import numpy;
 
     #choice = 0 # 0 old sf, 1 new sf
@@ -434,27 +594,27 @@ if __name__ == '__main__':
     '''f = [[1.5, 2],
          [3,   0]]
 
-    P = [[0,   0],
-         [1,   0]]'''
+    P = [[0,   1],
+         [0,   0]]'''
 
-    '''f = [[0,   20,  0],
+    f = [[0,   20,  0],
          [0,   30,  0],
          [15,  40,  21]]
 
-    P = [[1,   0,  0],
-         [1,   0,  0],
-         [0,  0,  0]]'''
+    P = [[0,   1,  0],
+         [0,   0,  0],
+         [0,   0,  1]]
 
     '''
     #pdb.set_trace()
 
     check_AbGh = 0'''
 
-    '''f = numpy.array(f)
+    f = numpy.array(f)
     P = numpy.array(P)
 
     a = numpy.sum(f, axis=1)
-    b = numpy.sum(f, axis=0)'''
+    b = numpy.sum(f, axis=0)
 
     #exception case
     '''P = [[ 1.00e+00,  0.00e+00,  0.00e+00], 
@@ -465,7 +625,7 @@ if __name__ == '__main__':
     b = [19.970230104230318, 429.3599472409519, 1.9970230104230318]'''
 
 
-    '''[a2,z] = path_decompose4(a,b,a,b,False,P,False,10)'''
+    [a2,z] = path_decompose5(a,b,a,b,False,P,False,10)
 
     '''
     [m,n]=a2.shape
@@ -476,5 +636,15 @@ if __name__ == '__main__':
     '''
     #[b2,y] = path_decompose(a,b,a,b,False,newP,False,10)
 
-    '''print(z)
-    print('res=\n%s'%str(a2))'''
+    print(z)
+    print('res=\n%s'%str(a2))
+
+    return
+
+#'''#Test Case
+if __name__ == '__main__':
+
+    test_pd5()
+    #test_LS()
+
+    

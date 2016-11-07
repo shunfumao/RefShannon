@@ -420,6 +420,8 @@ python analyze_simData_calcROC.py --calcROC -o path/to/rocFile \
                                             -f path/to/fpLogFile 
                                             [-N nJobs]
 
+#it seems using log file # of correct reconstructed ref transcripts reduced faster (fp ratio not affected)
+#per file recommended
 python analyze_simData_calcROC.py --calcROC_1Point -c cutoff \
                                                    -o path/to/tempRocFile \
                                                    -a path/to/abFile \

@@ -345,7 +345,7 @@ def performance_plot_express_modi(oracle_fasta, \
     
     if exp_format=='KAL':
         tot_ab = 0
-        pdb.set_trace()
+        #pdb.set_trace()
         for lines in open(exp_file):
             fields=lines.strip().split();
             tr_id = fields[0].upper()
@@ -445,6 +445,7 @@ def performance_plot_express_modi(oracle_fasta, \
         sub_list = stat_num_iso_os[stt:min(stp, len(stat_num_iso_os))]
         st += '%d ~ %d'%(sub_list[0], sub_list[len(sub_list)-1])
         print(st)
+    #pdb.set_trace()
 
     stat_cov_os.sort(key=lambda x:x)
     st = 'percentile\tabundance (isoforms %d - %d)'%(iso_lower, iso_upper)
@@ -454,8 +455,11 @@ def performance_plot_express_modi(oracle_fasta, \
         stp = int((cutoff+1) * 0.1 * len(stat_cov_os))
         st = '%d %% ~ %d %%:\t'%(cutoff*10, (cutoff+1)*10)
         sub_list = stat_cov_os[stt:min(stp, len(stat_cov_os))]
-        st += '%.5f ~ %.5f'%(sub_list[0], sub_list[len(sub_list)-1])
-        print(st)
+        try:
+            st += '%.5f ~ %.5f'%(sub_list[0], sub_list[len(sub_list)-1])
+            print(st)
+        except:
+            continue        
 
     #pdb.set_trace()
     

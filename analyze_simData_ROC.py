@@ -51,7 +51,7 @@ def quantByKallisto(args):
     cmd = 'kallisto index -i %s_kal.index %s --make-unique'%(out_prefix, recFa)
     run_cmd(cmd)
 
-    pdb.set_trace()
+    #pdb.set_trace()
 
     if SE_prefix != ' ':
         cmd = 'kallisto quant -i %s_kal.index -o %s_kal_out -t %d %s -l 200 -s 20 %s '% \

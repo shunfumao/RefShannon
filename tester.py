@@ -1,6 +1,6 @@
 import operator, pdb, os, sys
-from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna
+#from Bio.Seq import Seq
+#from Bio.Alphabet import generic_dna
 
 def reverse_complement(s):
     '''Find the reverse complement of a DNA string using biopython interface'''
@@ -299,6 +299,7 @@ def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
 '''
 
 #from code_sim_0912a fp_analysis
+#format: t_rec (unique) m1 (max match) l_ref1 l_rec1 t_ref1 m2 (max m/l_ref) l_ref2 l_rec2 t_ref2
 def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
     tr_dict = {}
     tr_matches = {}; tr_attributes = {}
@@ -318,9 +319,9 @@ def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
         #print(lines)
         if tokens[0][0]!='>':
             clen = tr_dict.get(curr_name,[0,0]); clen = clen[1]
-            tr_dict[curr_name] = [0,clen+len(tokens[0])]  #Code,Length
+            tr_dict[curr_name] = [0,clen+len(tokens[0])]  #tr_rec: Code,Length
             tr_matches[curr_name] = 0
-            tr_attributes[curr_name] = [0,0,clen+len(tokens[0]),'']  #matchSize, qSize, tSize, qName
+            tr_attributes[curr_name] = [0,0,clen+len(tokens[0]),'']  #tr_rec: matchSize, qSize, tSize, qName
             tr_att2[curr_name] = [0,0,clen+len(tokens[0]),'']
             tr_ratio[curr_name] = 0
             continue
@@ -336,8 +337,8 @@ def false_positive(Rec_fasta,LongReads_rec_per,Dest_File):
             sys.stdout.write('\r'); sys.stdout.write('%d %% processed (2/2)'%q); sys.stdout.flush()
 
         tokens=lines.strip().split();
-        qName = tokens[9]; qSize = int(tokens[10]) #need to select for the tokens[9][29:]  when having larger prefix
-        tName = tokens[13]; tSize = int(tokens[14])
+        qName = tokens[9]; qSize = int(tokens[10]) #need to select for the tokens[9][29:]  when having larger prefix #ref
+        tName = tokens[13]; tSize = int(tokens[14]) #rec
         matchSize = int(tokens[0])
         if matchSize >= tr_matches.get(tName,0):
             tr_matches[tName] = matchSize

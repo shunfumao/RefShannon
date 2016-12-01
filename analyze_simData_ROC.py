@@ -1,4 +1,4 @@
-import sys, tester, random
+import sys, tester, random, os
 from util import *
 
 def genPerLog(args):
@@ -97,8 +97,15 @@ def calc_fp(fpLogFile):
             fields = line.split()
 
             if len(fields)<9:
-                if len(fields)==8:
-                    pdb.set_trace() #fpLogFile has refTrName1 and refTrName2 missing
+                recTrName = fields[0]
+                recLen = int(fields[3])
+                if recLen < MIN_TR_LEN:
+                    continue
+                else:
+                    total += 1
+                    false_positives.add(recTrName)
+                #if len(fields)==8:
+                #    pdb.set_trace() #fpLogFile has refTrName1 and refTrName2 missing
                 continue
             
             recTrName = fields[0]
@@ -119,7 +126,7 @@ def calc_fp(fpLogFile):
             if isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2):
                 false_positives.add(recTrName)
 
-    print('{} false positives of {}'.format(len(false_positives), total))
+    #print('{} false positives of {}'.format(len(false_positives), total))
     
     return false_positives
 
@@ -197,6 +204,7 @@ def roc_curve(ab_file, fp_file, rec_file, format):
         f.readline()
         for line in f:
             name, l1, _, ec, weight = line.split()
+            if int(l1) < MIN_TR_LEN: continue
             weights.append((name, float(ec)/float(l1)*100)) #expected count at kallisto abundance output, 100 is scaling factor, does not matter
 
     weights.sort(key = lambda x: x[1])
@@ -253,15 +261,25 @@ def calcROC_1Point(args):
 
     fpLogFile = (args[args.index('-f')+1])
 
+    #pdb.set_trace()
+
     weights = []
     with open(ab_file) as f:
         f.readline()
         for line in f:
             name, l1, _, ec, weight = line.split()
-            weights.append((name, float(ec)/float(l1)*100)) #expected count at kallisto abundance output, 100 is scaling factor, does not matter
+            if int(l1) < MIN_TR_LEN:
+                #pdb.set_trace()
+                continue
+            else:
+                weights.append((name, float(ec)/float(l1)*100)) #expected count at kallisto abundance output, 100 is scaling factor, does not matter
     weights.sort(key = lambda x: x[1])
 
+    #pdb.set_trace()
+
     fp_set = calc_fp(fpLogFile)
+
+    #pdb.set_trace()
 
     [rec,fp] = calculate_curve(cutoff, weights, fp_set, recFile, f_format)
 
@@ -393,6 +411,188 @@ def drawROC(args):
         cnt += 1
 
     plotROC(data)
+
+    return
+
+'''
+know: .fasta, per, fp log
+use reads (SE) to realign onto fasta to get kal abundance, then filter Trec (.fasta) based on abundance, and calculate ROC res
+'''
+def batch_SE():
+
+    kal_prefix_list = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/wwSim_1122a/refShannon/reconstructed',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/wwSim_1122a/cufflinks/cufflinks',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/wwSim_1122a/stringtie/stringtie']
+
+    reads = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/rsem/sim_star/ww_snyderRef/sim_reads.fa']    
+
+    for kal_prefix in kal_prefix_list:
+        
+        abFile = kal_prefix + '_kal_out/abundance.tsv'
+        Trec = kal_prefix + '.fasta'
+        recPerFile = kal_prefix + '_per.txt'
+        fpLogFile = kal_prefix + '_fp_log.txt'
+        rocFile = kal_prefix + '_kal_roc.txt'        
+
+        cmd = 'python analyze_simData_ROC.py --kallisto -o %s '%kal_prefix + \
+              '--rec %s '%Trec + \
+              '-r1 %s '%reads[0] + \
+              '-t 20'
+        #os.system(cmd)
+
+        cmd = 'python analyze_simData_ROC.py --calcROC -o %s '%rocFile + \
+              '-a %s '%abFile + \
+              '-p %s '%recPerFile + \
+              '-f %s '%fpLogFile + \
+              '-N 20'
+        os.system(cmd)
+
+    return
+
+def batch_PE():
+
+    kal_prefix_list = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/refShannon/reconstructed',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/cufflinks/cufflinks',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/stringtie/stringtie']
+
+    reads = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/rsem/sim_star/snyder/sim_reads_1.fq',
+             '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/rsem/sim_star/snyder/sim_reads_2.fq']  
+
+    '''
+    kal_prefix_list = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon//kidneySim/refShannon/reconstructed_all',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon//kidneySim/cufflinks/cufflinks',
+                       '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon//kidneySim/stringtie/stringtie']
+
+    reads = ['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/rsem/sim_star/kidney_snyderRef/sim_reads_1.fq',
+             '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/rsem/sim_star/kidney_snyderRef/sim_reads_2.fq']    
+    '''
+  
+
+    for kal_prefix in kal_prefix_list:
+        
+        abFile = kal_prefix + '_kal_out/abundance.tsv'
+        Trec = kal_prefix + '.fasta'
+        recPerFile = kal_prefix + '_per.txt'
+        fpLogFile = kal_prefix + '_fp_log.txt'
+        rocFile = kal_prefix + '_kal_roc.txt'        
+
+        cmd = 'python analyze_simData_ROC.py --kallisto -o %s '%kal_prefix + \
+              '--rec %s '%Trec + \
+              '-r1 %s '%reads[0] + \
+              '-r2 %s '%reads[1] + \
+              '-t 20'
+        #os.system(cmd)
+
+        cmd = 'python analyze_simData_ROC.py --calcROC -o %s '%rocFile + \
+              '-a %s '%abFile + \
+              '-p %s '%recPerFile + \
+              '-f %s '%fpLogFile + \
+              '-N 20'
+        os.system(cmd)
+
+    return
+
+'''
+filter kal_prefix_fld/prefix.fasta to kal_prefix_fld/filteredFasta/(cutT)/prefix.fasta
+based on kal_prefix_fld/prefix_kal_out/abundance.tsv
+
+filter include: throw away transcripts < MIN_TR_LEN and select >cutT (e.g. 0% ~ 90%) percentile transcripts
+'''
+
+def filter_Trec_KAL_batch():
+
+    fld_prefix_list = []
+    #fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/wwSim_1122a/refShannon/', 'reconstructed'])
+    fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/refShannon/', 'reconstructed'])
+    fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/kidneySim/refShannon/', 'reconstructed_all'])
+
+    for kal_prefix_fld, prefix in fld_prefix_list:
+
+        abFile = '%s/%s_kal_out/abundance.tsv'%(kal_prefix_fld, prefix)
+        
+        weights = []
+        with open(abFile) as f:
+            f.readline()
+            for line in f:
+                name, l1, _, ec, weight = line.split()
+                if int(l1) < MIN_TR_LEN: continue
+                weights.append((name, float(ec)/float(l1)*100)) #expected count at kallisto abundance output, 100 is scaling factor, does not matter
+        weights.sort(key = lambda x: x[1])
+
+        #pdb.set_trace()
+
+        src = '%s/%s.fasta'%(kal_prefix_fld, prefix)
+
+        for cut in range(10):
+            dst_fld = '%s/filteredFasta/%.1f/'%(kal_prefix_fld, float(cut)/10)
+            os.system('mkdir -p %s'%dst_fld)
+            dst = '%s/%s.fasta'%(dst_fld, prefix)
+
+            weights_subset = weights[int(0.1*cut*len(weights)):]
+            target_trs = set([x[0] for x in weights_subset])
+
+            filter_Trec_Kal(src, dst, target_trs)
+            print('%s written'%dst)
+
+    return
+
+def filter_Trec_Kal(fasta_src, fasta_dst, target_trs):
+
+    seq = []
+    next_name = '_'; next_name_line = ''
+
+    with open(fasta_src, 'r') as src, \
+         open(fasta_dst, 'w') as dst:
+        for line in src:
+            if line[0] == '>':
+                seq_str = ''.join(seq)
+                if next_name != '_' and next_name in target_trs:
+                    dst.write(next_name_line)
+                    dst.write(seq_str + '\n')
+                seq = []
+                next_name = line.split()[0][1:]
+                next_name_line = line                
+            else:
+                seq.append(line.strip().upper())
+        seq_str = ''.join(seq)
+        if next_name != '_' and next_name in target_trs:
+            dst.write(next_name_line)
+            dst.write(seq_str + '\n')
+    return
+
+'''
+based on filtered fasta (kal_prefix_fld/filteredFasta/(cutT)/prefix.fasta),
+check sens/fp for each of them (by gen per, log, fp_log first)
+res (sens/fp) stored at (kal_prefix_fld/filteredFasta/(cutT)/)
+'''
+def eval_sens_fp_using_filter_Trec_Kal():
+
+    import os
+
+    Tref = '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/T_ref/reference.fasta'
+
+    fld_prefix_list = []
+    fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/wwSim_1122a/refShannon/', 'reconstructed'])
+    fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/refShannon/', 'reconstructed'])
+    fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/kidneySim/refShannon/', 'reconstructed_all'])
+
+    t_list = ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9']
+
+    for kal_prefix_fld, prefix in fld_prefix_list:
+
+        for t in t_list:
+            
+            dst_fld = '%s/filteredFasta/%s/'%(kal_prefix_fld, t)
+            Trec = '%s/%s.fasta'%(dst_fld, prefix)
+
+            cmd = 'python filter_FP_batch.py --eval1Job ' + \
+                  '-t %s '%Tref + \
+                  '-r %s '%Trec + \
+                  '-O %s'%dst_fld
+            #print(cmd)
+            os.system(cmd)
+
+            print('%s done'%dst_fld)
 
     return
 

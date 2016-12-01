@@ -247,7 +247,6 @@ def do_sf_Is(args):
         args_per_target += '-N %d '%(N_jobs)
         args_per_target += '-target %s '%(target)
         args_per_target = args_per_target.split()
-        #pdb.set_trace()
         do_sf_I(args_per_target)
 
     return
@@ -352,6 +351,7 @@ def do_eval_I(args):
 
     args2 = '-i %s -r %s -O %s -n %s'%(target_file, ref_file, out_dir, name_tag)
     args2 = args2.split()
+    #pdb.set_trace()
     do_eval_i(args2)
 
     return
@@ -502,7 +502,7 @@ def do_batch_I_G(args):
     sg_args = '-I %s -G %s -O %s %s %s -N %d'%(chrs_dir, genome_dir, out_dir, chrs_str_arg, paired_str, N_jobs)
     do_sg_I_G(sg_args.split())
 
-    sf_args = '-Is %s -O %s %s -N %d'%(out_dir, out_dir, chrs_str_arg, N_jobs)
+    sf_args = '-Is %s -O %s %s -N %d'%(chrs_dir, out_dir, chrs_str_arg, N_jobs)
     do_sf_Is(sf_args.split())
 
     if clear==True:

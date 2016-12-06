@@ -1,8 +1,8 @@
 import subprocess, re, time, sys, os, shutil, pdb
 
-def run_cmd(cmd):
+def run_cmd(cmd, shell=True):
     #print(cmd)
-    subprocess.call(cmd, shell=True)
+    subprocess.call(cmd, shell=shell)
 
 class Clock:
     def __init__(self):

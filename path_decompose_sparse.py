@@ -1,4 +1,7 @@
-import pdb, heapq
+import pdb, heapq, sys
+import numpy as np
+from global_values import *
+
 def local_dot(a,b):
 	## This function takes the dot product between two vectors.  
 	n = len(a)
@@ -190,6 +193,30 @@ def path_decompose(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False)
 			for ind in sorted_tmp:
 				new_ans[ind[0][0], ind[0][1]] = ind[1]
 			answer = new_ans 
+
+	'''with open('dmp/tmp.txt', 'a') as f:
+		sparsity = np.count_nonzero(answer)
+		f_min = np.min(answer[np.nonzero(answer)])
+		f_max = np.max(answer[np.nonzero(answer)])
+		st = '%d %d %d %d %f %f %f'%(m,n,m*n,sparsity, f_min, f_max, float(f_min)/float(f_max))
+		f.write(st+'\n')'''
+
+	#with open('dmp/tmp1.txt', 'a') as f:
+	#	f.write(str(FLOW_RATIO_THRESHOLD)+'\n')
+	#pdb.set_trace()
+	tmp_out_dir = sys.argv[sys.argv.index('-O')+1]
+	tokens = [token for token in tmp_out_dir.split('/') if token != '']
+	FLOW_RATIO_THRESHOLD = float(tokens[-1])
+
+	try:
+		f_max = np.max(answer[np.nonzero(answer)])
+		for i in range(m):
+			for j in range(n):
+				if answer[i,j]!=0 and float(answer[i,j])/f_max<FLOW_RATIO_THRESHOLD:
+					answer[i,j]=0
+	except:
+		aa = 1; #print(answer)
+
 	return [answer,non_unique]
 
 

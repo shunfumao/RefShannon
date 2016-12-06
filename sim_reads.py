@@ -1,5 +1,6 @@
 import sys, os, pdb, re, random
 from util import *
+import run_parallel_cmds
 
 RNASeqReadSimulatorPath='RNASeqReadSimulator/' #folder path to store external software codes
 
@@ -356,10 +357,16 @@ def sim_reads_G_B(args):
                 cnt += 1
 
         #pdb.set_trace()
-        pstring = ' '.join([str(i) for i in range(cnt)])
-        cmd = 'time parallel --jobs %d python sim_reads.py --simReads -job %s/{}.txt ::: %s'% \
-               (nJobs, jobs_dir, pstring)
-        run_cmd(cmd)
+        #pstring = ' '.join([str(i) for i in range(cnt)])
+        #cmd = 'time parallel --jobs %d python sim_reads.py --simReads -job %s/{}.txt ::: %s'% \
+        #       (nJobs, jobs_dir, pstring)
+        #run_cmd(cmd)
+
+        cmds = []
+        for i in range(cnt):
+            cmd = 'python sim_reads.py --simReads -job %s/%d.txt'%(jobs_dir, i)
+            cmds.append(cmd)
+        run_parallel_cmds.run_cmds(cmds, nJobs)
 
         run_cmd('rm -r %s'%jobs_dir)
         #pdb.set_trace()
@@ -510,7 +517,7 @@ def poolSamples(args):
 '''
 usage:
 
-# tr.gtf --> out_dir/tr.targe.chr_a.sorted.bed, out_dir/tr.target.chr_b.sorted.bed, ...
+# tr.gtf --> out_dir/tr.target.chr_a.sorted.bed, out_dir/tr.target.chr_b.sorted.bed, ...
 #
 # required naming:
 # input: tr.gtf: 'exon' lines contain transcript_id "(tr_id_to_be_extracted)" 

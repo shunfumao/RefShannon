@@ -88,6 +88,9 @@ def do_stringtie_i_g(args):
         FileToUse = sam_file
 
     cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile, N_jobs)
+    #cmd = 'stringtie %s -o %s -p %d '%(FileToUse, gtfFile, N_jobs) # default setting
+    #cmd = 'cufflinks -o %s -p %d -F 0.001 %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+    #cmd = 'cufflinks -o %s -p %d %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
     run_cmd(cmd)
 
     cmd = 'gffread -w %s -g %s %s'%(fastaFile, genomeFile, gtfFile)

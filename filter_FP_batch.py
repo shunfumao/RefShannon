@@ -1,5 +1,7 @@
 import sys, pdb, math
 from filter_FP.filter_FP import *
+from util import run_cmd
+import run_parallel_cmds
 
 def process_oneThreshold(args):
 
@@ -160,7 +162,7 @@ def process_filterBlatRes_batch(args):
 
 #line_start: 1-based of in_name file
 def cut_file(in_name,out_name,line_start,line_end):
-    os.system('awk \'NR > ' + str(line_end) + ' { exit } NR >= ' + str(line_start) +  '\' '+ in_name + ' > ' + out_name )
+    run_cmd('awk \'NR > ' + str(line_end) + ' { exit } NR >= ' + str(line_start) +  '\' '+ in_name + ' > ' + out_name )
     return
 
 #python filter_FP_batch --cutFile1Job -i in_name -O out_dir -c chunkIndex (0,1,2,...) -s splitSize
@@ -197,11 +199,18 @@ def cut_file_parallel(args):
     nLines = sum([1 for l in open(in_name)])
     splitSize = int(math.ceil(float(nLines)/numSplit))
 
-    x = [str(i) for i in range(numSplit)]
-    pstring = ' '.join(x)
+    #x = [str(i) for i in range(numSplit)]
+    #pstring = ' '.join(x)
     #pdb.set_trace()
-    cmd = 'time parallel --jobs %d python filter_FP_batch.py --cutFile1Job -i %s -O %s -c {} -s %d ::: %s'%(nJobs, in_name, out_dir, splitSize, pstring)
-    os.system(cmd)
+    #cmd = 'time parallel --jobs %d python filter_FP_batch.py --cutFile1Job -i %s -O %s -c {} -s %d ::: %s'%(nJobs, in_name, out_dir, splitSize, pstring)
+    #run_cmd(cmd)
+
+    cmds = []
+    for i in range(numSplit):
+        cmd = 'python filter_FP_batch.py --cutFile1Job -i %s -O %s -c %d -s %d'%(in_name, out_dir, i, splitSize)
+        cmds.append(cmd)
+    run_parallel_cmds.run_cmds(cmds, nJobs)
+
 
     return
 
@@ -327,8 +336,8 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
     Trec = args[args.index('-r')+1]
     out_dir = args[args.index('-O')+1]
 
-    #out_dir1 = out_dir + '/tmp/'; os.system('mkdir -p %s'%out_dir1)
-    #out_dir2 = out_dir + '/res/'; os.system('mkdir -p %s'%out_dir2)
+    #out_dir1 = out_dir + '/tmp/'; run_cmd('mkdir -p %s'%out_dir1)
+    #out_dir2 = out_dir + '/res/'; run_cmd('mkdir -p %s'%out_dir2)
 
     resNameStem = [i for i in Trec.strip().split('/') if i!='']
     resNameStem = resNameStem[-1][:-6] #skip .fasta
@@ -345,14 +354,14 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
                                           '--rec %s '%Trec + \
                                           '--per %s '%perFile + \
                                           '--log %s'%logFile
-    os.system(cmd)
+    run_cmd(cmd)
 
 
     #gen fpLog
     cmd = 'python analyze_simData_ROC.py --genFpLog --rec %s '%Trec + \
                                          '--per %s '%perFile + \
                                          '-o   %s'%fpLogFile
-    os.system(cmd)
+    run_cmd(cmd)
 
     #cal sens
     [num_ref_recovered, ref_recovered_ratio] = calcSens(logFile)
@@ -370,6 +379,38 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
         st += '#num_ref_recovered\tref_recovered_ratio\tnum_rec_fp\tfp_ratio\n'
         st += '%d\t%f\t%d\t%f\n'%(num_ref_recovered, ref_recovered_ratio, num_rec_fp, fp_ratio)
         f.write(st)
+
+    return
+
+#test purpose
+def eval_1Job_batch():
+
+    
+
+    Tref = '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSimChr15/reference.fasta'    
+    data_fld = '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSimChr15/'
+
+    fld_prefix_list = []
+
+    #fld_prefix_list.append(['%s/refShannon/algo_output/'%data_fld, 'reconstructed'])
+    fld_prefix_list.append(['%s/refShannon_test/'%data_fld, 'reconstructed'])
+    #fld_prefix_list.append(['%s/stringtie_DefaultParam/'%data_fld, 'stringtie'])
+    #fld_prefix_list.append(['%s/stringtie_f_0_c_0.001/'%data_fld, 'stringtie'])
+    #fld_prefix_list.append(['%s/cufflinks_DefaultParam/'%data_fld, 'cufflinks'])
+    #fld_prefix_list.append(['%s/cufflinks_F_0.001/'%data_fld, 'cufflinks'])
+    
+    for fld, prefix in fld_prefix_list:
+
+        Trec = '%s/%s.fasta'%(fld, prefix)
+
+        cmd = 'python filter_FP_batch.py --eval1Job ' + \
+              '-t %s '%Tref + \
+              '-r %s '%Trec + \
+              '-O %s'%fld
+        #print(cmd)
+        os.system(cmd)
+
+        print('%s done'%fld)
 
     return
 

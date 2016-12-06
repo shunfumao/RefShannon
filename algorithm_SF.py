@@ -7,6 +7,7 @@ import sys, time
 from path_decompose_sparse import path_decompose
 #from path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
 #from path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
+#from path_decompose_modi.path_decompose_sparse5 import path_decompose5
 
 modi_zero_edge_flow = False #Recommend: False
                             #When True: if n1-->v-->n2, n1-->v has 0 in-flow,  connect n1 to end;
@@ -473,7 +474,11 @@ class Graph(object):    ## Graph object (used universally)
                         #    print('n:%d'%len(outedges))
                         #    print('%s\n'%(str(tmp_paths)))
                         #    #pdb.set_trace()                 
-                        #  This line decomposes the node                
+                        #  This line decomposes the node 
+                        #if sum([1 for i in inedge_vector if i<0])>0 \
+                        #   or sum([1 for j in outedge_vector if j<0])>0:
+                        #    pdb.set_trace()               
+                        #output = path_decompose5(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
                         output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
                         temp_matrix = output[0]
                         m = len(inedge_vector)

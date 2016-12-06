@@ -3,7 +3,7 @@ import os
 import subprocess
 import pdb
 import sys
-from util import parent_dir
+from util import parent_dir, run_cmd
 
 '''
 usage:
@@ -80,52 +80,52 @@ def aligner_star():
             "--genomeDir "+genomeDir+" "+\
             "--genomeFastaFiles "+genomeFile+" "+\
             "--runThreadN %d"%num_Thread
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     
     #2.
     runDir=data_fld+"/1pass/"
     cmd = "mkdir -p "+runDir
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     cmd =   "STAR --genomeDir "+genomeDir+" "\
             "--readFilesIn "+readFile+" "\
             "--outFileNamePrefix "+runDir+" "\
             "--runThreadN %d "%num_Thread+\
             "--outSAMstrandField intronMotif"
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     
     #3. mapping to reference (2pass)
     genomeDir_2pass=data_fld+"/genome_2pass/"
     cmd = "mkdir -p "+genomeDir_2pass
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     cmd =   "STAR --runMode genomeGenerate "+\
             "--genomeDir "+genomeDir_2pass+" "+\
             "--genomeFastaFiles "+ genomeFile+" "+\
             "--sjdbFileChrStartEnd "+ runDir +"/SJ.out.tab "+\
             "--sjdbOverhang 99 --runThreadN %d"%num_Thread #75
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     
     #4.
     runDir_2pass=data_fld+"/2pass/"
     cmd = "mkdir -p "+runDir_2pass
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
     cmd =   "STAR --genomeDir "+genomeDir_2pass+" "+\
             "--readFilesIn "+readFile+" "+\
             "--outFileNamePrefix "+runDir_2pass+" "+\
             "--runThreadN %d "%num_Thread+\
             "--outSAMstrandField intronMotif"
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
 
     cmd = 'mv %s/Aligned.out.sam %s/%s'%(runDir_2pass, data_fld, sam_name)
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
 
     cmd = 'rm -r %s'%(runDir)
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
 
     cmd = 'rm -r %s'%(genomeDir_2pass)
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
 
     cmd = 'rm -r %s'%(runDir_2pass)
-    subprocess.call(cmd, shell=True)
+    run_cmd(cmd, shell=True)
 
     '''
     itms = os.listdir(genomeDir)

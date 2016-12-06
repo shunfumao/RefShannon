@@ -4,7 +4,7 @@ def run_cmd(s1):
         print(s1); 
         os.system(s1) # + '>> temp_out.txt')
 
-
+'''
 def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file):
         import sys, pdb
         tr_hits = {}
@@ -24,7 +24,7 @@ def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file):
                 if tr_hits.get(tr_name,0) >= len(fields[0]) * THRESH:
                         tr_file.write('>' + tr_name + '\n')
                         tr_file.write(fields[0] + '\n')
-
+'''
 
 def convert_vector(l1):
     nl = [];
@@ -36,7 +36,7 @@ def convert_vector(l1):
     return nl
 
 
-
+'''
 def break_seqs(tr_l,tr_r,l1):
     K = 25
     insert = 200
@@ -70,7 +70,7 @@ def break_seqs(tr_l,tr_r,l1):
         else: 
             tr_r[r_ptr][0] = l1
     return seqs
-
+'''
 
 
 def break_seqs_new(tr_l,tr_r,l1):
@@ -129,13 +129,29 @@ def read_in(depth_file):
         if curr_name: tr_dict[curr_name]=nl
         return tr_dict
 
+'''
+ld_file: depth of 'left' (r1 & r2') alignments on original rec fasta
+rd_file: depth of 'right' (r2 & r1') alignments on original rec fasta
+in_tr_file: original rec fasta
+out_tr_file: 'fp filtered' rec fasta
+log_file: not used
 
+#procedures
+- read_in: returns tr_dict{}, key - rec tid, val - list of [stt,stp] (1-based, inclusive) blocks 
+           where there's continuous coverage in [stt,stp] based on input depth file
+- for each original rec transcript t, based on its tr_left's [stt,stp] list and tr_right's [stt,stp] list and t's length
+  -- if there's tr_left's [l_stt,l_stp] overlapped with tr_right's [r_stt, r_stp], 
+     either [l_stt, r_stp] (>=200 bp) or [r_stt, l_stp] (>=200 bp) will be outputed.
+  -- need to understand further about (1) K (25) and insert (200) and (2) how curr_l and curr_r proceed
+'''
 
 def write_new_tr(ld_file, rd_file, in_tr_file, out_tr_file, log_file):
         import sys, pdb
         MIN_SEQ = 200 #Only write sequences longer than MIN_SEQ
         tr_left = read_in(ld_file)
         tr_right = read_in(rd_file)
+
+        pdb.set_trace()
 
 
         tr_len = {}; tr_name = ''
@@ -155,19 +171,24 @@ def write_new_tr(ld_file, rd_file, in_tr_file, out_tr_file, log_file):
                         ctr +=1
                 lf.write(tr_name + '\t' + str(bs) + '\n')
 
-def filter_FP(rec_fasta, read_1, read_2, out_dir, flags = '-f --ff'):
+def filter_FP(rec_fasta, read_1, read_2, out_dir, flags = '-f --ff', useHisat2 = False):
     #take rec_fasta, read_1, read_2 files of type. 
     #Output in out_fasta. Temp dir = out_dir. 
     #Output fasta is in out_dir/reconstructed.fasta 
     #Flags is '-f --ff' for fasta and forward-forward
     #Flags is '-q --fr' for fastq and forward-reverse
     hisat_dir = '' #include dir/ if specifying directory
+
+    if useHisat2==True:
+        ver = '2'
+    else:
+        ver = ''
     
     #Build hisat file
-    run_cmd(hisat_dir + 'hisat-build ' + rec_fasta + ' ' + out_dir + '/rec.hisat')
+    run_cmd(hisat_dir + 'hisat%s-build '%ver + rec_fasta + ' ' + out_dir + '/rec.hisat')
 
     #Align
-    run_cmd(hisat_dir + 'hisat ' + '-p 20 ' + '--no-spliced-alignment --no-discordant '+ flags + ' -x ' + out_dir + '/rec.hisat -1 ' + read_1 +  ' -2 ' + read_2 + ' -S ' + out_dir + '/rec.sam' )
+    run_cmd(hisat_dir + 'hisat%s '%ver + '-p 20 ' + '--no-spliced-alignment --no-discordant '+ flags + ' -x ' + out_dir + '/rec.hisat -1 ' + read_1 +  ' -2 ' + read_2 + ' -S ' + out_dir + '/rec.sam' )
     
     #Process SAM / BAM file to get depth information
     run_cmd('samtools view '+'-@ 20 '+' -bS -f 0x2 ' + out_dir + '/rec.sam > ' + out_dir + '/rec.bam') #properly aligned
@@ -184,8 +205,8 @@ def filter_FP(rec_fasta, read_1, read_2, out_dir, flags = '-f --ff'):
     
     #pdb.set_trace()
 
-    run_cmd('samtools sort '+'-@ 20 '+  '-o' + out_dir + '/l_sort.bam ' +  out_dir + '/l.bam ' )
-    run_cmd('samtools sort '+'-@ 20 '+  '-o' + out_dir + '/r_sort.bam ' +  out_dir + '/r.bam ' )
+    run_cmd('samtools sort '+'-@ 20 '+  '-o ' + out_dir + '/l_sort.bam ' +  out_dir + '/l.bam ' )
+    run_cmd('samtools sort '+'-@ 20 '+  '-o ' + out_dir + '/r_sort.bam ' +  out_dir + '/r.bam ' )
 
     run_cmd('samtools depth ' +  out_dir + '/l_sort.bam > ' +  out_dir + '/l.depth')
     run_cmd('samtools depth ' +  out_dir + '/r_sort.bam > ' +  out_dir + '/r.depth')
@@ -206,7 +227,30 @@ def filter_FP(rec_fasta, read_1, read_2, out_dir, flags = '-f --ff'):
 '''
 usage:
 
-python filter_FP_2s.py rec_fasta read_1 read_2 out_dir -f/q --fr/rf/ff
+python filter_FP_2s.py rec_fasta read_1 read_2 out_dir -f/q --fr/rf/ff [-hisat2]
+
+input: rec_fasta (copied to out_dir/reconstructed_org.fasta)
+output: out_dir/reconstructed.fasta
+
+#notes on strand
+
+-f: reads in fa format
+-q: reads in fq format
+
+--fr:
+    for read pair (r1,r2), it's possible: r1--> <--r2(2nd strand) or r2'--> <--r1'(2nd strand)
+    c1: includes r1 and r1'
+    c2: includes r2 and r2'
+    c1f: includes r1
+    c1r: includes r1' (2nd strand or rev comp)
+    c2f: includes r2 (2nd strand or rev comp)
+    c2r: includes r2'
+    l.bam: includes r1 and r2' (both of them on left side on genome)
+    r.bam: includes r2 and r1' (both of them on right side on genome)
+
+#procedures see write_new_tr
+
+#parallization by '-@ 20' when using samtools
 
 '''
 if __name__ == '__main__':
@@ -216,7 +260,10 @@ if __name__ == '__main__':
     read_2 = sys.argv[3]
     out_dir = sys.argv[4]
     flags = '%s %s'%(sys.argv[5], sys.argv[6]) #-f --fr etc 
+    useHisat2=False
+    if '-hisat2' in sys.argv:
+        useHisat2=True
     #pdb.set_trace()
-    filter_FP(rec_fasta, read_1, read_2, out_dir, flags)
+    filter_FP(rec_fasta, read_1, read_2, out_dir, flags, useHisat2)
 
 

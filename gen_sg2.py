@@ -102,7 +102,7 @@ def gen_splice_graph2():
 
     seg_res = check_segmentation(region2seg, seg2region)
 
-    subprocess.call('mkdir -p %s'%output_dir, shell=True)
+    run_cmd('mkdir -p %s'%output_dir, shell=True)
 
     clock.time()
     if target=='':

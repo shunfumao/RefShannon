@@ -5,10 +5,10 @@ def run_cmd(s1):
     os.system(s1) # + '>> temp_out.txt')
 
 
-def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file):
+def write_filtered_tr(depth_file, in_tr_file, out_tr_file, log_file, threshold=0.9):
     import sys, pdb
     tr_hits = {}
-    THRESH = 0.9
+    THRESH = threshold
     for a in open(depth_file): # as depth_file:
         #a=depth_file.readlines()
         fields = a.strip().split()

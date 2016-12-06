@@ -2,6 +2,7 @@ import sys, pdb, os
 from util import *
 from sf import load_stat_file, build_scheduler_files
 import tester
+import run_parallel_cmds
 
 '''
 reads --> sam
@@ -95,9 +96,17 @@ def do_sg_I_g(args):
 
     elif nJobs>1:
 
-        pstring = ' '.join(target_list)
-        cmd = 'time parallel --no-notice --jobs %d python gen_sg2.py -i %s/{}/hits.sam -g %s -O %s/{}/ %s -target {} ::: %s'%(nJobs, chrs_dir, multi_genome_file, out_dir, paired, pstring)
-        run_cmd(cmd)
+        #pstring = ' '.join(target_list)
+        #cmd = 'time parallel --no-notice --jobs %d python gen_sg2.py -i %s/{}/hits.sam -g %s -O %s/{}/ %s -target {} ::: %s'%(nJobs, chrs_dir, multi_genome_file, out_dir, paired, pstring)
+        #run_cmd(cmd)
+
+        cmds = []
+        for target in target_list:
+            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s -O %s/%s/ %s -target %s'% \
+                  (chrs_dir, target, multi_genome_file, out_dir, target, paired, target)
+            cmds.append(cmd)
+        run_parallel_cmds.run_cmds(cmds, nJobs)
+        
 
     return
 
@@ -138,9 +147,16 @@ def do_sg_I_G(args):
 
     elif nJobs>1:
 
-        pstring = ' '.join(target_list)
-        cmd = 'time parallel --no-notice --jobs %d python gen_sg2.py -i %s/{}/hits.sam -g %s/{}.fa -O %s/{}/ %s -target {} ::: %s'%(nJobs, chrs_dir, genome_dir, out_dir, paired, pstring)
-        run_cmd(cmd)
+        #pstring = ' '.join(target_list)
+        #cmd = 'time parallel --no-notice --jobs %d python gen_sg2.py -i %s/{}/hits.sam -g %s/{}.fa -O %s/{}/ %s -target {} ::: %s'%(nJobs, chrs_dir, genome_dir, out_dir, paired, pstring)
+        #run_cmd(cmd)
+
+        cmds = []
+        for target in target_list:
+            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s/%s.fa -O %s/%s/ %s -target %s'% \
+                  (chrs_dir, target, genome_dir, target, out_dir, target, paired, target)
+            cmds.append(cmd)
+        run_parallel_cmds.run_cmds(cmds, nJobs)
 
     return
 
@@ -199,10 +215,17 @@ def do_sf_I(args):
     elif N_jobs > 1:
         stats = load_stat_file(stat_file)
         scheduler_indice = build_scheduler_files(stats, N_jobs, sg_dir)
-        pstring = ' '.join([str(i) for i in scheduler_indice])
-        cmd = 'time parallel --no-notice --jobs %d python sf.py -I %s -O %s -tr_name_tag %s %s -scheduler_index {} ::: %s' \
-              %(N_jobs, sg_dir, res_dir, tr_name_tag, target_str, pstring)
-        run_cmd(cmd)
+        #pstring = ' '.join([str(i) for i in scheduler_indice])
+        #cmd = 'time parallel --no-notice --jobs %d python sf.py -I %s -O %s -tr_name_tag %s %s -scheduler_index {} ::: %s' \
+        #      %(N_jobs, sg_dir, res_dir, tr_name_tag, target_str, pstring)
+        #run_cmd(cmd)
+
+        cmds = []
+        for si in scheduler_indice:
+            cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -scheduler_index %d' \
+              %(sg_dir, res_dir, tr_name_tag, target_str, si)
+            cmds.append(cmd)
+        run_parallel_cmds.run_cmds(cmds, N_jobs)
         
         cmd = 'rm %s/scheduler*.txt'%sg_dir
         run_cmd(cmd)
@@ -212,10 +235,10 @@ def do_sf_I(args):
     os.chdir(res_dir) #in case cat arg too long
     reconstr_file = 'reconstructed.fasta'
     reconstr_gtf = 'reconstructed.gtf'
-    os.system('cat reconstructed_comp_*.fasta > ' + reconstr_file) # '>>' to '>' for both Y on and Y off
-    os.system('rm reconstructed_comp_*.fasta')
-    os.system('cat reconstructed_comp_*.gtf > ' + reconstr_gtf) # '>>' to '>' for both Y on and Y off
-    os.system('rm reconstructed_comp_*.gtf')
+    run_cmd('cat reconstructed_comp_*.fasta > ' + reconstr_file) # '>>' to '>' for both Y on and Y off
+    run_cmd('rm reconstructed_comp_*.fasta')
+    run_cmd('cat reconstructed_comp_*.gtf > ' + reconstr_gtf) # '>>' to '>' for both Y on and Y off
+    run_cmd('rm reconstructed_comp_*.gtf')
     os.chdir(wd)#change back cwd
 
     return

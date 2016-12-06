@@ -1,5 +1,6 @@
 import sys, tester, random, os
 from util import *
+import run_parallel_cmds
 
 def genPerLog(args):
 
@@ -319,16 +320,17 @@ def calcROC_Parallel(args):
                   '-f %s '%fpLogFile
             run_cmd(cmd)
     else:
-        pstring = ' '.join([str(i) for i in range(10)])
-        cmd = 'time parallel --no-notice --jobs %d '%nJobs + \
-              'python analyze_simData_ROC.py --calcROC_1Point '+ \
-                  '-c {} '+ \
-                  '-o %s/{}.txt '%tmpFld+ \
+
+        cmds = []
+        for i in range(10):
+            cmd = 'python analyze_simData_ROC.py --calcROC_1Point '+ \
+                  '-c %d '%i+ \
+                  '-o %s/%d.txt '%(tmpFld, i)+ \
                   '-a %s '%abFile+ \
                   '%s %s '%(f_format, recFile)+ \
-                  '-f %s '%fpLogFile+ \
-                  '::: %s'%pstring
-        run_cmd(cmd)
+                  '-f %s '%fpLogFile
+            cmds.append(cmd)
+            run_parallel_cmds.run_cmds(cmds, nJobs)
 
     #merge
     rec_fp = []
@@ -576,7 +578,9 @@ def eval_sens_fp_using_filter_Trec_Kal():
     fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSim_1018a/refShannon/', 'reconstructed'])
     fld_prefix_list.append(['/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/kidneySim/refShannon/', 'reconstructed_all'])
 
-    t_list = ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9']
+    #t_list = ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9']
+    t_list = ['0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1']
+
 
     for kal_prefix_fld, prefix in fld_prefix_list:
 

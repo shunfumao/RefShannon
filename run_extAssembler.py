@@ -79,7 +79,7 @@ def do_stringtie_i_g(args):
             run_cmd(cmd)
             files_to_clear.append(bamFileSorted)
 
-    gtfFile = res_dir + '/%s.gtf'%name_tag
+    gtfFile = res_dir + '/%s.gtf'%name_tag #transcripts.gtf
     fastaFile = res_dir + '/%s.fasta'%name_tag
 
     if addHead==True:

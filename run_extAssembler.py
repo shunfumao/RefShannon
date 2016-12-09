@@ -9,18 +9,18 @@ samtools
 usage:
 
 #sam --> gtf and fasta
-#sam_file should has (1) header info (2) xs tag to be used by stringtie
+#sam_file should has (1) header info (2) xs tag to be used by ext assemblers (e.g. stringtie, cufflinks)
 
-python run_stringtie.py -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
+python run_extAssembler.py [--assembler assemblerName] [--maxSens] (either stringtie or cufflinks. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
 #chrs_dir/chr_i/hits.sam --> out_dir/chr_i/algo_output/name_tag.gtf & name_tag.fasta
 
-python run_stringtie.py -I chrs_dir -g multi_genomeFile [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
-python run_stringtie.py -I chrs_dir -G genomeDir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
+python run_extAssembler.py [--assembler assemberName] [--maxSens]  -I chrs_dir -g multi_genomeFile [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
+python run_extAssembler.py [--assembler assemberName] [--maxSens]  -I chrs_dir -G genomeDir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
 '''
 
-def do_stringtie_i_g(args):
+def do_extAssembler_i_g(args):
 
     sam_file = args[args.index('-i')+1]
     genomeFile = args[args.index('-g')+1]
@@ -53,10 +53,20 @@ def do_stringtie_i_g(args):
     else:
         clear = False
 
-    if '-NoSeperatedLines':
+    if '-NoSeperatedLines' in args:
         NoSeperatedLines = True #remove \n of sequences for each transcript
     else:
         NoSeperatedLines = False
+
+    if '--assembler' in args:
+        assembler = args[args.index('--assembler')+1]
+    else:
+        assembler = 'stringtie'
+
+    if '--maxSens' in args:
+        maxSens = True
+    else:
+        maxSens = False
 
     if addHead==True:
 
@@ -79,7 +89,10 @@ def do_stringtie_i_g(args):
             run_cmd(cmd)
             files_to_clear.append(bamFileSorted)
 
-    gtfFile = res_dir + '/%s.gtf'%name_tag #transcripts.gtf
+    if assembler=='cufflinks':
+        gtfFile = res_dir + '/transcripts.gtf'
+    else:
+        gtfFile = res_dir + '/%s.gtf'%name_tag
     fastaFile = res_dir + '/%s.fasta'%name_tag
 
     if addHead==True:
@@ -87,10 +100,17 @@ def do_stringtie_i_g(args):
     else:
         FileToUse = sam_file
 
-    cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile, N_jobs)
-    #cmd = 'stringtie %s -o %s -p %d '%(FileToUse, gtfFile, N_jobs) # default setting
-    #cmd = 'cufflinks -o %s -p %d -F 0.001 %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
-    #cmd = 'cufflinks -o %s -p %d %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+    if assembler=='stringtie':
+        if maxSens==True:
+            cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile, N_jobs)
+        else:
+            cmd = 'stringtie %s -o %s -p %d '%(FileToUse, gtfFile, N_jobs) # default setting
+    elif assembler=='cufflinks':
+        if maxSens==True:
+            cmd = 'cufflinks -o %s -p %d -F 0.001 %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+        else:
+            cmd = 'cufflinks -o %s -p %d %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+
     run_cmd(cmd)
 
     cmd = 'gffread -w %s -g %s %s'%(fastaFile, genomeFile, gtfFile)
@@ -109,11 +129,11 @@ def do_stringtie_i_g(args):
 
     return
 
-def do_stringtie_I_g(args):
+def do_extAssembler_I_g(args):
 
     multi_genomeFile = args[args.index('-g')+1]
     
-    tmpFolder = parent_dir(multi_genomeFile)+'/tmp_do_stringtie_I_g/'
+    tmpFolder = parent_dir(multi_genomeFile)+'/tmp_do_extAssembler_I_g/'
     run_cmd('mkdir -p %s'%tmpFolder)
 
     cmd = 'python util.py --splitMultiFasta -i %s -O %s'%(multi_genomeFile, tmpFolder)
@@ -121,13 +141,13 @@ def do_stringtie_I_g(args):
 
     args.append('-G')
     args.append(tmpFolder)
-    do_stringtie_I_G(args)
+    do_extAssembler_I_G(args)
 
     run_cmd('rm -r %s'%tmpFolder)
 
     return
 
-def do_stringtie_I_G(args):
+def do_extAssembler_I_G(args):
 
     chrs_dir = args[args.index('-I')+1]
     genomeDir = args[args.index('-G')+1]
@@ -168,13 +188,23 @@ def do_stringtie_I_G(args):
     else:
         NoSeperatedLines_str = ''
 
+    if '--assembler' in args:
+        assembler = args[args.index('--assembler')+1]
+    else:
+        assembler = 'stringtie'
+
+    if '--maxSens' in args:
+        maxSensStr = '--maxSens'
+    else:
+        maxSensStr = ''
+
     for target in target_list:
         sam_file = '%s/%s/hits.sam'%(chrs_dir, target)
         genomeFile = '%s/%s.fa'%(genomeDir, target)
         res_dir = '%s/%s/algo_output/'%(out_dir, target)
-        target_args = '-i %s -g %s -O %s -N %d -n %s %s %s %s'% \
-                      (sam_file, genomeFile, res_dir, N_jobs, name_tag, addHead_str, clear_str, NoSeperatedLines_str)
-        do_stringtie_i_g(target_args.split())
+        target_args = '--assembler %s %s -i %s -g %s -O %s -N %d -n %s %s %s %s'% \
+                      (assembler, maxSensStr, sam_file, genomeFile, res_dir, N_jobs, name_tag, addHead_str, clear_str, NoSeperatedLines_str)
+        do_extAssembler_i_g(target_args.split())
         print('%s processed'%target)
 
     return
@@ -184,10 +214,10 @@ if __name__ == '__main__':
     args = sys.argv
 
     if '-i' in args and '-g' in args:
-        do_stringtie_i_g(args)
+        do_extAssembler_i_g(args)
 
     if '-I' in args and '-g' in args:
-        do_stringtie_I_g(args)
+        do_extAssembler_I_g(args)
 
     if '-I' in args and '-G' in args:
-        do_stringtie_I_G(args)
+        do_extAssembler_I_G(args)

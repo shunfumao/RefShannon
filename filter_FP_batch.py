@@ -277,9 +277,11 @@ def calcSens(logFile, mtl=MIN_TR_LEN):
 input: fp_logFile
 output: num_rec_tr_fp, fp ratio
 
+if not None, update tr_labels={} key - tr_id, val - -1: skip 0: non-fp 1: fp
+
 fp_logFile format: unique T_rec, max m1, l_ref1, t_ref1, m2 (max m/l_ref), l_ref2, t_ref2
 '''
-def calcFP(fp_logFile, mtl=MIN_TR_LEN):
+def calcFP(fp_logFile, mtl=MIN_TR_LEN, tr_labels=None):
     num_rec_tr_fp = 0
     num_rec = 0
 
@@ -295,13 +297,16 @@ def calcFP(fp_logFile, mtl=MIN_TR_LEN):
 
         if len(fields)<9:#rec tr not covered by any ref tr
             #pdb.set_trace()
+            recTrName = fields[0]#unique
             recLen = int(fields[3])
             if mtl>0 and recLen < mtl:
+                if tr_labels is not None: tr_labels[recTrName]=-1
                 continue
             else:
+                if tr_labels is not None: tr_labels[recTrName]=1
                 num_rec += 1
                 num_rec_tr_fp += 1            
-            continue
+                continue
         
         recTrName = fields[0]#unique
         recLen = int(fields[3])
@@ -315,11 +320,15 @@ def calcFP(fp_logFile, mtl=MIN_TR_LEN):
         refTrName2 = fields[8]
 
         if mtl>0 and recLen < mtl:
+            if tr_labels is not None: tr_labels[recTrName]=-1
             continue
         else:
             num_rec +=1
             if isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2):
+                if tr_labels is not None: tr_labels[recTrName]=1
                 num_rec_tr_fp+= 1
+            else:
+                if tr_labels is not None: tr_labels[recTrName]=0
 
     print('\n{} out of {} false positives (MIN_TR_LEN={})'.format(num_rec_tr_fp, num_rec, mtl))
 
@@ -379,38 +388,6 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
         st += '#num_ref_recovered\tref_recovered_ratio\tnum_rec_fp\tfp_ratio\n'
         st += '%d\t%f\t%d\t%f\n'%(num_ref_recovered, ref_recovered_ratio, num_rec_fp, fp_ratio)
         f.write(st)
-
-    return
-
-#test purpose
-def eval_1Job_batch():
-
-    
-
-    Tref = '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSimChr15/reference.fasta'    
-    data_fld = '/data1/shunfu1/ref_shannon_modi/data/sgRefShannon/snyderSimChr15/'
-
-    fld_prefix_list = []
-
-    #fld_prefix_list.append(['%s/refShannon/algo_output/'%data_fld, 'reconstructed'])
-    fld_prefix_list.append(['%s/refShannon_test/'%data_fld, 'reconstructed'])
-    #fld_prefix_list.append(['%s/stringtie_DefaultParam/'%data_fld, 'stringtie'])
-    #fld_prefix_list.append(['%s/stringtie_f_0_c_0.001/'%data_fld, 'stringtie'])
-    #fld_prefix_list.append(['%s/cufflinks_DefaultParam/'%data_fld, 'cufflinks'])
-    #fld_prefix_list.append(['%s/cufflinks_F_0.001/'%data_fld, 'cufflinks'])
-    
-    for fld, prefix in fld_prefix_list:
-
-        Trec = '%s/%s.fasta'%(fld, prefix)
-
-        cmd = 'python filter_FP_batch.py --eval1Job ' + \
-              '-t %s '%Tref + \
-              '-r %s '%Trec + \
-              '-O %s'%fld
-        #print(cmd)
-        os.system(cmd)
-
-        print('%s done'%fld)
 
     return
 

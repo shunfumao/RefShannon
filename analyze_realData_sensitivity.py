@@ -520,9 +520,9 @@ def performance_plot_express_modi(oracle_fasta, \
         tr_cov = tr_dict[tr_id][1];
         tr_ab = tr_dict[tr_id][2]
         for (i,ab) in enumerate(ab_list):
-            #tr_cov = tr_ab*L / norm * N 
-            if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
-                #stringtie_no[i] +=1
+            #tr_cov = tr_ab*L / norm * N
+            #pdb.set_trace() 
+            if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]: #stringtie_no[i] +=1
                 #stringtie_length[i] += tr_len
                 stringtie_tot[i] += tr_rec 
                 if tr_rec >= 0.9*tr_len:
@@ -531,8 +531,7 @@ def performance_plot_express_modi(oracle_fasta, \
                     ab_stringtie += tr_ab
                     no_stringtie += 1
  
-    with open(plot_file,'w') as plotFile:
-
+    with open(plot_file,'w') as plotFile: 
         info_str = ''
         info_str += '# oracle tr: %s\n'%oracle_fasta
         info_str += '# num iso file: %s\n'%num_isoform_file

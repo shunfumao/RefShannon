@@ -296,7 +296,7 @@ def merge_regions_modi2(regions_dic_0):
 
                 stat_merge_small_hole += 1
 
-            elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14: #merge type II
+                '''elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14: #merge type II
                 #pdb.set_trace()
                 cnt_interpolated += (r2[0]-r1[1]-1)
                 #print('r1=%s, r2=%s merged (cnt_interpolated=%d)'%(r1,r2, cnt_interpolated))
@@ -310,7 +310,7 @@ def merge_regions_modi2(regions_dic_0):
                 num_sp_out = r2[4] #r2[3]==0
                 r1 = [r_stt, r_stp, cov, num_sp_in, num_sp_out]
 
-                stat_merge_close_hole_high_cov += 1
+                stat_merge_close_hole_high_cov += 1'''
 
             else: #no merge
                 regions_dic[ind]=copy.copy(r1[0:3])
@@ -598,6 +598,7 @@ def gen_regions_genome_mapping(sam_file, target=''):
     del weights; del splice_starts; del splice_ends
 
     regions_dic, msgs = merge_regions_modi2(regions_dic_0)
+    #regions_dic = regions_dic_0
     print('%.2f to merge regions'%clock.time())
 
     genome2region_dic = gen_genome2region(regions_dic)

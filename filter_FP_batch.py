@@ -239,6 +239,21 @@ def isReconstructed(match, recLen, refLen):
         return False
 
 '''
+usage:
+python filter_FP_batch.py --calcSensWrapper --logFile lf
+'''
+def calcSensWrapper(args): #(logFile, mtl=MIN_TR_LEN):
+
+    #pdb.set_trace()
+
+    lf = args[args.index('--logFile')+1]
+
+    [num_ref_recovered, sens_ratio]  = calcSens(lf)
+    
+    print('%d\t%s'%(num_ref_recovered, lf))
+    return [num_ref_recovered, sens_ratio] 
+
+'''
 input: logFile
 output: num_ref_tr_recovered, sens ratio
 
@@ -438,6 +453,8 @@ if __name__ == '__main__':
 
     elif '--eval1Job' in args:
         eval_1Job(args) #Tref & Trec --> per, log, fplog --> sens & fp
+    elif '--calcSensWrapper' in args:
+        calcSensWrapper(args)
     else:
         print('unexpected mode')
         pdb.set_trace() 

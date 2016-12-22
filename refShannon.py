@@ -28,7 +28,7 @@ python refShannon.py --sf -Is chrs_dir [-O res_dir] [-chrs chr_a[,chr_b,...]] [-
 transcripts --> performance (per.txt, log.txt)
 
 python refShannon.py --eval -i fa_file -r ref_file [-O out_dir] [-n name_tag]
-python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag] [-unique_tr_name]
+python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag] [-unique_tr_name] [--poolFastaOnly]
 
 sam --> transcripts
 
@@ -349,6 +349,11 @@ def do_eval_I(args):
     else:
         unique_tr_name = False
 
+    if '--poolFastaOnly' in args:
+        noEvaluation = True
+    else:
+        noEvaluation = False
+
     #merge
     target_file = out_dir + '/%s_all.fasta'%name_tag #e.g. reconstructed_all.fasta, stringtie_all.fasta
     temp_file = out_dir + '/%s_temp.fasta'%name_tag
@@ -372,10 +377,12 @@ def do_eval_I(args):
     if unique_tr_name==True:
         enforce_unique_tr_name(target_file)
 
-    args2 = '-i %s -r %s -O %s -n %s'%(target_file, ref_file, out_dir, name_tag)
-    args2 = args2.split()
-    #pdb.set_trace()
-    do_eval_i(args2)
+    if noEvaluation == False:
+
+        args2 = '-i %s -r %s -O %s -n %s'%(target_file, ref_file, out_dir, name_tag)
+        args2 = args2.split()
+        #pdb.set_trace()
+        do_eval_i(args2)
 
     return
 

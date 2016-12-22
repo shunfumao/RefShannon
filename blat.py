@@ -49,7 +49,7 @@ def parallel_blat(target_fasta,query_fasta,out_file,QUERY_SPLIT):
 	#run_cmd('time parallel --jobs %d blat -noHead '%MAX_PARALLEL_PROCESS + target_fasta + ' ' + query_fasta + '_{} ' +out_file + '_{} ::: ' + q_str  )
 	cmds = []
 	for i in q_range:
-		cmd = 'blat -noHead ' + target_fasta + ' ' + query_fasta + '_%d '%i +out_file + '_%d'%i
+		cmd = 'blat -noHead ' + target_fasta + ' ' + query_fasta + '_%d '%(i+1) +out_file + '_%d'%(i+1)
 		cmds.append(cmd)
 	run_parallel_cmds.run_cmds(cmds, MAX_PARALLEL_PROCESS)
 

@@ -458,7 +458,9 @@ class Graph(object):    ## Graph object (used universally)
 
                         for (m, in_node) in enumerate(inedges):
                             for (n, out_node) in enumerate(outedges):
-                                #if '_' in in_node.name or '_' in out_node.name: continue #less P=1
+                                if '_' in in_node.name or '_' in out_node.name:
+                                    #pdb.set_trace()
+                                    continue #less P=1
                                 in_node_org = self.constituent_nodes[in_node][0]
                                 c_node_org = self.constituent_nodes[node][0]
                                 out_node_org = self.constituent_nodes[out_node][0]

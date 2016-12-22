@@ -24,7 +24,7 @@ RefShannon is a reference based transcriptome assembler, which is able to recons
 
 RefShannon can take read alignment (.sam) as input, generate splice graph and then use a sparse flow algorithm to reconstruct RNA transcripts in both gtf and fasta formats, as shown below.
 
-<center><img src="RefShannonCore.png"></center>
+<center><img src="figs/RefShannonCore.png"></center>
 <center>RefShannon Core</center>
 
 
@@ -156,7 +156,7 @@ Based on RefShannon, a chromosome (e.g. chr15) can contain many segments (e.g. s
 
 One segment corresponds to one splice grap, and are mainly described by nodes, edges and paths files. For example, below is an illustrated figure of segment i on chromosome 15. 
 
-<center><img src="splice_graph.png"></center>
+<center><img src="figs/splice_graph.png"></center>
 <center>Splice Graph</center>
 
 After running RefShannon, you can find nodesi.txt, edgesi.txt and pathsi.txt for segment i from path/to/chr15/intermediate. Their formats are:

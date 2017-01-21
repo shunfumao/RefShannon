@@ -1,5 +1,6 @@
 import sys, os, pdb, subprocess, copy
 from util import *
+import math
 
 '''
 memory debug
@@ -16,7 +17,9 @@ sam --> splice graph
 
 usage:
 
-python gen_sg2.py -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr]
+python gen_sg2.py -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr] [-F F_val]
+
+#adaptively modifies merge II criterion according to F_val for sens/fp tradeoff
 
 
 '''
@@ -53,11 +56,16 @@ def parse_args_gen_splice_graph2():
     else:
         target = ''
 
-    return [args_error, sam_file, genome_file, out_dir, paired, target]
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
+    return [args_error, sam_file, genome_file, out_dir, paired, target, F_val]
 
 def gen_splice_graph2():
 
-    [args_error, sam_file, genome_file, subdir, paired, target] = parse_args_gen_splice_graph2()
+    [args_error, sam_file, genome_file, subdir, paired, target, F_val] = parse_args_gen_splice_graph2()
     if args_error == True:
         print('gen_sg2 arguments error')
         return
@@ -85,7 +93,7 @@ def gen_splice_graph2():
     clock = Clock()
 
     #1. .sam --> regions_dic, genome2region_dic
-    regions_dic, genome2region_dic = gen_regions_genome_mapping(sam_file, target)
+    regions_dic, genome2region_dic = gen_regions_genome_mapping(sam_file, target, F_val)
     print('[%s] gen_regions_genome_mapping finished'%clock.asctime())
     #pdb.set_trace()
 
@@ -237,7 +245,26 @@ def gen_regions_modi(weights, boundaries, splice_starts, splice_ends): # dic of 
     #pdb.set_trace()
     return regions_dic_0 
 
-def merge_regions_modi2(regions_dic_0):
+#x is threshold T to filter fij/max fij<T in sparse flow decomposition
+#adjust_y is related threshold to adjust region merge for better sens/fp performance
+#other trials
+#adjust_y = math.pow(10, -20.75*adjust_x+10) #approx 2
+#adjust_y = math.pow(10, -4*adjust_x+3) #approx 3
+def adjust_y_approx4(x):
+    x = float(x)
+    if x>=0.0 and x<=0.25:
+        y = 120.0*x*x-62.0*x+10
+    elif x<=0.65:
+        y = -2.0*(x-0.25)+2.0
+    elif x<=1.0:
+        y = -87.35*x*x+111.55*x-34.2
+    else:
+        #invalid x, disable adjust_y
+        y = 10.0
+    adjust_y = math.pow(10,y)
+    return [y, adjust_y]
+
+def merge_regions_modi2(regions_dic_0, F_val):
 
     #pdb.set_trace()
     # dic of key - rid, val - [stt, stp, cov, # sp in, # sp out]
@@ -270,6 +297,10 @@ def merge_regions_modi2(regions_dic_0):
             stat_no_merge_has_splice += 1
 
         else: #r1 has no splice out and r2 has no splice in, consider merge (r1 and r2 has a gap; otherwise if they're connected, either r1 has a splice out or r2 has a splice in)
+
+            #pdb.set_trace()
+            mergeII_threshold = adjust_y_approx4(F_val)[1]
+
             if r1[1]+1==r2[0]:
                 print('r1 and r2 connected with no splice out at r1 and no splice in at r2 -- unexpected')
                 pdb.set_trace()
@@ -296,7 +327,8 @@ def merge_regions_modi2(regions_dic_0):
 
                 stat_merge_small_hole += 1
 
-                '''elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14: #merge type II
+                #elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14: 
+            elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14 and r2[2]+r1[2]<mergeII_threshold: #mergeII_threshold: 0 merge II skipped
                 #pdb.set_trace()
                 cnt_interpolated += (r2[0]-r1[1]-1)
                 #print('r1=%s, r2=%s merged (cnt_interpolated=%d)'%(r1,r2, cnt_interpolated))
@@ -310,7 +342,7 @@ def merge_regions_modi2(regions_dic_0):
                 num_sp_out = r2[4] #r2[3]==0
                 r1 = [r_stt, r_stp, cov, num_sp_in, num_sp_out]
 
-                stat_merge_close_hole_high_cov += 1'''
+                stat_merge_close_hole_high_cov += 1
 
             else: #no merge
                 regions_dic[ind]=copy.copy(r1[0:3])
@@ -582,7 +614,7 @@ def gen_weights_splice(sam_file, target=''):
 
 
 #@profile(stream=memory_fp)
-def gen_regions_genome_mapping(sam_file, target=''):
+def gen_regions_genome_mapping(sam_file, target='', F_val=0.0):
 
     clock = Clock()
 
@@ -597,7 +629,7 @@ def gen_regions_genome_mapping(sam_file, target=''):
 
     del weights; del splice_starts; del splice_ends
 
-    regions_dic, msgs = merge_regions_modi2(regions_dic_0)
+    regions_dic, msgs = merge_regions_modi2(regions_dic_0, F_val)
     #regions_dic = regions_dic_0
     print('%.2f to merge regions'%clock.time())
 

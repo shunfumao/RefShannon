@@ -43,7 +43,7 @@ dump = False #True
 
 '''
 usage:
-python algorithm_SF.py comp -I intermediate_dir [-O algo_out_dir] [-tr_name_tag tr_name_tag] [-target target]
+python algorithm_SF.py comp -I intermediate_dir [-O algo_out_dir] [-tr_name_tag tr_name_tag] [-target target] [-F F_val]
 '''
 args = sys.argv
 comp = args[1]
@@ -63,6 +63,11 @@ if '-target' in args: #used for GTF output
     target = args[args.index('-target')+1]
 else:
     target = '.'
+
+if '-F' in args:
+    F_val = float(args[args.index('-F')+1])
+else:
+    F_val = 0.0
 
 outputGTF = True
 outputFasta = True #default, unless nodes files (including single_nodes) have seq as *
@@ -481,7 +486,7 @@ class Graph(object):    ## Graph object (used universally)
                         #   or sum([1 for j in outedge_vector if j<0])>0:
                         #    pdb.set_trace()               
                         #output = path_decompose5(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
-                        output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
+                        output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity, F_val)
                         temp_matrix = output[0]
                         m = len(inedge_vector)
                         n = len(outedge_vector)

@@ -15,7 +15,7 @@ def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
 
-def path_decompose(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False):
+def path_decompose(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False, F=0.0):
 	'''This function takes in a node's information in the attempt to decompose it into the lowest number of paths that
 	accounts for the flow constraints.  
 	Thhe algorithm uses many trials of a randomizaed optimization model and takes the best result seen.  
@@ -26,6 +26,7 @@ def path_decompose(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False)
 	b_true: a vector that should have the copycount values for the out-edges but does not.  (Don't Use)
 	decides whether or not to  use a_true and b_true.
 	This is a matrix of in-edges versus out-edges that has a 0 if there is a known path and a 1 otherwise.  
+	F: 0~1 trade off b/w sens and FP. 0 - max sens 1 - lest FP
 	'''
 
     #mb_check = 1 #if this parameter is set to 1, if the data can be set using MB, then it
@@ -201,21 +202,14 @@ def path_decompose(a,b,a_true,b_true,overwrite_norm,P,use_GLPK, sparsity= False)
 		st = '%d %d %d %d %f %f %f'%(m,n,m*n,sparsity, f_min, f_max, float(f_min)/float(f_max))
 		f.write(st+'\n')'''
 
-	#with open('dmp/tmp1.txt', 'a') as f:
-	#	f.write(str(FLOW_RATIO_THRESHOLD)+'\n')
-	#pdb.set_trace()
-	tmp_out_dir = sys.argv[sys.argv.index('-O')+1]
-	tokens = [token for token in tmp_out_dir.split('/') if token != '']
-	FLOW_RATIO_THRESHOLD = float(tokens[-1])
-
 	try:
 		f_max = np.max(answer[np.nonzero(answer)])
 		for i in range(m):
 			for j in range(n):
-				if answer[i,j]!=0 and float(answer[i,j])/f_max<FLOW_RATIO_THRESHOLD:
+				if answer[i,j]!=0 and float(answer[i,j])/f_max<F: #FLOW_RATIO_THRESHOLD:
 					answer[i,j]=0
 	except:
-		aa = 1; #print(answer)
+		pass
 
 	return [answer,non_unique]
 

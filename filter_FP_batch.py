@@ -1,5 +1,5 @@
 import sys, pdb, math
-from filter_FP.filter_FP import *
+#from filter_FP.filter_FP import *
 from util import run_cmd
 import run_parallel_cmds
 
@@ -220,19 +220,19 @@ similar as in analyze_simData_ROC.py
 MIN_TR_LEN = 200 #trLen below MIN_TR_LEN are not considered for FP/REC judge; typically 200; -1: disable
 
 FP_FRAC = 0.9
-def isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2):
+def isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2, fpThreshold=FP_FRAC):
 
     #if float(match1)/recLen < FP_FRAC and float(match2)/refTrLen2 < FP_FRAC: #orig
-    if float(match1)/recLen < FP_FRAC:
+    if float(match1)/recLen < fpThreshold:
     #if float(match1)/recLen < FP_FRAC or float(match1)/refTrLen1 < FP_FRAC:
         return True 
     else:
         return False
 
 REC_FRAC = 0.9
-def isReconstructed(match, recLen, refLen):
+def isReconstructed(match, recLen, refLen, recThreshold=REC_FRAC):
 
-    if match >= REC_FRAC * refLen: #orig
+    if match >= recThreshold * refLen: #orig
     #if match >= REC_FRAC * refLen and match >= REC_FRAC * recLen:
         return True
     else:
@@ -259,7 +259,7 @@ output: num_ref_tr_recovered, sens ratio
 
 logFile format: unique T_ref, T_rec, max m, l_ref, l_rec
 '''
-def calcSens(logFile, mtl=MIN_TR_LEN):
+def calcSens(logFile, mtl=MIN_TR_LEN, recThreshold=REC_FRAC):
     num_ref_recovered = 0
     num_ref = 0
 
@@ -283,7 +283,7 @@ def calcSens(logFile, mtl=MIN_TR_LEN):
             continue
         else:
             num_ref +=1
-            if isReconstructed(match, recLen, refLen):
+            if isReconstructed(match, recLen, refLen, recThreshold):
                 num_ref_recovered += 1
     print('\n{} out of {} reconstructed (MIN_TR_LEN={})'.format(num_ref_recovered, num_ref, mtl))
     return [num_ref_recovered, float(num_ref_recovered)/num_ref]
@@ -296,7 +296,7 @@ if not None, update tr_labels={} key - tr_id, val - -1: skip 0: non-fp 1: fp
 
 fp_logFile format: unique T_rec, max m1, l_ref1, t_ref1, m2 (max m/l_ref), l_ref2, t_ref2
 '''
-def calcFP(fp_logFile, mtl=MIN_TR_LEN, tr_labels=None):
+def calcFP(fp_logFile, mtl=MIN_TR_LEN, tr_labels=None, fpThreshold=FP_FRAC):
     num_rec_tr_fp = 0
     num_rec = 0
 
@@ -339,7 +339,7 @@ def calcFP(fp_logFile, mtl=MIN_TR_LEN, tr_labels=None):
             continue
         else:
             num_rec +=1
-            if isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2):
+            if isFalsePositive(recLen, match1, refTrLen1, match2, refTrLen2, fpThreshold):
                 if tr_labels is not None: tr_labels[recTrName]=1
                 num_rec_tr_fp+= 1
             else:

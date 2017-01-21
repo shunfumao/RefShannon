@@ -16,25 +16,25 @@ python refShannon.py --split -O chrs_dir -i sam_file
 
 sam --> splice graph
 
-python refShannon.py --sg -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr]
-python refShannon.py --sg -I chrs_dir -g multi_genome_file [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs]
-python refShannon.py --sg -I chrs_dir -G genome_dir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs]
+python refShannon.py --sg -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr] [-F F_val]
+python refShannon.py --sg -I chrs_dir -g multi_genome_file [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs][-F F_val]
+python refShannon.py --sg -I chrs_dir -G genome_dir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs] [-F F_val]
 
 splice graph --> transcripts
 
-python refShannon.py --sf -I sg_dir [-O res_dir] [-N nJobs] [-target chr]
-python refShannon.py --sf -Is chrs_dir [-O res_dir] [-chrs chr_a[,chr_b,...]] [-N nJobs]
+python refShannon.py --sf -I sg_dir [-O res_dir] [-N nJobs] [-target chr] [-F F_val]
+python refShannon.py --sf -Is chrs_dir [-O res_dir] [-chrs chr_a[,chr_b,...]] [-N nJobs] [-F F_val]
 
 transcripts --> performance (per.txt, log.txt)
 
 python refShannon.py --eval -i fa_file -r ref_file [-O out_dir] [-n name_tag]
-python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag] [-unique_tr_name] [--poolFastaOnly]
+python refShannon.py --eval -I chrs_dir [-chrs chr_a[,chr_b,...]] -r ref_file [-O out_dir] [-n name_tag] [-unique_tr_name] [--poolFastaGTFOnly]
 
 sam --> transcripts
 
-python refShannon.py --batch -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr] [-N nJobs] [-clear]
-python refShannon.py --batch -I chrs_dir -g multi_genome_file [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs] [-clear]
-python refShannon.py --batch -I chrs_dir -G genome_dir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs] [-clear]
+python refShannon.py --batch -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr] [-N nJobs] [-clear] [-F F_val]
+python refShannon.py --batch -I chrs_dir -g multi_genome_file [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs] [-clear] [-F F_val]
+python refShannon.py --batch -I chrs_dir -G genome_dir [-O out_dir] [-chrs chr_a[,chr_b,...]] [-paired] [-N nJobs] [-clear] [-F F_val]
 
 '''
 
@@ -85,13 +85,18 @@ def do_sg_I_g(args):
     else:
         nJobs = 1
 
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
     if nJobs==1:
 
         for target in target_list:
 
             sam_file = chrs_dir + '/' + target + '/hits.sam'
             target_out_dir = '%s/%s/'%(out_dir, target)
-            cmd = 'python gen_sg2.py -i %s -g %s -O %s %s -target %s'%(sam_file, multi_genome_file, target_out_dir, paired, target)
+            cmd = 'python gen_sg2.py -i %s -g %s -O %s %s -target %s -F %f'%(sam_file, multi_genome_file, target_out_dir, paired, target, F_val)
             run_cmd(cmd)
 
     elif nJobs>1:
@@ -102,8 +107,8 @@ def do_sg_I_g(args):
 
         cmds = []
         for target in target_list:
-            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s -O %s/%s/ %s -target %s'% \
-                  (chrs_dir, target, multi_genome_file, out_dir, target, paired, target)
+            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s -O %s/%s/ %s -target %s -F %f'% \
+                  (chrs_dir, target, multi_genome_file, out_dir, target, paired, target, F_val)
             cmds.append(cmd)
         run_parallel_cmds.run_cmds(cmds, nJobs)
         
@@ -136,13 +141,18 @@ def do_sg_I_G(args):
     else:
         nJobs = 1
 
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
     if nJobs==1:
 
         for target in target_list:
 
             sam_file = chrs_dir + '/' + target + '/hits.sam'
             target_out_dir = '%s/%s/'%(out_dir, target)
-            cmd = 'python gen_sg2.py -i %s -g %s/%s.fa -O %s %s -target %s'%(sam_file, genome_dir, target, target_out_dir, paired, target)
+            cmd = 'python gen_sg2.py -i %s -g %s/%s.fa -O %s %s -target %s -F %f'%(sam_file, genome_dir, target, target_out_dir, paired, target, F_val)
             run_cmd(cmd)
 
     elif nJobs>1:
@@ -153,8 +163,8 @@ def do_sg_I_G(args):
 
         cmds = []
         for target in target_list:
-            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s/%s.fa -O %s/%s/ %s -target %s'% \
-                  (chrs_dir, target, genome_dir, target, out_dir, target, paired, target)
+            cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s/%s.fa -O %s/%s/ %s -target %s -F %f'% \
+                  (chrs_dir, target, genome_dir, target, out_dir, target, paired, target, F_val)
             cmds.append(cmd)
         run_parallel_cmds.run_cmds(cmds, nJobs)
 
@@ -202,14 +212,19 @@ def do_sf_I(args):
         target_str = ''
         tr_name_tag = 'refShannon'
 
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
     stat_file = sg_dir + '/stats.txt'
 
     #single node
     run_cmd('python algorithm_SF.py -1 -I '+ sg_dir + ' -O ' + res_dir + \
-            ' -tr_name_tag ' + tr_name_tag + target_str)
+            ' -tr_name_tag ' + tr_name_tag + target_str + ' -F %f'%F_val)
 
     if N_jobs == 1:        
-        cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -scheduler_index %d'%(sg_dir, res_dir, tr_name_tag, target_str, -1)
+        cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d'%(sg_dir, res_dir, tr_name_tag, target_str, F_val, -1)
         run_cmd(cmd)
 
     elif N_jobs > 1:
@@ -222,8 +237,8 @@ def do_sf_I(args):
 
         cmds = []
         for si in scheduler_indice:
-            cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -scheduler_index %d' \
-              %(sg_dir, res_dir, tr_name_tag, target_str, si)
+            cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d' \
+              %(sg_dir, res_dir, tr_name_tag, target_str, F_val, si)
             cmds.append(cmd)
         run_parallel_cmds.run_cmds(cmds, N_jobs)
         
@@ -264,11 +279,17 @@ def do_sf_Is(args):
     else:
         N_jobs = 1
 
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
     for target in target_list:
         args_per_target =  '-I %s/%s/intermediate/ '%(chrs_dir, target)
         args_per_target += '-O %s/%s/algo_output/ '%(res_dir, target)
         args_per_target += '-N %d '%(N_jobs)
         args_per_target += '-target %s '%(target)
+        args_per_target += '-F %f '%F_val
         args_per_target = args_per_target.split()
         do_sf_I(args_per_target)
 
@@ -349,12 +370,12 @@ def do_eval_I(args):
     else:
         unique_tr_name = False
 
-    if '--poolFastaOnly' in args:
+    if '--poolFastaGTFOnly' in args:
         noEvaluation = True
     else:
         noEvaluation = False
 
-    #merge
+    #merge fasta files
     target_file = out_dir + '/%s_all.fasta'%name_tag #e.g. reconstructed_all.fasta, stringtie_all.fasta
     temp_file = out_dir + '/%s_temp.fasta'%name_tag
 
@@ -373,6 +394,27 @@ def do_eval_I(args):
 
         cmd = 'mv %s %s'%(temp_file, target_file)
         run_cmd(cmd)
+
+    #merge gtf files
+    target_gtf_file = out_dir + '/%s_all.gtf'%name_tag #e.g. reconstructed_all.fasta, stringtie_all.fasta
+    temp_gtf_file = out_dir + '/%s_temp.gtf'%name_tag
+
+    for target in target_list:        
+        source_file = chrs_dir + '/' + target + '/algo_output/%s.gtf'%name_tag
+
+        if os.path.exists(target_gtf_file)==False:
+            run_cmd('touch %s'%target_gtf_file)
+
+        if os.path.exists(source_file)==False:
+            print('%s: not found, skipped (target=%s)'%(source_file, target))
+            continue
+
+        cmd = 'cat %s %s > %s'%(target_gtf_file, source_file, temp_gtf_file)
+        run_cmd(cmd)
+
+        cmd = 'mv %s %s'%(temp_gtf_file, target_gtf_file)
+        run_cmd(cmd)
+
 
     if unique_tr_name==True:
         enforce_unique_tr_name(target_file)
@@ -434,13 +476,18 @@ def do_batch_i_g(args):
     else:
         clear = False
 
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
     #gen sg
-    sg_args = '-i %s -g %s -O %s %s %s'%(sam_file, genome_file, out_dir, paired_str, target_str)
+    sg_args = '-i %s -g %s -O %s %s %s -F %f'%(sam_file, genome_file, out_dir, paired_str, target_str, F_val)
     do_sg_i_g(sg_args.split())
 
     sg_dir = out_dir + '/intermediate/'
     res_dir = out_dir + '/algo_output/'
-    sf_args = '-I %s -O %s -N %d %s'%(sg_dir, res_dir, N_jobs, target_str)
+    sf_args = '-I %s -O %s -N %d %s -F %f'%(sg_dir, res_dir, N_jobs, target_str, F_val)
     do_sf_I(sf_args.split())
 
     if clear==True:
@@ -482,10 +529,15 @@ def do_batch_I_g(args):
     else:
         clear = False
 
-    sg_args = '-I %s -g %s -O %s %s %s -N %d'%(chrs_dir, multi_genome_file, out_dir, chrs_str_arg, paired_str, N_jobs)
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
+    sg_args = '-I %s -g %s -O %s %s %s -N %d -F %f'%(chrs_dir, multi_genome_file, out_dir, chrs_str_arg, paired_str, N_jobs, F_val)
     do_sg_I_g(sg_args.split())
 
-    sf_args = '-Is %s -O %s %s -N %d'%(out_dir, out_dir, chrs_str_arg, N_jobs)
+    sf_args = '-Is %s -O %s %s -N %d -F %f'%(out_dir, out_dir, chrs_str_arg, N_jobs, F_val)
     do_sf_Is(sf_args.split())
 
     if clear==True:
@@ -529,10 +581,15 @@ def do_batch_I_G(args):
     else:
         clear = False
 
-    sg_args = '-I %s -G %s -O %s %s %s -N %d'%(chrs_dir, genome_dir, out_dir, chrs_str_arg, paired_str, N_jobs)
+    if '-F' in args:
+        F_val = float(args[args.index('-F')+1])
+    else:
+        F_val = 0.0
+
+    sg_args = '-I %s -G %s -O %s %s %s -N %d -F %f'%(chrs_dir, genome_dir, out_dir, chrs_str_arg, paired_str, N_jobs, F_val)
     do_sg_I_G(sg_args.split())
 
-    sf_args = '-Is %s -O %s %s -N %d'%(chrs_dir, out_dir, chrs_str_arg, N_jobs)
+    sf_args = '-Is %s -O %s %s -N %d -F %f'%(chrs_dir, out_dir, chrs_str_arg, N_jobs, F_val)
     do_sf_Is(sf_args.split())
 
     if clear==True:

@@ -183,5 +183,6 @@ pathsi.txt | each line is a sequence of region ids, indicating there's a path (e
 
 ### History <a id='history'></a>
 
-2017.03.20 - slightly revised to include F_val usage
+2017.03.20 - slightly revised to include F_val usage.
+
 2016.10.02 - code wrapped up and initial manual finished.

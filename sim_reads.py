@@ -80,11 +80,16 @@ def gtf2bed(args):
             i+=1
             if i>T:
                 i=0; j+=1; sys.stdout.write('\r'); sys.stdout.write('%d %% of gtf processed'%j); sys.stdout.flush()
-            
+           
+            if line[0]=='#': continue
+ 
             tokens = line.split()
             
             if target_list!=[] and tokens[0] not in target_list: continue            
+            #try:
             if tokens[2]!='exon': continue
+            #except:
+            #pdb.set_trace()
 
             #pdb.set_trace()
             chr_id = tokens[0]

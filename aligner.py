@@ -33,7 +33,7 @@ def aligner_tophat2(args):
 
     run_cmd(cmd)
 
-    cmd = 'tophat2 -p %d -o %s %s %s'%(numThread, parent_dir(sam_file), genome_index, ' '.join(readFiles))
+    cmd = 'tophat2 -p %d --no-sort-bam -o %s %s %s'%(numThread, parent_dir(sam_file), genome_index, ' '.join(readFiles))
 
     run_cmd(cmd)
 

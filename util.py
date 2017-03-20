@@ -142,13 +142,13 @@ def cigar2blocks5(ref_i, cigar):
                       #                             r is right pos of read (inclusive) after 50N
 
     if splice_c[0]=='S':
-        L = splice_n[0]
+        #L = splice_n[0]
         splice_c = splice_c[1:]
         splice_n = splice_n[1:]
         #read = read[L:]
 
     if splice_c[-1]=='S':
-        L = splice_n[-1]
+        #L = splice_n[-1]
         splice_c = splice_c[:-1]
         splice_n = splice_n[:-1]
         #read = read[:-L]
@@ -181,6 +181,94 @@ def cigar2blocks5(ref_i, cigar):
         else:
             return [0, '', [], []]
     return [1, modi_seq, blocks, splice_sites]
+
+#based on cigar2blocks5, offer cigar pattern stats
+def cigar2blocks6(ref_i, cigar):
+
+    num_pattern = re.compile('[\d]+')
+    chr_pattern = re.compile('[^\d]+')
+    s = num_pattern.findall(cigar)
+
+    splice_n = [int(s[i]) for i in range(len(s))]
+    splice_c = chr_pattern.findall(cigar)
+
+    modi_seq = ''
+    blocks = []
+    splice_sites = [] # (l,r) if read has 4M50N94M, l is left pos of read (inclusive) before 50N
+                      #                             r is right pos of read (inclusive) after 50N
+
+    cigar_stat = {} #key - S/M/N/D/I val - list of val
+
+    if splice_c[0]=='S':
+        #L = splice_n[0]
+        splice_c = splice_c[1:]
+        splice_n = splice_n[1:]
+        #read = read[L:]
+
+        cigar_stat['S']=[splice_n[0]]
+
+    if splice_c[-1]=='S':
+        #L = splice_n[-1]
+        splice_c = splice_c[:-1]
+        splice_n = splice_n[:-1]
+        #read = read[:-L]
+
+        if 'S' in cigar_stat:
+            cigar_stat['S'].append(splice_n[-1])
+        else:
+            cigar_stat['S']=[splice_n[-1]]
+
+    for i in range(len(splice_c)):
+        c = splice_c[i]
+        n = splice_n[i]
+        if c=='M':
+            #read_part = read[read_i:read_i+n]
+            #modi_seq += read_part
+            #blocks.append([ref_i, ref_i+n-1]) #blocks.append((start, length))
+            blocks.append((ref_i, n))
+            #ref_part = ref[ref_i:ref_i+n]
+            #blocks.append([ref_i, ref_i+n-1, read_part, ref_part])
+            #read_i += n
+            ref_i += n
+
+            if 'M' in cigar_stat:
+                cigar_stat['M'].append(n)
+            else:
+                cigar_stat['M']=[n]
+        elif c=='N':
+            splice_left = ref_i-1
+            splice_right = ref_i+n
+            splice_sites.append((splice_left, splice_right)) #inclusive
+            #pdb.set_trace()
+            #read_i = read_i
+            ref_i += n
+
+            if 'N' in cigar_stat:
+                cigar_stat['N'].append(n)
+            else:
+                cigar_stat['N']=[n]
+
+        elif c=='D':
+            #read_i = read_i
+            ref_i += n
+
+            if 'D' in cigar_stat:
+                cigar_stat['D'].append(n)
+            else:
+                cigar_stat['D']=[n]
+
+        elif c=='I':
+            #read_i += n
+            ref_i = ref_i
+
+            if 'I' in cigar_stat:
+                cigar_stat['I'].append(n)
+            else:
+                cigar_stat['I']=[n]
+
+        else:
+            return [0, '', [], [], cigar_stat]
+    return [1, modi_seq, blocks, splice_sites, cigar_stat]
 
 def parent_dir(dir_path):
     dir_path = dir_path.split('/')
@@ -260,6 +348,137 @@ def do_splitRead(args):
                 of.write(st+'\n')
     print('%s written'%(out_file))
     return
+
+'''
+extract reads from sam file
+'''
+def reverse_complement(s):
+    comp = {'A':'T', 'T':'A', 'G':'C', 'C':'G', 'N':'N'}
+    return ''.join(comp[c] for c in s[::-1])
+'''
+def gen_read_from_sam(sam_file, chrom, out_dir):
+
+    reads = {} # name, [seqA, seqB]
+
+    i = 0
+    j = 0
+    nLines = sum([1 for l in open(sam_file)]); print('%d lines in %s'%(nLines, sam_file))
+    T = nLines/100
+
+    with open(sam_file) as f:
+        for line in f:
+
+            i += 1
+            if i>T:
+                i=0
+                j+=1
+                print('1st iter: %d perc processed'%j)
+
+            if line[0] == '@': continue
+
+            fields = line.split()
+
+            name, flags, g_name, start, cigar, seq = (
+                fields[0], int(fields[1]), fields[2],
+                int(fields[3])-1, fields[5], fields[9])
+
+            if g_name != chrom: continue
+            #if start<tr_stt or start>tr_end: continue
+            if (flags>>8)&1==1: continue #2nd ali
+
+            if name not in reads:
+                reads[name] = ['', '']
+
+            rev = bool((flags>>4)&1)
+            if rev==0:
+                read_seq = seq
+            elif rev==1:
+                read_seq = reverse_complement(seq)
+
+            if (flags >> 6) & 1:#1st seg, A
+                reads[name][0] = read_seq
+            elif (flags >> 7) & 1:#2nd seq, B
+                reads[name][1] = read_seq
+
+            #pdb.set_trace()
+
+    #pdb.set_trace()
+    
+    i=0
+    j=0
+
+    #try to include read who is not in reads while its pair is in reads
+    with open(sam_file) as f:
+        for line in f:
+
+            i += 1
+            if i>T:
+                i=0
+                j+=1
+                print('2nd iter: %d perc processed'%j)
+
+            if line[0] == '@': continue
+
+            fields = line.split()
+
+            name, flags, g_name, start, cigar, seq = (
+                fields[0], int(fields[1]), fields[2],
+                int(fields[3])-1, fields[5], fields[9])
+
+            if g_name != chrom: continue
+            #if start<tr_stt or start>tr_end: continue
+            if (flags>>8)&1==1: continue #2nd ali
+
+            if name not in reads: continue
+
+            rev = bool((flags>>4)&1)
+            if rev==0:
+                read_seq = seq
+            elif rev==1:
+                read_seq = reverse_complement(seq)
+
+            if (flags >> 6) & 1 and reads[name][0]=='':#1st seg, A
+                #pdb.set_trace()
+                reads[name][0] = read_seq
+            elif (flags >> 7) & 1 and reads[name][1]=='':#2nd seq, B
+                #pdb.set_trace()
+                reads[name][1] = read_seq
+
+            #pdb.set_trace()
+
+    #pdb.set_trace()
+
+    f_1 = open(out_dir + '/reads_1.fa', 'w')
+    f_2 = open(out_dir + '/reads_2.fa', 'w')
+
+    for name, seqs in reads.items():
+        f_1.write('>%s\n%s\n'%(name, seqs[0]))
+        f_2.write('>%s\n%s\n'%(name, seqs[1]))
+
+    f_1.close()
+    f_2.close()
+
+    return
+'''
+
+#DEBUG from 0922a
+#get lens of tr of fasta file
+def from_fasta_lens(filename):
+    sequences = []
+    seq = []
+    next_name = '_'
+    with open(filename) as f:
+        for line in f:
+            if line[0] == '>':
+                #sequences.append((next_name, ''.join(seq)))
+                sequences.append((next_name, len(''.join(seq))))
+                seq = []
+                next_name = line.split()[0][1:]
+            else:
+                seq.append(line.strip().upper())
+    #sequences.append((next_name, ''.join(seq)))
+    sequences.append((next_name, len(''.join(seq))))
+    return sequences[1:]
 
 '''
 usage:

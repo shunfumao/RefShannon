@@ -646,6 +646,7 @@ def gen_edges_paths(regions_dic, genome2region_dic, sam_file, target, paired):
     if paired==0:
         return gen_edges_paths_sam_SE(sam_file, target, genome2region_dic)
     else:
+        #return gen_edges_paths_sam_SE(sam_file, target, genome2region_dic)
         return gen_edges_paths_sam_PE(sam_file, target, genome2region_dic)
 
 def gen_regions_segments_mapping(regions_dic, genome2region_dic, region_pairs):

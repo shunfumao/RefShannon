@@ -10,8 +10,11 @@ usage:
 
 #sam --> gtf and fasta
 #sam_file should has (1) header info (2) xs tag to be used by ext assemblers (e.g. stringtie, cufflinks)
+#other assemblers:
+#TransComb: need tophat2 bam
+#CLASS2: need path/to/run_class.pl; BAM format sorted by chromosome and position
 
-python run_extAssembler.py [--assembler assemblerName] [--maxSens] (either stringtie or cufflinks. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
+python run_extAssembler.py [--assembler assemblerName] [--maxSens] (e.g. stringtie/cufflinks/TransComb/CLASS2. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
 #chrs_dir/chr_i/hits.sam --> out_dir/chr_i/algo_output/name_tag.gtf & name_tag.fasta
 
@@ -22,7 +25,7 @@ python run_extAssembler.py [--assembler assemberName] [--maxSens]  -I chrs_dir -
 
 def do_extAssembler_i_g(args):
 
-    sam_file = args[args.index('-i')+1]
+    sam_file = args[args.index('-i')+1] #could be bam
     genomeFile = args[args.index('-g')+1]
     files_to_clear = []
 
@@ -110,6 +113,18 @@ def do_extAssembler_i_g(args):
             cmd = 'cufflinks -o %s -p %d -F 0.001 %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
         else:
             cmd = 'cufflinks -o %s -p %d %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+    elif assembler=='TransComb':
+        if maxSens==True:
+            print('TransComb max sens TBD')  #-f: default 0 -f 1 sens decreases
+            pdb.set_trace()
+        else:
+            cmd = 'TransComb -b %s -s unstranded -o %s -l 200'%(FileToUse, gtfFile)
+    elif assembler=='CLASS2':
+        if maxSens==True:
+            cmd = 'perl /home/shunfu1/software/CLASS_2.1.5/run_class.pl -a %s -o %s -p %d -F 0.0'%(FileToUse, gtfFile, N_jobs)        
+
+        else:
+            cmd = 'perl /home/shunfu1/software/CLASS_2.1.5/run_class.pl -a %s -o %s -p %d'%(FileToUse, gtfFile, N_jobs)        
 
     run_cmd(cmd)
 

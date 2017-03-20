@@ -3,12 +3,19 @@
 ### Topics
 
 <a href='#intro'> Introduction </a>
+
 <a href='#workflow'> Work Flow </a>
+
 <a href='#install'> Installation </a>
+
 <a href='#req'> Software & Hardware Requirements </a>
+
 <a href='#usage'> Usage </a>
+
    - <a href='#cmd1'> python refShannon.py --batch -i sam_file -g genome_file </a> <a href='#eg1'> [Example] </a>
+
     - <a href='#cmd2'> python refShannon.py --batch -I chrs_dir -g multi_genome_file </a> <a href='#eg2'> [Example] </a>
+
     - <a href='#cmd3'>python refShannon.py --batch -I chrs_dir -G genome_dir </a> <a href='#eg3'> [Example] </a>
 
 <a href='#sg'> Splice Graph </a>
@@ -19,7 +26,7 @@
 
 ### Introduction <a id='intro'></a>
 
-RefShannon is a reference based transcriptome assembler, which is able to reconstruct RNA transcripts from read alignment. It is based on a sparse flow decomposition algorithm. This software is developed by [Shunfu Mao](shunfu at uw dot edu) and [Sreeram Kannan](ksreeram at uw dot edu) at University of Washington.
+RefShannon is a reference based transcriptome assembler, which is able to reconstruct RNA transcripts from read alignment. It is based on a sparse flow decomposition algorithm. This software is developed by [Shunfu Mao](shunfu@uw.edu) and [Sreeram Kannan](ksreeram@uw.edu) at University of Washington.
 
 ### Work Flow <a id='workflow'></a>
 

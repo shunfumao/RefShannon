@@ -175,16 +175,16 @@ After running RefShannon, you can find nodesi.txt, edgesi.txt and pathsi.txt for
 File | Formats
 ---- | ----
 nodesi.txt | column 1: id of single region (or node)
-                 | column 2: sequence of region
-                 | column 3: average read coverage of region
-                 | column 4: length of sequence of region
-                 | column 5: genome start position of region (0-based, inclusive)
-                 | column 6: genome end position of region (0-based, inclusive)
+nodesi.txt | column 2: sequence of region
+nodesi.txt | column 3: average read coverage of region
+nodesi.txt | column 4: length of sequence of region
+nodesi.txt | column 5: genome start position of region (0-based, inclusive)
+nodesi.txt | column 6: genome end position of region (0-based, inclusive)
 edgesi.txt | column 1: start region id
-                 | column 2: end region id
-                 | column 3: overlap between start and end regions (currently always 0)
-                 | column 4: weight (e.g. number of reads going through from start region toward end region) of edge
-                 | column 5: normalization (currently always 1)              
+edgesi.txt | column 2: end region id
+edgesi.txt | column 3: overlap between start and end regions (currently always 0)
+edgesi.txt | column 4: weight (e.g. number of reads going through from start region toward end region) of edge
+edgesi.txt | column 5: normalization (currently always 1)              
 pathsi.txt | each line is a sequence of region ids, indicating there's a path (e.g. transcript) going through these regions
 
 ***

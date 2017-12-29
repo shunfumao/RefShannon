@@ -1,15 +1,20 @@
 import sys, os, pdb, subprocess, copy
 from util import *
 import math
+from pyfaidx import Fasta 
 
-'''
-memory debug
-from memory_profiler import profile
-memory_fp = open('memory_profiler.log', 'w+')
-'''
+#from memory_profiler import profile
+
+#'''
+#memory debug
+#from memory_profiler import profile
+#memory_fp = open('gen_sg2_memory_profiler.log', 'w+')
+#'''
 
 ALLOWED_HOLE = 10 # <= ALLOWED_HOLE, interpolate directly
 MAX_HOLE = 200 # >= MAX_HOLE, no interpolate
+
+outputFasta = False #if False, regardless of -g genome_file would disable fasta output
 
 '''
 
@@ -17,13 +22,15 @@ sam --> splice graph
 
 usage:
 
-python gen_sg2.py -i sam_file -g genome_file [-O out_dir] [-paired] [-target chr] [-F F_val]
+python gen_sg2.py -i sam_file [-g genome_file] [-O out_dir] [-paired] [-target chr] [-F F_val]
 
 #adaptively modifies merge II criterion according to F_val for sens/fp tradeoff
+#if no -g, output node files will have bases '*'
 
 
 '''
 
+#@profile(stream=memory_fp)
 def parse_args_gen_splice_graph2():
 
     args = sys.argv
@@ -35,10 +42,16 @@ def parse_args_gen_splice_graph2():
     else:
         args_error = True
 
-    if '-g' in args:
-        genome_file = args[args.index('-g')+1]
+    if outputFasta == False:
+
+        genome_file = ''
+
     else:
-        args_error = True
+        
+        if '-g' in args:
+            genome_file = args[args.index('-g')+1]
+        else:
+            genome_file = ''
 
     if '-O' in args:
         out_dir = args[args.index('-O')+1]
@@ -63,6 +76,7 @@ def parse_args_gen_splice_graph2():
 
     return [args_error, sam_file, genome_file, out_dir, paired, target, F_val]
 
+#@profile(stream=memory_fp)
 def gen_splice_graph2():
 
     [args_error, sam_file, genome_file, subdir, paired, target, F_val] = parse_args_gen_splice_graph2()
@@ -113,20 +127,29 @@ def gen_splice_graph2():
     run_cmd('mkdir -p %s'%output_dir, shell=True)
 
     clock.time()
-    if target=='':
-        genome = from_fasta(genome_file)
-        #del genome['_']
-        genome = genome.items()[0][1]
+    if genome_file != '': #outputFasta == True:
+        if target=='':
+            #genome = from_fasta(genome_file)
+            #del genome['_']
+            #genome = genome.items()[0][1]
+            genomeRec = Fasta(genome_file)
+            genomeRec = genomeRec[genomeRec.keys()[0]]
+        else:
+            #genome = from_fasta(genome_file)[target]
+            genomeRec = Fasta(genome_file)[target]
+            #pdb.set_trace()
+        print('{:.2f} to load genome\n\tgenome_file={}'.format(clock.time(), genome_file))
+        #pdb.set_trace()
     else:
-        genome = from_fasta(genome_file)[target]
-    print('{:.2f} to load genome\n\tgenome_file={}'.format(clock.time(), genome_file))
-    #pdb.set_trace()
-    
-    export_nodes_edges_paths(output_dir, regions_dic, genome, region_pairs, known_paths, region2seg, seg2region)
+        #genome = None
+        genomeRec = None
+        
+    export_nodes_edges_paths(output_dir, regions_dic, genomeRec, region_pairs, known_paths, region2seg, seg2region)
     print('[%s] export_nodes_edges_paths finished'%clock.asctime())
 
     return
 
+#@profile(stream=memory_fp)
 def calc_boundaries(weights, splice_starts, splice_ends):
     #key: genome pos (0-based) val:=1 (inclusive)/ -1 (inclusive)
     boundaries = {}
@@ -211,6 +234,7 @@ def calc_boundaries(weights, splice_starts, splice_ends):
     #pdb.set_trace()
     return boundaries_sorted #, weights_sorted
 
+#@profile(stream=memory_fp)
 def gen_regions_modi(weights, boundaries, splice_starts, splice_ends): # dic of key - rid, val - [stt, stp, cov, # sp in, # sp out]
 
     #pdb.set_trace()
@@ -264,6 +288,7 @@ def adjust_y_approx4(x):
     adjust_y = math.pow(10,y)
     return [y, adjust_y]
 
+#@profile(stream=memory_fp)
 def merge_regions_modi2(regions_dic_0, F_val):
 
     #pdb.set_trace()
@@ -364,6 +389,7 @@ def merge_regions_modi2(regions_dic_0, F_val):
     #pdb.set_trace()
     return regions_dic, msgs
 
+#@profile(stream=memory_fp)
 def gen_genome2region(regions_dic):
 
     #pdb.set_trace()
@@ -390,6 +416,7 @@ def get_regions_from_read(genome2region_dic, alignment):
                 regions.append(i)
     return regions
 
+#@profile(stream=memory_fp)
 def gen_edges_paths_sam_SE(sam_file, target, genome2region_dic):
 
     #pdb.set_trace()
@@ -575,6 +602,7 @@ def gen_edges_paths_sam_PE(sam_file, target, genome2region_dic):
     #known_paths = filter_known_paths(known_paths) #dic-->set
     return region_pairs, known_paths
 
+#@profile(stream=memory_fp)
 def gen_weights_splice(sam_file, target=''):
 
     weights, splice_starts, splice_ends = Counter(), Counter(), Counter()
@@ -638,6 +666,7 @@ def gen_regions_genome_mapping(sam_file, target='', F_val=0.0):
 
     return regions_dic, genome2region_dic
 
+#@profile(stream=memory_fp)
 def gen_edges_paths(regions_dic, genome2region_dic, sam_file, target, paired):
 
     #region_pairs = {} #key - (r1, r2) if r1 & r2 are bridged
@@ -649,6 +678,7 @@ def gen_edges_paths(regions_dic, genome2region_dic, sam_file, target, paired):
         #return gen_edges_paths_sam_SE(sam_file, target, genome2region_dic)
         return gen_edges_paths_sam_PE(sam_file, target, genome2region_dic)
 
+#@profile(stream=memory_fp)
 def gen_regions_segments_mapping(regions_dic, genome2region_dic, region_pairs):
 
     region2seg = {}
@@ -720,14 +750,21 @@ def check_segmentation(region2seg, seg2region):
 
     return res
 
-def str_region2(rid, stt_end_cov, genome):
+def str_region2(rid, stt_end_cov, genomeRec):
     stt = stt_end_cov[0]
     stp = stt_end_cov[1]
     cov = stt_end_cov[2]
 
     st = ''
     st += '%d\t'%rid
-    st += '%s\t'%genome[stt:stp+1]
+    if genomeRec != None:
+        #st += '%s\t'%genome[stt:stp+1]
+        #pdb.set_trace()
+        st += '%s\t'%genomeRec[stt:stp+1].seq.encode('ascii','ignore') 
+        #pdb.set_trace()
+    else:
+        st += '*\t'
+        
     st += '%f\t'%cov
     st += '%d\t'%(stp-stt+1)
     #gtf purpose
@@ -736,8 +773,8 @@ def str_region2(rid, stt_end_cov, genome):
 
     return st
 
-#@profile(stream=fp)
-def export_1seg(output_dir, sorted_rids, regions_dic, genome, region_pairs, paths_by_start, component):
+#@profile(stream=memory_fp)
+def export_1seg(output_dir, sorted_rids, regions_dic, genomeRec, region_pairs, paths_by_start, component):
 
     num_nodes = 0
     num_edges = 0
@@ -763,7 +800,7 @@ def export_1seg(output_dir, sorted_rids, regions_dic, genome, region_pairs, path
         nodefile.write('ID\tBases\tCopycount\tNormalization\tGenome_start\tGenome_stop\n')
         for rid in sorted_rids:
             #st = str_region(node_hash_dic[rid], regions_dic[rid], genome)
-            st = str_region2(node_hash_dic[rid], regions_dic[rid], genome)
+            st = str_region2(node_hash_dic[rid], regions_dic[rid], genomeRec)
             nodefile.write(st)
 
         #pdb.set_trace()
@@ -794,10 +831,12 @@ def export_1seg(output_dir, sorted_rids, regions_dic, genome, region_pairs, path
 
     return [num_nodes, num_edges, num_paths]
 
-def export_nodes_edges_paths(output_dir, regions_dic, genome, region_pairs, known_paths, region2seg, seg2region):
+#@profile(stream=memory_fp)
+def export_nodes_edges_paths(output_dir, regions_dic, genomeRec, region_pairs, known_paths, region2seg, seg2region):
     '''
     regions_dic: key rid val [stt, stp, cov] 0-based, inclusive
     genome: str
+    genomeRec: FastaRecord of target chrom (if outputFasta==True) or None (if outputFasta==False)
     region_pairs: key (rid1, rid2) val cnt of reads passing the boundary of rid1 and rid2
     known_paths: set of tuple of rids which are passed by certain read
     region2seg: key rid val sid
@@ -827,7 +866,7 @@ def export_nodes_edges_paths(output_dir, regions_dic, genome, region_pairs, know
         for sid, rids in seg2region.items():
             if len(rids)==1:
                 #st = str_region(rids[0], regions_dic[rids[0]], genome)
-                st = str_region2(rids[0], regions_dic[rids[0]], genome)
+                st = str_region2(rids[0], regions_dic[rids[0]], genomeRec)
                 single_file.write(st)
 
     print('{:.2f} to export single nodes'.format(clock.time()))
@@ -889,7 +928,7 @@ def export_nodes_edges_paths(output_dir, regions_dic, genome, region_pairs, know
 
         if len(rids)==1: continue
 
-        [num_nodes, num_edges, num_paths] = export_1seg(output_dir, rids, regions_dic, genome, seg2edges[sid], paths_by_start, sid2component[sid])
+        [num_nodes, num_edges, num_paths] = export_1seg(output_dir, rids, regions_dic, genomeRec, seg2edges[sid], paths_by_start, sid2component[sid])
 
     print('\n{:.2f} to exports >2 nodes'.format(clock.time()))
 

@@ -60,7 +60,7 @@ def build_scheduler_files(stats, N_jobs, loc):
     return scheduler_indice
 
 #def run_sf(chrs_loc, target, scheduler_file_index):
-def run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val):
+def run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val, outputFasta_str):
 
     component_list = []
     if scheduler_file_index==-1: #serial
@@ -77,7 +77,7 @@ def run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val
         ncomp = component_list[i]
         sys.stdout.write('\r%d/%d of components processed %s'%((i+1), len(component_list), target_str)); sys.stdout.flush()
         run_cmd('python algorithm_SF.py ' + str(ncomp) + ' -I '+ sg_dir + ' -O ' + res_dir + \
-            ' -tr_name_tag ' + tr_name_tag + ' ' + target_str + ' -F %f'%F_val)
+            ' -tr_name_tag ' + tr_name_tag + ' ' + target_str + ' -F %f '%F_val + outputFasta_str)
 
     print('')
 
@@ -86,9 +86,10 @@ def run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val
 '''
 usage:
 
-python sf.py -I sg_dir -O res_dir -tr_name_tag tr_name_tag [-target target] [-F F_val] -scheduler_index sid
+python sf.py -I sg_dir -O res_dir -tr_name_tag tr_name_tag [-target target] [-F F_val] -scheduler_index sid [--outputFasta]
 
 # F_val: at local sparse flow decomposition, filter flows if fij/max(fij)<F_val to trade-off sens/fp
+# outputFasta: sparse flow procedure will output both gtf and fasta files
 
 '''
 
@@ -120,7 +121,12 @@ if __name__ == '__main__':
     else:
         F_val = 0.0
 
+    if '--outputFasta' in args:
+        outputFasta_str = '--outputFasta'
+    else:
+        outputFasta_str = ''
+
     scheduler_file_index = int(args[args.index('-scheduler_index')+1])
 
-    run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val)
+    run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val, outputFasta_str)
 

@@ -5,9 +5,12 @@ import pdb
 import sys, time
 
 from path_decompose_sparse import path_decompose
-#from path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
-#from path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
-#from path_decompose_modi.path_decompose_sparse5 import path_decompose5
+#from path_decompose_modi.path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
+#from path_decompose_modi.path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
+from path_decompose_modi.path_decompose_sparse5 import path_decompose5
+
+#from memory_profiler import profile
+#memory_fp = open('gen_sf_memory_profiler_non_single_nodes.log', 'w+')
 
 modi_zero_edge_flow = False #Recommend: False
                             #When True: if n1-->v-->n2, n1-->v has 0 in-flow,  connect n1 to end;
@@ -43,7 +46,7 @@ dump = False #True
 
 '''
 usage:
-python algorithm_SF.py comp -I intermediate_dir [-O algo_out_dir] [-tr_name_tag tr_name_tag] [-target target] [-F F_val]
+python algorithm_SF.py comp -I intermediate_dir [-O algo_out_dir] [-tr_name_tag tr_name_tag] [-target target] [-F F_val] [--outputFasta]
 '''
 args = sys.argv
 comp = args[1]
@@ -70,7 +73,10 @@ else:
     F_val = 0.0
 
 outputGTF = True
-outputFasta = True #default, unless nodes files (including single_nodes) have seq as *
+
+outputFasta = False #default False
+if '--outputFasta' in args:
+    outputFasta = True
 
 edges_file = sample_name+'/edges' + comp + '.txt'
 nodes_file = sample_name+'/nodes' + comp + '.txt'
@@ -96,28 +102,41 @@ known_paths = []       ## A list of known paths, each path is a tuple of three e
 known_paths_str = []
 paths_for_node = {}    ## Map: node => known_paths that the node is involved in.
 
-
+#@profile(stream=memory_fp)
 def single_nodes_to_fasta(): 
     ## The function outputs individual nodes without any edges as reconstructed transcripts.
 
-    with open(reconstr_file, 'w') as reconstFile, \
-         open(comp_gtf_file, 'w') as gtf_file:#'a'-->'w'
-        i = 0
-        for lines in open(single_nodes_file):
-            if i>0:
-                fields = lines.strip().split()
-                #reconstFile.write('>Shannon_'+sname + '_single_'+str(i)+'\t Copycount:' + fields[2])
-                transcript_id = tr_name_tag+'_single_node_tr_'+str(i)
+    #pdb.set_trace()
+    if outputFasta == True:
+        reconstFile = open(reconstr_file, 'w')
+    if outputGTF == True:
+        gtf_file = open(comp_gtf_file, 'w') #'a'-->'w'
+
+    i = 0
+    for lines in open(single_nodes_file):
+        if i>0:
+            fields = lines.strip().split()
+            #reconstFile.write('>Shannon_'+sname + '_single_'+str(i)+'\t Copycount:' + fields[2])
+            transcript_id = tr_name_tag+'_single_node_tr_'+str(i)
+
+            if outputFasta==True:
                 reconstFile.write('>'+transcript_id+'\tweight=' + fields[2])
                 reconstFile.write('\n'+fields[1] +'\n')
+            #pdb.set_trace()
+            if outputGTF==True:
                 #pdb.set_trace()
-                if outputGTF==True:
-                    #pdb.set_trace()
-                    path_regions = '%d, %d;'%(int(fields[4]), int(fields[5])) #0-based, inclusive
-                    write_gtf(gtf_file, target, transcript_id, path_regions)
-            i += 1
+                path_regions = '%d, %d;'%(int(fields[4]), int(fields[5])) #0-based, inclusive
+                write_gtf(gtf_file, target, transcript_id, path_regions)
+        i += 1
+
+    if outputFasta == True:
+        reconstFile.close()
+    if outputGTF == True:
+        gtf_file.close()
+    #pdb.set_trace()
 
 
+#@profile(stream=memory_fp)
 def ParseKnownPathsFile(KnownPathsFile, graph): 
     ## This function builds the known_paths and paths_for_node data structures.
     f = open(KnownPathsFile, 'r')
@@ -145,14 +164,15 @@ def ParseKnownPathsFile(KnownPathsFile, graph):
 
 
 # must be called first
+#@profile(stream=memory_fp)
 def ParseNodeFile(NodeFile, graph):
     ## Builds node_to_hash and hash_to_node.
     ## NodeFile: The file with all the nodes.
     ## graph: the graph object we are using.
     f=open(NodeFile,'r')
-    lines = f.readlines()
+    #lines = f.readlines()
     i = 0
-    for line in lines:
+    for line in f: #lines:
         if i != 0:
             tokens = line.split()
             try:
@@ -164,9 +184,12 @@ def ParseNodeFile(NodeFile, graph):
             except ValueError:
                 t3 = 0
 
-            if tokens[1]=='*':
-                pdb.set_trace()
-                outputFasta = False
+            #if tokens[1]=='*':
+            #    pdb.set_trace()
+            #    outputFasta = False
+
+            if outputFasta == False:
+                tokens[1] = ""
 
             if outputGTF==True:
                 #pdb.set_trace()
@@ -182,14 +205,15 @@ def ParseNodeFile(NodeFile, graph):
         i += 1
     f.close()
 
+#@profile(stream=memory_fp)
 def ParseEdgeFile(EdgeFile, graph):
     ## Adds each edge to list of connections for both nodes involved.  *EHC
     ## EdgeFile: The file with all the edges.
     ## graph: the graph object we are using.
     f = open(EdgeFile, 'r')
-    lines = f.readlines()
+    #lines = f.readlines()
     i = 0
-    for line in lines:
+    for line in f: #lines:
         if i != 0:
             tokens = line.split()
             start_node = hash_to_node[tokens[0]]
@@ -200,7 +224,7 @@ def ParseEdgeFile(EdgeFile, graph):
         i += 1
     f.close()
 
-
+#@profile(stream=memory_fp)
 def write_gtf(gtf_file, target, transcript_id, path_regions):
 
     path_regions_1 = [[int(itm.split(',')[0]), int(itm.split(',')[1])] for itm in path_regions.split(';') if itm != '' and '-1' not in itm] # list of [stt, stp]
@@ -232,7 +256,7 @@ def write_gtf(gtf_file, target, transcript_id, path_regions):
     st += '.\t' #frame
     st += 'transcript_id \"%s\";\n'%transcript_id #attribute
 
-    if len(path_regions_2)>1:
+    if len(path_regions_2)>=1: #add == 1 because needed when use gffread to convert gtf to fa
 
         for i in range(len(path_regions_2)):
             st +=  '%s\t'%target
@@ -375,7 +399,8 @@ class Graph(object):    ## Graph object (used universally)
                     self.tobereduced.append(node)
         self.tobereduced.sort(key=lambda x: int(x.name.split("_")[0]), reverse=False)
 
-            
+    
+    #@profile(stream=memory_fp)
     def algorithm2(self):
         # Runs sparse flow algorithm on graph to simplify graph such that all nodes have an in-degree of 1.
         done = False
@@ -461,6 +486,8 @@ class Graph(object):    ## Graph object (used universally)
                             else:
                                 out_node_cnt[out_node_org] = 1'''
 
+                        I0 = set(); J0 = set()
+
                         for (m, in_node) in enumerate(inedges):
                             for (n, out_node) in enumerate(outedges):
                                 if '_' in in_node.name or '_' in out_node.name:
@@ -474,28 +501,40 @@ class Graph(object):    ## Graph object (used universally)
                                     #in_node_cnt[in_node_org]<=1 and \
                                     #out_node_cnt[out_node_org]<=1:
                                     P[m,n]=1; #pdb.set_trace()
-                        #'''
-                        #            tmp_paths.append([m,n])
-                        #if len(inedges)>1 and len(outedges)>1 and tmp_paths!=[]:
-                        #    print('m:%d'%len(inedges))
-                        #    print('n:%d'%len(outedges))
-                        #    print('%s\n'%(str(tmp_paths)))
-                        #    #pdb.set_trace()                 
-                        #  This line decomposes the node 
-                        #if sum([1 for i in inedge_vector if i<0])>0 \
-                        #   or sum([1 for j in outedge_vector if j<0])>0:
-                        #    pdb.set_trace()               
-                        #output = path_decompose5(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
-                        output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity, F_val)
+
+                                    I0.add(m); J0.add(n)
+
+                        if 0: #algo_iteration==0:
+                            if (len(I0)==m and len(J0)==n) or (len(I0)==m-1 and len(J0)==n-1):
+                                #pdb.set_trace() #LS approach
+                                output = path_decompose5(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
+                            else:
+                                #pdb.set_trace() #next node
+                                continue 
+                        else:
+                            #'''
+                            #            tmp_paths.append([m,n])
+                            #if len(inedges)>1 and len(outedges)>1 and tmp_paths!=[]:
+                            #    print('m:%d'%len(inedges))
+                            #    print('n:%d'%len(outedges))
+                            #    print('%s\n'%(str(tmp_paths)))
+                            #    #pdb.set_trace()                 
+                            #  This line decomposes the node 
+                            #if sum([1 for i in inedge_vector if i<0])>0 \
+                            #   or sum([1 for j in outedge_vector if j<0])>0:
+                            #    pdb.set_trace()               
+                            #output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
+                            output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity, F_val)
                         temp_matrix = output[0]
                         m = len(inedge_vector)
                         n = len(outedge_vector)
+                        #pdb.set_trace()
 
-                        if modi_zero_edge_flow==True:
+                        '''if modi_zero_edge_flow==True:
                             in_node_flow = numpy.sum(temp_matrix, 1)
                             I_no_flow = [inedges[i] for i in range(m) if in_node_flow[i]==0] #list of in-nodes {r} s.t. no flow decomposed through r-->v
                             out_node_flow = numpy.sum(temp_matrix, 0)
-                            J_no_flow = [outedges[j] for j in range(n) if out_node_flow[j]==0] #list of out-nodes {t} s.t. no flow decomposed through v-->t
+                            J_no_flow = [outedges[j] for j in range(n) if out_node_flow[j]==0] '''#list of out-nodes {t} s.t. no flow decomposed through v-->t
                             #if I_no_flow != [] or J_no_flow != []:
                             #    pdb.set_trace()
                         
@@ -548,13 +587,13 @@ class Graph(object):    ## Graph object (used universally)
                                 #if oedge[0].string == node.string:
                                     in_node_temp.out_edges.remove(oedge)
 
-                            if modi_zero_edge_flow==True \
+                            '''if modi_zero_edge_flow==True \
                                and in_node_temp in I_no_flow and len(in_node_temp.out_edges)==0 \
                                and in_node_temp != self.start:
                                 #pdb.set_trace()
                                 in_node_temp.out_edges.append([self.end, 0, in_node_temp.weight, 0])
                                 self.end.in_edges.append([in_node_temp, 0, in_node_temp.weight, 0])
-                                self.end.weight += float(in_node_temp.weight)
+                                self.end.weight += float(in_node_temp.weight)'''
 
                         for edge in node.out_edges:
                             out_node_temp = edge[0]
@@ -562,13 +601,13 @@ class Graph(object):    ## Graph object (used universally)
                                 if iedge[0] is node:
                                     out_node_temp.in_edges.remove(iedge)
 
-                            if modi_zero_edge_flow==True \
+                            '''if modi_zero_edge_flow==True \
                                and out_node_temp in J_no_flow and len(out_node_temp.in_edges)==0 \
                                and out_node_temp != self.end:
                                 #pdb.set_trace()
                                 out_node_temp.in_edges.append([self.start, 0, out_node_temp.weight, 0])
                                 self.start.out_edges.append([out_node_temp, 0, out_node_temp.weight, 0])
-                                self.start.weight += float(out_node_temp.weight)   
+                                self.start.weight += float(out_node_temp.weight)   '''
 
                         if node not in self.nodes:
                             'alert'
@@ -581,15 +620,29 @@ class Graph(object):    ## Graph object (used universally)
                         #    del self.constituent_nodes[node]; #pdb.set_trace()
             #self.nodes = new_node_list # update node list after each iteration through all nodes
             self.search() # checks to see if any more nodes need to be reduced
-            if len(self.tobereduced) == 0:
-                done = True
-            else:
+
+            if 0: #algo_iteration==0:
+
+                #pdb.set_trace()
+
                 # This is to ensure nodes are run through topologically
                 self.nodes.remove(self.start)
                 self.nodes.remove(self.end)
                 self.nodes.sort(key=lambda x: int(x.name.split("_")[0]), reverse=False)
                 self.nodes.append(self.end)
                 self.nodes.insert(0, self.start)
+
+            else: #2nd iteration, ready to stop
+
+                if len(self.tobereduced) == 0:
+                    done = True
+                else:
+                    # This is to ensure nodes are run through topologically
+                    self.nodes.remove(self.start)
+                    self.nodes.remove(self.end)
+                    self.nodes.sort(key=lambda x: int(x.name.split("_")[0]), reverse=False)
+                    self.nodes.append(self.end)
+                    self.nodes.insert(0, self.start)
                 
             algo_iteration += 1
         #sys.stdout.write('\n')               
@@ -601,16 +654,21 @@ class Graph(object):    ## Graph object (used universally)
         overlap:  THe amount of bases of overlap between the last node in the path and the current node.
         prev_weight:  The wieght of thw last node in the path.  
         '''
-        curr_str=str_till_now+node.string[overlap:]
+        if outputFasta==False:
+            curr_str = str_till_now + '*' # *** (no START_)
+        else:
+            curr_str= str_till_now + node.string[overlap:]
         node_name = node.name.split('_')[0]
         curr_nodes = nodes_till_now + '->'+ node_name
         curr_regions = regions_till_now + '%d, %d;'%(node.DNA_start_pos, node.DNA_end_pos)
         if len(node.out_edges) == 0: ## This assumes all paths end at the _END node.
-            if curr_str[-4:] != '_End':
+            #if curr_str[-4:] != '_End':
+            if node.string != '_End':
                 #Return without appending this path
                 return
             else:
-                curr_str = curr_str[:-4]
+                if outputFasta==True: 
+                    curr_str = curr_str[:-4] #START_...(no _End) or *** 
                 self.paths_Y.append([curr_str,prev_weight,curr_nodes, curr_regions])
                 return
         else:
@@ -626,23 +684,37 @@ class Graph(object):    ## Graph object (used universally)
         ''' Uses read_paths_recursive to find all paths if the graph only has Y nodes 
         (a Y node is a node with at most 1 in edge AND 0 or more out edges).
         '''
-        with open(reconstr_Y_file, 'w') as pathfile, \
-             open(comp_gtf_file, 'w') as gtf_file: #'a'-->'w'
-            self.search()
-            if len(self.tobereduced) != 0:
-                print('CAUTION:There are still some unresolved nodes')
-            self.read_paths_recursive_modi(self.start,'','','', 0,0)
-            for (i,path_info) in enumerate(self.paths_Y): #self.paths_Y.append([curr_str,prev_weight,curr_nodes, curr_regions])
-                path_str = path_info[0][6:]
-                path_wt = path_info[1]
-                path_nodes = path_info[2]
-                path_regions = path_info[3]
-                if len(path_str):
-                    transcript_id = tr_name_tag+'_comp_'+comp+'_tr_'+str(i)
+        if outputFasta == True:
+            pathfile = open(reconstr_Y_file, 'w')
+        if outputGTF == True:
+            gtf_file = open(comp_gtf_file, 'w')
+
+        self.search()
+        if len(self.tobereduced) != 0:
+            print('CAUTION:There are still some unresolved nodes')
+        self.read_paths_recursive_modi(self.start,'','','', 0,0)
+        #pdb.set_trace()
+        for (i,path_info) in enumerate(self.paths_Y): #self.paths_Y.append([curr_str,prev_weight,curr_nodes, curr_regions])
+            if outputFasta==True:
+                path_str = path_info[0][6:]#skip START_
+            else:
+                path_str = path_info[0]
+            path_wt = path_info[1]
+            path_nodes = path_info[2]
+            path_regions = path_info[3]
+            
+            if len(path_str):# *** (if outputFasta==False) or [ATCG]+ (if outputFasta==True)
+                transcript_id = tr_name_tag+'_comp_'+comp+'_tr_'+str(i)
+                if outputFasta==True:
                     pathfile.write('>'+transcript_id+"\tweight="+str(path_wt)+'\tnodes='+path_nodes)
                     pathfile.write("\n"+path_str+"\n") #with weights
-                    if outputGTF==True:
-                        write_gtf(gtf_file, target, transcript_id, path_regions)
+                if outputGTF==True:
+                    write_gtf(gtf_file, target, transcript_id, path_regions)
+
+        if outputFasta == True:
+            pathfile.close()
+        if outputGTF == True:
+            gtf_file.close()
 
 #main
 

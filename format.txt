@@ -1,0 +1,19 @@
+# single_nodes.txt (comp==-1)
+# example
+# org_rid Bases                                                   Copycount       Normalization   Genome_start    Genome_stop
+# 0       TTTGGACTACAGAGGCCTGCAGTACAAGTGGATCTACAATTTTGTTTAGGGA    2.865385        52              20044435        20044486
+
+# nodes file (comp!=-1)
+# ID      Bases                                                   Copycount       Normalization   Genome_start    Genome_stop
+# 0       TGATGGATCTGCCCTTCGCACAATAAAATATGATTCCAAATGGATAAAAG      5.460000        50              48054466        48054515
+#         could be * (outputFasta=False)
+
+# edge file (comp != -1)
+# InID    OutID   Weight  Copycount       Normalization
+# 0       1       0       54              1
+
+# path file (comp != -1)
+# example
+# ID1     ID2     Etc.
+# 0       4       5
+# 3       4       7

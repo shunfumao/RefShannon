@@ -459,211 +459,208 @@ def extract_isoforms(fasta_file,mummer_file,out_file):
 
 
 
-def performance_plot_express(oracle_fasta,num_isoform_file,reconstr_log,trinity_log,cufflinks_log,plot_file,exp_file,exp_format,L,S,N,iso_low,iso_high,use_oracle):
-    #exp_file has to be a express output
-    #N = 76885022
-    tr_dict_full = {}
-    #pdb.set_trace()
+# def performance_plot_express(oracle_fasta,num_isoform_file,reconstr_log,trinity_log,cufflinks_log,plot_file,exp_file,exp_format,L,S,N,iso_low,iso_high,use_oracle):
+#     #exp_file has to be a express output
+#     #N = 76885022
+#     tr_dict_full = {}
+#     #pdb.set_trace()
     
-    if exp_format=='EXP':
-        tot_ab = 0
-        for lines in open(exp_file):
-            fields=lines.strip().split();
-            tr_id = fields[1].upper()
-            if not fields[2].isdigit():
-                continue;
-            try:
-                tr_len = float(fields[2]);  tr_ab = float(fields[6]) / N; tr_cov = float(fields[6]) / max(1,tr_len-L) * L # * 20 / 135
-                tot_ab = tot_ab + tr_ab
-                tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
-            except ValueError:
-                continue
-    elif exp_format == 'SIM':  #Type is simulation format
-        #pdb.set_trace()
-	tot_ab = 0
-        for lines in open(exp_file):
-            fields=lines.strip().split();
-            tr_id = 'hg19_wgEncodeGencodeBasicV17_'+fields[0].upper(); tr_id = tr_id.upper()
-            if not fields[1].isdigit():
-                continue;
-            try:
-                tr_len = float(fields[1]);  tr_ab = float(fields[7]) ; tr_cov = float(fields[7])  # * 20 / 135
-                tot_ab = tot_ab + tr_ab
-                tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
-            except ValueError:
-                continue
-	if tot_ab == 0:
-		tot_ab=1; # max(tot_ab,1);
-        for (tr_id,vec) in tr_dict_full.iteritems():
-            tr_dict_full[tr_id] = [vec[0],vec[1]/tot_ab*N*L/max(1,vec[0]),vec[2]/tot_ab,vec[3],vec[4],vec[5],vec[6]];
-    elif exp_format=='KAL':
-        tot_ab = 0
-        for lines in open(exp_file):
-            fields=lines.strip().split();
-            tr_id = fields[0].upper()
-            if not fields[1].isdigit():
-                continue;
-	    if float(fields[1]) < S:
-		continue;
-            try:
-                tr_len = float(fields[1]);  tr_ab = float(fields[4])/1e6; tr_cov = float(fields[3]) / max(1,(tr_len-L)) * L # * 20 / 135
-                tot_ab = tot_ab + tr_ab
-                tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
-            except ValueError:
-                continue
+#     if exp_format=='EXP':
+#         tot_ab = 0
+#         for lines in open(exp_file):
+#             fields=lines.strip().split();
+#             tr_id = fields[1].upper()
+#             if not fields[2].isdigit():
+#                 continue;
+#             try:
+#                 tr_len = float(fields[2]);  tr_ab = float(fields[6]) / N; tr_cov = float(fields[6]) / max(1,tr_len-L) * L # * 20 / 135
+#                 tot_ab = tot_ab + tr_ab
+#                 tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
+#             except ValueError:
+#                 continue
+#     elif exp_format == 'SIM':  #Type is simulation format
+#         #pdb.set_trace()
+#         tot_ab = 0
+#         for lines in open(exp_file):
+#             fields=lines.strip().split();
+#             tr_id = 'hg19_wgEncodeGencodeBasicV17_'+fields[0].upper(); tr_id = tr_id.upper()
+#             if not fields[1].isdigit():
+#                 continue;
+#             try:
+#                 tr_len = float(fields[1]);  tr_ab = float(fields[7]) ; tr_cov = float(fields[7])  # * 20 / 135
+#                 tot_ab = tot_ab + tr_ab
+#                 tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
+#             except ValueError:
+#                 continue
+#         if tot_ab == 0: tot_ab=1; # max(tot_ab,1);
+#         for (tr_id,vec) in tr_dict_full.iteritems():
+#             tr_dict_full[tr_id] = [vec[0],vec[1]/tot_ab*N*L/max(1,vec[0]),vec[2]/tot_ab,vec[3],vec[4],vec[5],vec[6]];
+#     elif exp_format=='KAL':
+#         tot_ab = 0
+#         for lines in open(exp_file):
+#             fields=lines.strip().split();
+#             tr_id = fields[0].upper()
+#             if not fields[1].isdigit():
+#                 continue;
+#             if float(fields[1]) < S: continue;
+#             try:
+#                 tr_len = float(fields[1]);  tr_ab = float(fields[4])/1e6; tr_cov = float(fields[3]) / max(1,(tr_len-L)) * L # * 20 / 135
+#                 tot_ab = tot_ab + tr_ab
+#                 tr_dict_full[tr_id] = [tr_len, tr_cov, tr_ab, 0, 0, 0, 0] #last 4 entries are num_iso, ours,trinity,cufflinks
+#             except ValueError:
+#                 continue
 
 
 
-    #print('total abundnace:' + str(tot_ab))
-    #pdb.set_trace()
-    '''Filter to files in oracle_fasta'''
-    tr_os = {}
-    for lines in open(oracle_fasta):
-        fields=lines.strip().split()
-        tr_id = fields[0][1:].upper()
-        if fields[0][0]=='>':
-            if tr_dict_full.get(tr_id):
-                tr_os[tr_id] = tr_dict_full[tr_id]
-    if not use_oracle:
-       tr_os = tr_dict_full; #Use to bypass filtering
+#     #print('total abundnace:' + str(tot_ab))
+#     #pdb.set_trace()
+#     '''Filter to files in oracle_fasta'''
+#     tr_os = {}
+#     for lines in open(oracle_fasta):
+#         fields=lines.strip().split()
+#         tr_id = fields[0][1:].upper()
+#         if fields[0][0]=='>':
+#             if tr_dict_full.get(tr_id):
+#                 tr_os[tr_id] = tr_dict_full[tr_id]
+#     if not use_oracle:
+#        tr_os = tr_dict_full; #Use to bypass filtering
 
-    #pdb.set_trace()
-    '''Filter based on number of isoforms'''
-    #No of isoforms is specified 
-    iso_lower = iso_low; iso_upper = iso_high; #consider only transcripts that have iso_lower<=num_iso <= iso_upper
-    tr_dict = {}
-    tot_ab = 0
-    tot_no = 0
-    ab_list = [0,1,10,25,50,100,1e10]
-    no = [0] * len(ab_list)
+#     #pdb.set_trace()
+#     '''Filter based on number of isoforms'''
+#     #No of isoforms is specified 
+#     iso_lower = iso_low; iso_upper = iso_high; #consider only transcripts that have iso_lower<=num_iso <= iso_upper
+#     tr_dict = {}
+#     tot_ab = 0
+#     tot_no = 0
+#     ab_list = [0,1,10,25,50,100,1e10]
+#     no = [0] * len(ab_list)
 
-    for lines in open(num_isoform_file):
-        fields=lines.strip().split()
-        tr_id = fields[0].upper()
-	if exp_format=='SIM':
-		tr_id = 'hg19_wgEncodeGencodeBasicV17_'+fields[0]
-		tr_id = tr_id.upper()
-        if tr_os.get(tr_id):
-            num_iso = float(fields[6])
-            if iso_lower<=num_iso and num_iso <= iso_upper:
-                tr_dict[tr_id] = tr_os[tr_id]
-                tot_no += 1
-		tot_ab += tr_dict[tr_id][2]; tr_cov = tr_dict[tr_id][1]
-                for (i,ab) in enumerate(ab_list):
-                	if i >= len(ab_list)-1:
-                    		continue;
-                #tr_cov = tr_ab*L / norm * N 
-                	if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
-                    		no[i] +=1
+#     for lines in open(num_isoform_file):
+#         fields=lines.strip().split()
+#         tr_id = fields[0].upper()
+#         if exp_format=='SIM': tr_id = 'hg19_wgEncodeGencodeBasicV17_'+fields[0]
+#         tr_id = tr_id.upper()
+#         if tr_os.get(tr_id):
+#             num_iso = float(fields[6])
+#             if iso_lower<=num_iso and num_iso <= iso_upper:
+#                 tr_dict[tr_id] = tr_os[tr_id]
+#                 tot_no += 1
+# 		tot_ab += tr_dict[tr_id][2]; tr_cov = tr_dict[tr_id][1]
+#                 for (i,ab) in enumerate(ab_list):
+#                 	if i >= len(ab_list)-1:
+#                     		continue;
+#                 #tr_cov = tr_ab*L / norm * N 
+#                 	if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
+#                     		no[i] +=1
 
-    #pdb.set_trace()
-    #tr_dict = tr_os
+#     #pdb.set_trace()
+#     #tr_dict = tr_os
 
-    '''Run through our reconstructed file'''
-    tot = [0] * len(ab_list)
-    frac = [0] * len(ab_list)
-    length = [0] * len(ab_list)
-    ab_rec = 0
-    no_rec = 0
-    #tot_ab = 0
+#     '''Run through our reconstructed file'''
+#     tot = [0] * len(ab_list)
+#     frac = [0] * len(ab_list)
+#     length = [0] * len(ab_list)
+#     ab_rec = 0
+#     no_rec = 0
+#     #tot_ab = 0
 
-    for lines in open(reconstr_log):
-        fields=lines.strip().split();
-        tr_id = fields[0].upper()
-        if (not tr_dict.get(tr_id)):
-            continue
-            #pdb.set_trace()
-        tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
-        #tot_ab += tr_ab
-        if tr_id == 'ENST00000537877.1':
-                        pass #pdb.set_trace()
+#     for lines in open(reconstr_log):
+#         fields=lines.strip().split();
+#         tr_id = fields[0].upper()
+#         if (not tr_dict.get(tr_id)):
+#             continue
+#             #pdb.set_trace()
+#         tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
+#         #tot_ab += tr_ab
+#         if tr_id == 'ENST00000537877.1':
+#                         pass #pdb.set_trace()
 
-        if 1:
-            for (i,ab) in enumerate(ab_list):
-                if i >= len(ab_list)-1:
-                    continue;
-                #tr_cov = tr_ab*L / norm * N 
-                if tr_id == 'hg19_wgEncodeGencodeBasicV17_ENST00000560268.1':
-			pdb.set_trace()
-		if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
-                    #no[i] +=1
-                    length[i] += tr_len
-                    tot[i] += min(tr_rec,tr_len)
-                    if tr_rec > 0.9*tr_len:
-                        tr_dict[tr_id][4]=1
-                        frac[i]+=1
-                        ab_rec += tr_ab
-			no_rec += 1
+#         if 1:
+#             for (i,ab) in enumerate(ab_list):
+#                 if i >= len(ab_list)-1:
+#                     continue;
+#                 #tr_cov = tr_ab*L / norm * N 
+#                 if tr_id == 'hg19_wgEncodeGencodeBasicV17_ENST00000560268.1':
+#             pdb.set_trace()
+#         if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
+#                     #no[i] +=1
+#                     length[i] += tr_len
+#                     tot[i] += min(tr_rec,tr_len)
+#                     if tr_rec > 0.9*tr_len:
+#                         tr_dict[tr_id][4]=1
+#                         frac[i]+=1
+#                         ab_rec += tr_ab
+#             no_rec += 1
 
-    #pdb.set_trace()
-    '''Run through trinity'''
-    trinity_tot = [0] * len(ab_list)
-    trinity_frac = [0] * len(ab_list)
-    trinity_no = [0] * len(ab_list)
-    trinity_length = [0] * len(ab_list)
-    ab_trinity = 0
-    no_trinity = 0
+#     #pdb.set_trace()
+#     '''Run through trinity'''
+#     trinity_tot = [0] * len(ab_list)
+#     trinity_frac = [0] * len(ab_list)
+#     trinity_no = [0] * len(ab_list)
+#     trinity_length = [0] * len(ab_list)
+#     ab_trinity = 0
+#     no_trinity = 0
 
-    for lines in open(trinity_log):
-        fields=lines.strip().split();
-        tr_id = fields[0].upper()
-        if (not tr_dict.get(tr_id)):
-            continue
-            #pdb.set_trace()
-        tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
-        if 1:
-            for (i,ab) in enumerate(ab_list):
-                #tr_cov = tr_ab*L / norm * N 
-                if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
-                    trinity_no[i] +=1
-                    trinity_length[i] += tr_len
-                    trinity_tot[i] += tr_rec 
-                    if tr_rec > 0.9*tr_len:
-                        tr_dict[tr_id][5]=1
-                        trinity_frac[i]+=1
-                        ab_trinity += tr_ab
-			no_trinity += 1
+#     for lines in open(trinity_log):
+#         fields=lines.strip().split();
+#         tr_id = fields[0].upper()
+#         if (not tr_dict.get(tr_id)):
+#             continue
+#             #pdb.set_trace()
+#         tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
+#         if 1:
+#             for (i,ab) in enumerate(ab_list):
+#                 #tr_cov = tr_ab*L / norm * N 
+#                 if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
+#                     trinity_no[i] +=1
+#                     trinity_length[i] += tr_len
+#                     trinity_tot[i] += tr_rec 
+#                     if tr_rec > 0.9*tr_len:
+#                         tr_dict[tr_id][5]=1
+#                         trinity_frac[i]+=1
+#                         ab_trinity += tr_ab
+#             no_trinity += 1
                         
-    cufflinks_tot = [0] * len(ab_list)
-    cufflinks_frac = [0] * len(ab_list)
-    cufflinks_no = [0] * len(ab_list)
-    cufflinks_length = [0] * len(ab_list)
-    ab_cufflinks = 0
-    no_cufflinks = 0
+#     cufflinks_tot = [0] * len(ab_list)
+#     cufflinks_frac = [0] * len(ab_list)
+#     cufflinks_no = [0] * len(ab_list)
+#     cufflinks_length = [0] * len(ab_list)
+#     ab_cufflinks = 0
+#     no_cufflinks = 0
 
-    for lines in open(cufflinks_log):
-        fields=lines.strip().split();
-        tr_id = fields[0].upper()
-        if (not tr_dict.get(tr_id)):
-            continue
-            #pdb.set_trace()
-        tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
-        if 1:
-            for (i,ab) in enumerate(ab_list):
-                #tr_cov = tr_ab*L / norm * N 
-                if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
-                    cufflinks_no[i] +=1
-                    cufflinks_length[i] += tr_len
-                    cufflinks_tot[i] += tr_rec 
-                    if tr_rec > 0.9*tr_len:
-                        tr_dict[tr_id][6]=1
-                        cufflinks_frac[i]+=1
-                        ab_cufflinks += tr_ab
-			no_cufflinks += 1
+#     for lines in open(cufflinks_log):
+#         fields=lines.strip().split();
+#         tr_id = fields[0].upper()
+#         if (not tr_dict.get(tr_id)):
+#             continue
+#             #pdb.set_trace()
+#         tr_rec = float(fields[2]); tr_len = tr_dict[tr_id][0]; tr_cov = tr_dict[tr_id][1]; tr_ab = tr_dict[tr_id][2]
+#         if 1:
+#             for (i,ab) in enumerate(ab_list):
+#                 #tr_cov = tr_ab*L / norm * N 
+#                 if tr_cov>=ab_list[i] and tr_cov<ab_list[i+1]:
+#                     cufflinks_no[i] +=1
+#                     cufflinks_length[i] += tr_len
+#                     cufflinks_tot[i] += tr_rec 
+#                     if tr_rec > 0.9*tr_len:
+#                         tr_dict[tr_id][6]=1
+#                         cufflinks_frac[i]+=1
+#                         ab_cufflinks += tr_ab
+#             no_cufflinks += 1
 
 
 
-    with open(plot_file,'w') as plotFile:
-        plotFile.write('Abundance \t No. Trans \t Frac. reconstructed (Ours) \t Frac. reconstructed (Trinity) \t Frac. reco (Cufflinks) \t Bases reconstructed (Ours) \t Bases reconstr (Trinity) \t No bases\n')
-        for (i,ab) in enumerate(ab_list):
-            plotFile.write(str(ab)+'\t'+str(no[i])+'\t'+str(frac[i])+'\t'+str(trinity_frac[i])+'\t' + str(cufflinks_frac[i])+'\t'+str(tot[i])+'\t'+str(trinity_tot[i])+'\t' + str(length[i])+'\n')
+#     with open(plot_file,'w') as plotFile:
+#         plotFile.write('Abundance \t No. Trans \t Frac. reconstructed (Ours) \t Frac. reconstructed (Trinity) \t Frac. reco (Cufflinks) \t Bases reconstructed (Ours) \t Bases reconstr (Trinity) \t No bases\n')
+#         for (i,ab) in enumerate(ab_list):
+#             plotFile.write(str(ab)+'\t'+str(no[i])+'\t'+str(frac[i])+'\t'+str(trinity_frac[i])+'\t' + str(cufflinks_frac[i])+'\t'+str(tot[i])+'\t'+str(trinity_tot[i])+'\t' + str(length[i])+'\n')
 
-    with open(plot_file+'_all','w') as plotFile:
-        for (tr_id, tr_info) in tr_dict.items():
-            plotFile.write(str(tr_id)+'\t'+str(tr_info[0])+'\t'+str(tr_info[1])+'\t'+str(tr_info[2])+'\t'+str(tr_info[3])+'\t'+str(tr_info[4])+'\t' + str(tr_info[5])+'\t' + str(tr_info[6])+'\n')
+#     with open(plot_file+'_all','w') as plotFile:
+#         for (tr_id, tr_info) in tr_dict.items():
+#             plotFile.write(str(tr_id)+'\t'+str(tr_info[0])+'\t'+str(tr_info[1])+'\t'+str(tr_info[2])+'\t'+str(tr_info[3])+'\t'+str(tr_info[4])+'\t' + str(tr_info[5])+'\t' + str(tr_info[6])+'\n')
 
-    print('Total,Ours,Trinity,Cufflinks='+str(tot_ab)+','+str(ab_rec)+','+str(ab_trinity)+','+str(ab_cufflinks))
-    print('Total,Ours,Trinity,Cufflinks='+str(tot_no)+','+str(no_rec)+','+str(no_trinity)+','+str(no_cufflinks))
+#     print('Total,Ours,Trinity,Cufflinks='+str(tot_ab)+','+str(ab_rec)+','+str(ab_trinity)+','+str(ab_cufflinks))
+#     print('Total,Ours,Trinity,Cufflinks='+str(tot_no)+','+str(no_rec)+','+str(no_trinity)+','+str(no_cufflinks))
 
 def performance_plot_correct(reconstr_log,trinity_log,exp_file,plot_file,L,S,N):
     tr_abundance = {}

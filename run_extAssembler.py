@@ -9,12 +9,13 @@ samtools
 usage:
 
 #sam --> gtf and fasta
-#sam_file should has (1) header info (2) xs tag to be used by ext assemblers (e.g. stringtie, cufflinks)
+#sam_file should has (1) header info (2) xs tag to be used by ext assemblers (e.g. stringtie, cufflinks, scallop)
 #other assemblers:
 #TransComb: need tophat2 bam
 #CLASS2: need path/to/run_class.pl; BAM format sorted by chromosome and position
+#scallop: need sorted bam file; need XS tag or library type.
 
-python run_extAssembler.py [--assembler assemblerName] [--maxSens] (e.g. stringtie/cufflinks/TransComb/CLASS2. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
+python run_extAssembler.py [--assembler assemblerName] [--maxSens] (e.g. stringtie/cufflinks/TransComb/CLASS2/scallop. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
 #chrs_dir/chr_i/hits.sam --> out_dir/chr_i/algo_output/name_tag.gtf & name_tag.fasta
 
@@ -125,6 +126,8 @@ def do_extAssembler_i_g(args):
 
         else:
             cmd = 'perl /home/shunfu1/software/CLASS_2.1.5/run_class.pl -a %s -o %s -p %d'%(FileToUse, gtfFile, N_jobs)        
+    elif assembler=='scallop':
+        cmd = 'scallop -i %s -o %s'%(FileToUse, gtfFile)
 
     run_cmd(cmd)
 

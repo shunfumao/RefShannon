@@ -4,8 +4,8 @@ import copy,random, numpy
 import pdb
 import sys, time
 
-from path_decompose_sparse import path_decompose
-#from path_decompose_modi.path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
+#from path_decompose_sparse import path_decompose
+from path_decompose_modi.path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
 #from path_decompose_modi.path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
 from path_decompose_modi.path_decompose_sparse5 import path_decompose5
 
@@ -15,6 +15,7 @@ from path_decompose_modi.path_decompose_sparse5 import path_decompose5
 modi_zero_edge_flow = False #Recommend: False
                             #When True: if n1-->v-->n2, n1-->v has 0 in-flow,  connect n1 to end;
                             #                           v-->n2 has 0 out-flow, connect start to n2;
+PATH_SPARSITY = 10
 
 import os
 from time import sleep
@@ -31,9 +32,10 @@ restored_normalization = True
 use_Y_paths = True
 use_smoothing = False
 use_GLPK = False
-path_sparsity = 10
 
-burden_factor = 100
+#path_sparsity = 10
+
+# burden_factor = 100
 
 run_penalized = 0
 
@@ -47,6 +49,7 @@ dump = False #True
 '''
 usage:
 python algorithm_SF.py comp -I intermediate_dir [-O algo_out_dir] [-tr_name_tag tr_name_tag] [-target target] [-F F_val] [--outputFasta]
+                                                [-path_sparsity]
 '''
 args = sys.argv
 comp = args[1]
@@ -71,6 +74,11 @@ if '-F' in args:
     F_val = float(args[args.index('-F')+1])
 else:
     F_val = 0.0
+
+if '-path_sparsity' in args:
+    path_sparsity = int(args[args.index('-path_sparsity')+1])
+else:
+    path_sparsity = PATH_SPARSITY
 
 outputGTF = True
 
@@ -524,7 +532,7 @@ class Graph(object):    ## Graph object (used universally)
                             #   or sum([1 for j in outedge_vector if j<0])>0:
                             #    pdb.set_trace()               
                             #output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity)
-                            output = path_decompose(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity, F_val)
+                            output = path_decompose2(inedge_vector, outedge_vector, inedge_cc, outedge_cc, overwrite_normalization, P,use_GLPK, path_sparsity, F_val)
                         temp_matrix = output[0]
                         m = len(inedge_vector)
                         n = len(outedge_vector)

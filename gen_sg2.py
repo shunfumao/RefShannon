@@ -12,7 +12,10 @@ from pyfaidx import Fasta
 #'''
 
 ALLOWED_HOLE = 10 # <= ALLOWED_HOLE, interpolate directly
+INTERMEDIATE_HOLE = 100
 MAX_HOLE = 200 # >= MAX_HOLE, no interpolate
+
+MIN_COVERAGE = 14
 
 outputFasta = False #if False, regardless of -g genome_file would disable fasta output
 
@@ -23,9 +26,15 @@ sam --> splice graph
 usage:
 
 python gen_sg2.py -i sam_file [-g genome_file] [-O out_dir] [-paired] [-target chr] [-F F_val]
+                              [-allowed_hole ah]
+                              [-intermediate_hole ih]
+                              [-max_hole mh]
+                              [-min_coverage mc]
 
 #adaptively modifies merge II criterion according to F_val for sens/fp tradeoff
 #if no -g, output node files will have bases '*'
+
+#allowed_hole, intermediate_hole, max_hole and min_coverage are additional params used for merging
 
 
 '''
@@ -74,12 +83,34 @@ def parse_args_gen_splice_graph2():
     else:
         F_val = 0.0
 
-    return [args_error, sam_file, genome_file, out_dir, paired, target, F_val]
+    if '-allowed_hole' in args:
+        allowed_hole = int(args[args.index('-allowed_hole')+1])
+    else:
+        allowed_hole = ALLOWED_HOLE
+
+    if '-intermediate_hole' in args:
+        intermediate_hole = int(args[args.index('-intermediate_hole')])
+    else:
+        intermediate_hole = INTERMEDIATE_HOLE
+
+    if '-max_hole' in args:
+        max_hole = int(args[args.index('-max_hole')])
+    else:
+        max_hole = MAX_HOLE
+
+    if '-min_coverage' in args:
+        min_coverage = int(args[args.index('-min_coverage')])
+    else:
+        min_coverage = MIN_COVERAGE
+
+    return [args_error, sam_file, genome_file, out_dir, paired, target, F_val,
+            allowed_hole, intermediate_hole, max_hole, min_coverage]
 
 #@profile(stream=memory_fp)
 def gen_splice_graph2():
 
-    [args_error, sam_file, genome_file, subdir, paired, target, F_val] = parse_args_gen_splice_graph2()
+    [args_error, sam_file, genome_file, subdir, paired, target, F_val \
+     allowed_hole, intermediate_hole, max_hole, min_coverage] = parse_args_gen_splice_graph2()
     if args_error == True:
         print('gen_sg2 arguments error')
         return
@@ -107,7 +138,8 @@ def gen_splice_graph2():
     clock = Clock()
 
     #1. .sam --> regions_dic, genome2region_dic
-    regions_dic, genome2region_dic = gen_regions_genome_mapping(sam_file, target, F_val)
+    regions_dic, genome2region_dic = gen_regions_genome_mapping(sam_file, target, F_val,
+        allowed_hole, intermediate_hole, max_hole, min_coverage)
     print('[%s] gen_regions_genome_mapping finished'%clock.asctime())
     #pdb.set_trace()
 
@@ -289,7 +321,8 @@ def adjust_y_approx4(x):
     return [y, adjust_y]
 
 #@profile(stream=memory_fp)
-def merge_regions_modi2(regions_dic_0, F_val):
+def merge_regions_modi2(regions_dic_0, F_val,
+    allowed_hole=ALLOWED_HOLE, intermediate_hole=INTERMEDIATE_HOLE, max_hole=MAX_HOLE, min_coverage=MIN_COVERAGE):
 
     #pdb.set_trace()
     # dic of key - rid, val - [stt, stp, cov, # sp in, # sp out]
@@ -330,14 +363,14 @@ def merge_regions_modi2(regions_dic_0, F_val):
                 print('r1 and r2 connected with no splice out at r1 and no splice in at r2 -- unexpected')
                 pdb.set_trace()
 
-            elif r2[0]-r1[1]-1>=MAX_HOLE: #regions seperated far away, no merge            
+            elif r2[0]-r1[1]-1>=max_hole: #MAX_HOLE: #regions seperated far away, no merge            
                regions_dic[ind]=copy.copy(r1[0:3])
                ind+=1
                r1 = r2
 
                stat_no_merge_no_splice_large_gap += 1
 
-            elif r2[0]-r1[1]-1<=ALLOWED_HOLE: #merge type I
+            elif r2[0]-r1[1]-1<=allowed_hole: #ALLOWED_HOLE: #merge type I
                 cnt_interpolated += (r2[0]-r1[1]-1)
                 #print('r1=%s, r2=%s merged (cnt_interpolated=%d)'%(r1,r2, cnt_interpolated))
                 msgs.append('r1=%s, r2(i=%d)=%s cnt_interpolated=%d (I)'%(r1,i,r2, cnt_interpolated))
@@ -353,7 +386,7 @@ def merge_regions_modi2(regions_dic_0, F_val):
                 stat_merge_small_hole += 1
 
                 #elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14: 
-            elif r2[0]-r1[1]-1<100 and r2[2]+r1[2]>=14 and r2[2]+r1[2]<mergeII_threshold: #mergeII_threshold: 0 merge II skipped
+            elif r2[0]-r1[1]-1<intermediate_hole and r2[2]+r1[2]>=min_coverage and r2[2]+r1[2]<mergeII_threshold: #mergeII_threshold: 0 merge II skipped
                 #pdb.set_trace()
                 cnt_interpolated += (r2[0]-r1[1]-1)
                 #print('r1=%s, r2=%s merged (cnt_interpolated=%d)'%(r1,r2, cnt_interpolated))
@@ -642,7 +675,9 @@ def gen_weights_splice(sam_file, target=''):
 
 
 #@profile(stream=memory_fp)
-def gen_regions_genome_mapping(sam_file, target='', F_val=0.0):
+def gen_regions_genome_mapping(sam_file, target='', F_val=0.0,
+    allowed_hole=ALLOWED_HOLE, intermediate_hole=INTERMEDIATE_HOLE,
+    max_hole=MAX_HOLE, min_coverage=MIN_COVERAGE):
 
     clock = Clock()
 
@@ -657,7 +692,8 @@ def gen_regions_genome_mapping(sam_file, target='', F_val=0.0):
 
     del weights; del splice_starts; del splice_ends
 
-    regions_dic, msgs = merge_regions_modi2(regions_dic_0, F_val)
+    regions_dic, msgs = merge_regions_modi2(regions_dic_0,
+        F_val, allowed_hole, intermediate_hole, max_hole, min_coverage)
     #regions_dic = regions_dic_0
     print('%.2f to merge regions'%clock.time())
 

@@ -3,7 +3,7 @@ import os
 import subprocess
 import pdb
 import sys
-from util import parent_dir, run_cmd
+from RefShannon.util import parent_dir, run_cmd
 
 def aligner_tophat2(args):
 

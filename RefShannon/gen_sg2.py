@@ -1,5 +1,5 @@
 import sys, os, pdb, subprocess, copy
-from util import *
+from RefShannon.util import *
 import math
 from pyfaidx import Fasta 
 

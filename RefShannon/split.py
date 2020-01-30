@@ -1,5 +1,5 @@
 import sys, os, pdb
-from util import *
+from RefShannon.util import *
 
 '''
 hits.sam --> chr1/hits.sam, chr2/hits.sam ...

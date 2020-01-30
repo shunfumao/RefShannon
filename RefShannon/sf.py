@@ -4,7 +4,7 @@
 import sys
 import pdb
 import os
-from util import run_cmd
+from RefShannon.util import run_cmd
 
 def load_stat_file(stat_file):
 

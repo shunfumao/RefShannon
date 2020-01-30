@@ -1,6 +1,6 @@
 import sys, os, pdb, re, random
-from util import *
-import run_parallel_cmds
+from RefShannon.util import *
+import RefShannon.run_parallel_cmds
 
 RNASeqReadSimulatorPath='RNASeqReadSimulator/' #folder path to store external software codes
 

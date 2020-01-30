@@ -1,7 +1,7 @@
 import sys, pdb, math
 #from filter_FP.filter_FP import *
-from util import run_cmd
-import run_parallel_cmds
+from RefShannon.util import run_cmd
+import RefShannon.run_parallel_cmds
 
 def process_oneThreshold(args):
 

@@ -1,8 +1,8 @@
 import sys, pdb, os
-from util import *
-from sf import load_stat_file, build_scheduler_files
-import tester
-import run_parallel_cmds
+from RefShannon.util import *
+from RefShannon.sf import load_stat_file, build_scheduler_files
+import RefShannon.tester
+import RefShannon.run_parallel_cmds
 from memory_profiler import profile
 
 '''

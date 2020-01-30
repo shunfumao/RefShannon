@@ -1,7 +1,7 @@
 import multiprocessing
 import os
-from util import run_cmd
-from global_values import *
+from RefShannon.util import run_cmd
+from RefShannon.global_values import *
 import pdb
 
 def run_cmds(cmds,noJobs=MAX_PARALLEL_PROCESS):

@@ -1,5 +1,5 @@
 import pdb, sys
-from util import *
+from RefShannon.util import *
 import numpy
 
 '''

@@ -1,6 +1,6 @@
 import sys, tester, random, os
-from util import *
-import run_parallel_cmds
+from RefShannon.util import *
+import RefShannon.run_parallel_cmds
 
 def genPerLog(args):
 

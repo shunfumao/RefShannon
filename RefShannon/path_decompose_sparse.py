@@ -1,6 +1,6 @@
 import pdb, heapq, sys
 import numpy as np
-from global_values import *
+from RefShannon.global_values import *
 
 def local_dot(a,b):
 	## This function takes the dot product between two vectors.  

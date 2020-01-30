@@ -4,10 +4,10 @@ import copy,random, numpy
 import pdb
 import sys, time
 
-from path_decompose_sparse import path_decompose
+from RefShannon.path_decompose_sparse import path_decompose
 #from path_decompose_modi.path_decompose_sparse2 import path_decompose2 #change to: output = path_decompose2(
 #from path_decompose_modi.path_decompose_sparse4 import path_decompose4 #change to: output = path_decompose4(
-from path_decompose_modi.path_decompose_sparse5 import path_decompose5
+from RefShannon.path_decompose_modi.path_decompose_sparse5 import path_decompose5
 
 #from memory_profiler import profile
 #memory_fp = open('gen_sf_memory_profiler_non_single_nodes.log', 'w+')

@@ -2,9 +2,9 @@ import subprocess
 import os
 import pdb
 import math
-from util import run_cmd
-from global_values import *
-import run_parallel_cmds
+from RefShannon.util import run_cmd
+from RefShannon.global_values import *
+import RefShannon.run_parallel_cmds
 
 def cut_file(in_name,out_name,line_start,line_end):
     run_cmd('awk \'NR > ' + str(line_end) + ' { exit } NR >= ' + str(line_start) +  '\' '+ in_name + ' > ' + out_name )

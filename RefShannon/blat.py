@@ -5,6 +5,7 @@ import math
 from RefShannon.util import run_cmd
 from RefShannon.global_values import *
 import RefShannon.run_parallel_cmds
+from RefShannon.dep_path import tool_paths
 
 def cut_file(in_name,out_name,line_start,line_end):
     run_cmd('awk \'NR > ' + str(line_end) + ' { exit } NR >= ' + str(line_start) +  '\' '+ in_name + ' > ' + out_name )
@@ -49,7 +50,8 @@ def parallel_blat(target_fasta,query_fasta,out_file,QUERY_SPLIT):
     #run_cmd('time parallel --jobs %d blat -noHead '%MAX_PARALLEL_PROCESS + target_fasta + ' ' + query_fasta + '_{} ' +out_file + '_{} ::: ' + q_str  )
     cmds = []
     for i in q_range:
-        cmd = 'blat -noHead ' + target_fasta + ' ' + query_fasta + '_%d '%(i+1) +out_file + '_%d'%(i+1)
+        cmd = tool_paths["blat"]
+        cmd = cmd + ' -noHead ' + target_fasta + ' ' + query_fasta + '_%d '%(i+1) +out_file + '_%d'%(i+1)
         cmds.append(cmd)
     run_parallel_cmds.run_cmds(cmds, MAX_PARALLEL_PROCESS)
 

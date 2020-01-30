@@ -1,6 +1,8 @@
 from RefShannon.util import *
 import sys, os, pdb
 
+from RefShannon.dep_path import extAssembler_paths, tool_paths
+
 '''
 dependencies:
 
@@ -79,17 +81,19 @@ def do_extAssembler_i_g(args):
         genomeFileIndex = genomeFile + '.fai'
 
         if os.path.exists(genomeFileIndex)==False:
-            cmd = 'samtools faidx %s'%genomeFile
+            cmd = '%s faidx %s'%(tool_paths["samtools"], genomeFile)
             run_cmd(cmd)
             files_to_clear.append(genomeFileIndex)
 
         if os.path.exists(bamFile)==False:
-            cmd = 'samtools view -bt %s %s > %s -@ %d'%(genomeFileIndex, sam_file, bamFile, N_jobs) #header purpose
+            cmd = '%s view -bt %s %s > %s -@ %d'%(
+              tool_paths["samtools"], genomeFileIndex, sam_file, bamFile, N_jobs) #header purpose
             run_cmd(cmd)
             files_to_clear.append(bamFile)
 
         if os.path.exists(bamFileSorted)==False:
-            cmd = 'samtools sort -o %s %s -@ %d'%(bamFileSorted, bamFile, N_jobs)
+            cmd = '%s sort -o %s %s -@ %d'%(
+                tool_paths["samtools"], bamFileSorted, bamFile, N_jobs)
             run_cmd(cmd)
             files_to_clear.append(bamFileSorted)
 
@@ -106,32 +110,45 @@ def do_extAssembler_i_g(args):
 
     if assembler=='stringtie':
         if maxSens==True:
-            cmd = 'stringtie %s -o %s -p %d -f 0.0 -c 0.001'%(FileToUse, gtfFile, N_jobs)
+            cmd = '%s %s -o %s -p %d -f 0.0 -c 0.001'%(
+              extAssembler_paths["stringtie"], FileToUse, gtfFile, N_jobs)
         else:
-            cmd = 'stringtie %s -o %s -p %d '%(FileToUse, gtfFile, N_jobs) # default setting
+            cmd = '%s %s -o %s -p %d '%(
+              extAssembler_paths["stringtie"], FileToUse, gtfFile, N_jobs) # default setting
     elif assembler=='cufflinks':
         if maxSens==True:
-            cmd = 'cufflinks -o %s -p %d -F 0.001 %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+            cmd = '%s -o %s -p %d -F 0.001 %s'%(
+              extAssembler_paths["cufflinks"], parent_dir(gtfFile), N_jobs, FileToUse)
         else:
-            cmd = 'cufflinks -o %s -p %d %s'%(parent_dir(gtfFile), N_jobs, FileToUse)
+            cmd = '%s -o %s -p %d %s'%(
+              extAssembler_paths["cufflinks"], parent_dir(gtfFile), N_jobs, FileToUse)
     elif assembler=='TransComb':
         if maxSens==True:
             print('TransComb max sens TBD')  #-f: default 0 -f 1 sens decreases
             pdb.set_trace()
         else:
-            cmd = 'TransComb -b %s -s unstranded -o %s -l 200'%(FileToUse, gtfFile)
+            cmd = '%s -b %s -s unstranded -o %s -l 200'%(
+              extAssembler_paths["TransComb"] ,FileToUse, gtfFile)
     elif assembler=='CLASS2':
         if maxSens==True:
-            cmd = 'perl /home/shunfu1/software/CLASS_2.1.5/run_class.pl -a %s -o %s -p %d -F 0.0'%(FileToUse, gtfFile, N_jobs)        
+            cmd = 'perl %s -a %s -o %s -p %d -F 0.0'%(
+              extAssembler_paths["CLASS2"], FileToUse, gtfFile, N_jobs)        
 
         else:
-            cmd = 'perl /home/shunfu1/software/CLASS_2.1.5/run_class.pl -a %s -o %s -p %d'%(FileToUse, gtfFile, N_jobs)        
+            cmd = 'perl %s -a %s -o %s -p %d'%(
+              extAssembler_paths["CLASS2"], FileToUse, gtfFile, N_jobs)        
     elif assembler=='scallop':
-        cmd = 'scallop -i %s -o %s'%(FileToUse, gtfFile)
+        cmd = '%s -i %s -o %s'%(
+          extAssembler_paths["scallop"] ,FileToUse, gtfFile)
+    elif assembler == 'strawberry':
+        cmd = '%s -o %s --no-quant -p %d %s'%(
+            extAssembler_paths["strawberry"], parent_dir(gtfFile), N_jobs, FileToUse)
+        print(cmd)
+        pdb.set_trace()
 
     run_cmd(cmd)
 
-    cmd = 'gffread -w %s -g %s %s'%(fastaFile, genomeFile, gtfFile)
+    cmd = '%s -w %s -g %s %s'%(tool_paths["gffread"], fastaFile, genomeFile, gtfFile)
     run_cmd(cmd)
 
     if NoSeperatedLines==True:

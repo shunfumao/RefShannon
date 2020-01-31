@@ -4,7 +4,7 @@ import pdb
 import math
 from RefShannon.util import run_cmd
 from RefShannon.global_values import *
-import RefShannon.run_parallel_cmds
+from RefShannon.run_parallel_cmds import run_cmds
 from RefShannon.dep_path import tool_paths
 
 def cut_file(in_name,out_name,line_start,line_end):
@@ -53,7 +53,7 @@ def parallel_blat(target_fasta,query_fasta,out_file,QUERY_SPLIT):
         cmd = tool_paths["blat"]
         cmd = cmd + ' -noHead ' + target_fasta + ' ' + query_fasta + '_%d '%(i+1) +out_file + '_%d'%(i+1)
         cmds.append(cmd)
-    run_parallel_cmds.run_cmds(cmds, MAX_PARALLEL_PROCESS)
+    run_cmds(cmds, MAX_PARALLEL_PROCESS)
 
     run_cmd('cat ' + out_file + '_* > ' + out_file)
     run_cmd('rm ' + out_file + '_*' )

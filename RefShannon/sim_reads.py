@@ -1,8 +1,12 @@
 import sys, os, pdb, re, random
 from RefShannon.util import *
-import RefShannon.run_parallel_cmds
+from RefShannon.run_parallel_cmds import run_cmds
 
-RNASeqReadSimulatorPath='RNASeqReadSimulator/' #folder path to store external software codes
+ROOT = os.path.dirname(__file__)
+RNASeqReadSimulatorPath='%s/RNASeqReadSimulator/'%(
+    parent_dir(ROOT)
+  ) #folder path to store external software codes
+pdb.set_trace()
 
 def process_new_transcript(out_dir, name_prefix, target_files, tr_info):
 
@@ -320,7 +324,7 @@ def sim_reads_G_B(args):
             for i in range(len(genome_trBed_list)):
                 curr_output_dir = '%s/sample_%d/%s/'% \
                                   (OutDir, j, genome_trBed_list[i][0])
-                cmd = 'python sim_reads.py --simReads'
+                cmd = 'python %s/sim_reads.py --simReads'%ROOT
                 cmd += ' -g %s -b %s -O %s %s -l %d -r %f %s %s'% \
                        (genome_trBed_list[i][1][0], \
                         genome_trBed_list[i][1][1], \
@@ -345,7 +349,7 @@ def sim_reads_G_B(args):
             for i in range(len(genome_trBed_list)): #chrs
                 curr_output_dir = '%s/sample_%d/%s/'% \
                                   (OutDir, j, genome_trBed_list[i][0])
-                cmd = 'python sim_reads.py --simReads'
+                cmd = 'python %s/sim_reads.py --simReads'%ROOT
                 cmd += ' -g %s -b %s -O %s %s -l %d -r %f %s %s'% \
                        (genome_trBed_list[i][1][0], \
                         genome_trBed_list[i][1][1], \
@@ -369,9 +373,9 @@ def sim_reads_G_B(args):
 
         cmds = []
         for i in range(cnt):
-            cmd = 'python sim_reads.py --simReads -job %s/%d.txt'%(jobs_dir, i)
+            cmd = 'python %s/sim_reads.py --simReads -job %s/%d.txt'%(ROOT, jobs_dir, i)
             cmds.append(cmd)
-        run_parallel_cmds.run_cmds(cmds, nJobs)
+        run_cmds(cmds, nJobs)
 
         run_cmd('rm -r %s'%jobs_dir)
         #pdb.set_trace()

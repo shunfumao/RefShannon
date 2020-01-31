@@ -1,6 +1,8 @@
 import sys, tester, random, os
 from RefShannon.util import *
-import RefShannon.run_parallel_cmds
+from RefShannon.run_parallel_cmds import run_cmds
+
+ROOT = os.path.dirname(__file__)
 
 def genPerLog(args):
 
@@ -10,7 +12,7 @@ def genPerLog(args):
 
     print('genPerLog: to generate perFile')
 
-    run_cmd('python blat.py {} {} {}'.format(recFa, refFa, perFile))
+    run_cmd('python {}/blat.py {} {} {}'.format(ROOT, recFa, refFa, perFile))
 
     logFile = args[args.index('--log')+1]
 
@@ -312,7 +314,7 @@ def calcROC_Parallel(args):
         pdb.set_trace()
         for cutoff in range(10):
             tmpFile = '%s/%d.txt'%(tmpFld, cutoff)
-            cmd = 'python analyze_simData_ROC.py --calcROC_1Point '+ \
+            cmd = 'python %s/analyze_simData_ROC.py --calcROC_1Point '%ROOT + \
                   '-c %d '%cutoff+ \
                   '-o %s '%tmpFile+ \
                   '-a %s '%abFile+ \
@@ -323,14 +325,14 @@ def calcROC_Parallel(args):
 
         cmds = []
         for i in range(10):
-            cmd = 'python analyze_simData_ROC.py --calcROC_1Point '+ \
+            cmd = 'python %s/analyze_simData_ROC.py --calcROC_1Point '%ROOT + \
                   '-c %d '%i+ \
                   '-o %s/%d.txt '%(tmpFld, i)+ \
                   '-a %s '%abFile+ \
                   '%s %s '%(f_format, recFile)+ \
                   '-f %s '%fpLogFile
             cmds.append(cmd)
-            run_parallel_cmds.run_cmds(cmds, nJobs)
+            run_cmds(cmds, nJobs)
 
     #merge
     rec_fp = []
@@ -436,13 +438,13 @@ def batch_SE():
         fpLogFile = kal_prefix + '_fp_log.txt'
         rocFile = kal_prefix + '_kal_roc.txt'        
 
-        cmd = 'python analyze_simData_ROC.py --kallisto -o %s '%kal_prefix + \
+        cmd = 'python %s/analyze_simData_ROC.py --kallisto -o %s '%(ROOT, kal_prefix) + \
               '--rec %s '%Trec + \
               '-r1 %s '%reads[0] + \
               '-t 20'
         #os.system(cmd)
 
-        cmd = 'python analyze_simData_ROC.py --calcROC -o %s '%rocFile + \
+        cmd = 'python %s/analyze_simData_ROC.py --calcROC -o %s '%(ROOT, rocFile) + \
               '-a %s '%abFile + \
               '-p %s '%recPerFile + \
               '-f %s '%fpLogFile + \
@@ -478,14 +480,14 @@ def batch_PE():
         fpLogFile = kal_prefix + '_fp_log.txt'
         rocFile = kal_prefix + '_kal_roc.txt'        
 
-        cmd = 'python analyze_simData_ROC.py --kallisto -o %s '%kal_prefix + \
+        cmd = 'python %s/analyze_simData_ROC.py --kallisto -o %s '%(ROOT, kal_prefix) + \
               '--rec %s '%Trec + \
               '-r1 %s '%reads[0] + \
               '-r2 %s '%reads[1] + \
               '-t 20'
         #os.system(cmd)
 
-        cmd = 'python analyze_simData_ROC.py --calcROC -o %s '%rocFile + \
+        cmd = 'python %s/analyze_simData_ROC.py --calcROC -o %s '%(ROOT, rocFile) + \
               '-a %s '%abFile + \
               '-p %s '%recPerFile + \
               '-f %s '%fpLogFile + \
@@ -589,7 +591,7 @@ def eval_sens_fp_using_filter_Trec_Kal():
             dst_fld = '%s/filteredFasta/%s/'%(kal_prefix_fld, t)
             Trec = '%s/%s.fasta'%(dst_fld, prefix)
 
-            cmd = 'python filter_FP_batch.py --eval1Job ' + \
+            cmd = 'python %s/filter_FP_batch.py --eval1Job '%ROOT + \
                   '-t %s '%Tref + \
                   '-r %s '%Trec + \
                   '-O %s'%dst_fld

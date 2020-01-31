@@ -6,6 +6,9 @@ import pdb
 import os
 from RefShannon.util import run_cmd
 
+ROOT = os.path.dirname(__file__)
+pdb.set_trace()
+
 def load_stat_file(stat_file):
 
     #'org_sid\tcomp_id\tnum_nodes\n
@@ -76,7 +79,7 @@ def run_sf(sg_dir, res_dir, tr_name_tag, target_str, scheduler_file_index, F_val
     for i in range(len(component_list)):
         ncomp = component_list[i]
         sys.stdout.write('\r%d/%d of components processed %s'%((i+1), len(component_list), target_str)); sys.stdout.flush()
-        run_cmd('python algorithm_SF.py ' + str(ncomp) + ' -I '+ sg_dir + ' -O ' + res_dir + \
+        run_cmd('python %s/algorithm_SF.py '%ROOT + str(ncomp) + ' -I '+ sg_dir + ' -O ' + res_dir + \
             ' -tr_name_tag ' + tr_name_tag + ' ' + target_str + ' -F %f '%F_val + outputFasta_str)
 
     print('')

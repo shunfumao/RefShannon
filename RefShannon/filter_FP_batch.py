@@ -1,7 +1,9 @@
-import sys, pdb, math
+import sys, pdb, math, os
 #from filter_FP.filter_FP import *
 from RefShannon.util import run_cmd
-import RefShannon.run_parallel_cmds
+from RefShannon.run_parallel_cmds import run_cmds
+
+ROOT = os.path.dirname(__file__)
 
 def process_oneThreshold(args):
 
@@ -60,7 +62,8 @@ def process_multiThresholds(args):
 
         for fp_rec_file, name_tag in fp_rec_files:
 
-            cmd = 'python refShannon.py --eval -i %s -r %s -O %s -n %s'%(fp_rec_file, ref_file, out_dir2, name_tag)
+            cmd = 'python %s/refShannon.py --eval -i %s -r %s -O %s -n %s'%(
+                ROOT, fp_rec_file, ref_file, out_dir2, name_tag)
             run_cmd(cmd)
     return
 
@@ -207,9 +210,10 @@ def cut_file_parallel(args):
 
     cmds = []
     for i in range(numSplit):
-        cmd = 'python filter_FP_batch.py --cutFile1Job -i %s -O %s -c %d -s %d'%(in_name, out_dir, i, splitSize)
+        cmd = 'python %s/filter_FP_batch.py --cutFile1Job -i %s -O %s -c %d -s %d'%(
+            ROOT, in_name, out_dir, i, splitSize)
         cmds.append(cmd)
-    run_parallel_cmds.run_cmds(cmds, nJobs)
+    run_cmds(cmds, nJobs)
 
 
     return
@@ -374,7 +378,7 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
     resFile = '%s/%s_res.txt'%(out_dir, resNameStem) 
     
     #gen log & per
-    cmd = 'python analyze_simData_ROC.py --genPerLog --ref %s '%Tref + \
+    cmd = 'python %s/analyze_simData_ROC.py --genPerLog --ref %s '%(ROOT, Tref) + \
                                           '--rec %s '%Trec + \
                                           '--per %s '%perFile + \
                                           '--log %s'%logFile
@@ -382,7 +386,7 @@ def eval_1Job(args): #Tref & Trec --> per, log, fplog --> sens & fp
 
 
     #gen fpLog
-    cmd = 'python analyze_simData_ROC.py --genFpLog --rec %s '%Trec + \
+    cmd = 'python %s/analyze_simData_ROC.py --genFpLog --rec %s '%(ROOT, Trec) + \
                                          '--per %s '%perFile + \
                                          '-o   %s'%fpLogFile
     run_cmd(cmd)

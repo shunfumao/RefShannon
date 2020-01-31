@@ -3,6 +3,8 @@ import sys, os, pdb
 
 from RefShannon.dep_path import extAssembler_paths, tool_paths
 
+ROOT = os.path.dirname(__file__)
+
 '''
 dependencies:
 
@@ -99,6 +101,8 @@ def do_extAssembler_i_g(args):
 
     if assembler=='cufflinks':
         gtfFile = res_dir + '/transcripts.gtf'
+    elif assembler=='strawberry':
+        gtfFile = res_dir + '/assembled_transcripts.gtf'
     else:
         gtfFile = res_dir + '/%s.gtf'%name_tag
     fastaFile = res_dir + '/%s.fasta'%name_tag
@@ -143,8 +147,6 @@ def do_extAssembler_i_g(args):
     elif assembler == 'strawberry':
         cmd = '%s -o %s --no-quant -p %d %s'%(
             extAssembler_paths["strawberry"], parent_dir(gtfFile), N_jobs, FileToUse)
-        print(cmd)
-        pdb.set_trace()
 
     run_cmd(cmd)
 
@@ -171,7 +173,7 @@ def do_extAssembler_I_g(args):
     tmpFolder = parent_dir(multi_genomeFile)+'/tmp_do_extAssembler_I_g/'
     run_cmd('mkdir -p %s'%tmpFolder)
 
-    cmd = 'python util.py --splitMultiFasta -i %s -O %s'%(multi_genomeFile, tmpFolder)
+    cmd = 'python %s/util.py --splitMultiFasta -i %s -O %s'%(ROOT, multi_genomeFile, tmpFolder)
     run_cmd(cmd)
 
     args.append('-G')

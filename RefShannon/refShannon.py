@@ -2,8 +2,11 @@ import sys, pdb, os
 from RefShannon.util import *
 from RefShannon.sf import load_stat_file, build_scheduler_files
 import RefShannon.tester
-import RefShannon.run_parallel_cmds
+from RefShannon.run_parallel_cmds import run_cmds
 from memory_profiler import profile
+
+ROOT = os.path.dirname(__file__)
+pdb.set_trace()
 
 '''
 reads --> sam
@@ -41,21 +44,21 @@ python refShannon.py --batch -I chrs_dir [-G genome_dir] [-O out_dir] [-chrs chr
 
 def do_alignment(args):
 
-    cmd = 'python aligner_star.py %s'%(' '.join(args[2:]))
+    cmd = 'python %s/aligner_star.py %s'%(ROOT, ' '.join(args[2:]))
     run_cmd(cmd)
 
     return
 
 def do_split(args):
 
-    cmd = 'python split.py %s'%(' '.join(args[2:]))
+    cmd = 'python %s/split.py %s'%(ROOT, ' '.join(args[2:]))
     run_cmd(cmd)
 
     return
 
 def do_sg_i_g(args):
 
-    cmd = 'python gen_sg2.py %s'%(' '.join(args)) #(' '.join(args[2:]))
+    cmd = 'python %s/gen_sg2.py %s'%(ROOT, ' '.join(args)) #(' '.join(args[2:]))
     run_cmd(cmd)
 
     return
@@ -101,7 +104,8 @@ def do_sg_I_g(args):
 
             sam_file = chrs_dir + '/' + target + '/hits.sam'
             target_out_dir = '%s/%s/'%(out_dir, target)
-            cmd = 'python gen_sg2.py -i %s %s -O %s %s -target %s -F %f'%(sam_file, multi_genome_file, target_out_dir, paired, target, F_val)
+            cmd = 'python %s/gen_sg2.py -i %s %s -O %s %s -target %s -F %f'%(
+                ROOT, sam_file, multi_genome_file, target_out_dir, paired, target, F_val)
             run_cmd(cmd)
 
     elif nJobs>1:
@@ -112,10 +116,10 @@ def do_sg_I_g(args):
 
         cmds = []
         for target in target_list:
-            cmd = 'python gen_sg2.py -i %s/%s/hits.sam %s -O %s/%s/ %s -target %s -F %f'% \
-                  (chrs_dir, target, multi_genome_file, out_dir, target, paired, target, F_val)
+            cmd = 'python %s/gen_sg2.py -i %s/%s/hits.sam %s -O %s/%s/ %s -target %s -F %f'% \
+                  (ROOT, chrs_dir, target, multi_genome_file, out_dir, target, paired, target, F_val)
             cmds.append(cmd)
-        run_parallel_cmds.run_cmds(cmds, nJobs)
+        run_cmds(cmds, nJobs)
         
 
     return
@@ -163,9 +167,11 @@ def do_sg_I_G(args):
             sam_file = chrs_dir + '/' + target + '/hits.sam'
             target_out_dir = '%s/%s/'%(out_dir, target)
             if genome_dir != '':
-                cmd = 'python gen_sg2.py -i %s -g %s/%s.fa -O %s %s -target %s -F %f'%(sam_file, genome_dir, target, target_out_dir, paired, target, F_val)
+                cmd = 'python %s/gen_sg2.py -i %s -g %s/%s.fa -O %s %s -target %s -F %f'%(
+                    ROOT, sam_file, genome_dir, target, target_out_dir, paired, target, F_val)
             else:
-                cmd = 'python gen_sg2.py -i %s -O %s %s -target %s -F %f'%(sam_file, target_out_dir, paired, target, F_val)
+                cmd = 'python %s/gen_sg2.py -i %s -O %s %s -target %s -F %f'%(
+                    ROOT, sam_file, target_out_dir, paired, target, F_val)
             run_cmd(cmd)
 
     elif nJobs>1:
@@ -177,13 +183,13 @@ def do_sg_I_G(args):
         cmds = []
         for target in target_list:
             if genome_dir != '':
-                cmd = 'python gen_sg2.py -i %s/%s/hits.sam -g %s/%s.fa -O %s/%s/ %s -target %s -F %f'% \
-                      (chrs_dir, target, genome_dir, target, out_dir, target, paired, target, F_val)
+                cmd = 'python %s/gen_sg2.py -i %s/%s/hits.sam -g %s/%s.fa -O %s/%s/ %s -target %s -F %f'% \
+                      (ROOT, chrs_dir, target, genome_dir, target, out_dir, target, paired, target, F_val)
             else:
-                cmd = 'python gen_sg2.py -i %s/%s/hits.sam -O %s/%s/ %s -target %s -F %f'% \
-                      (chrs_dir, target, out_dir, target, paired, target, F_val)
+                cmd = 'python %s/gen_sg2.py -i %s/%s/hits.sam -O %s/%s/ %s -target %s -F %f'% \
+                      (ROOT, chrs_dir, target, out_dir, target, paired, target, F_val)
             cmds.append(cmd)
-        run_parallel_cmds.run_cmds(cmds, nJobs)
+        run_cmds(cmds, nJobs)
 
     return
 
@@ -242,11 +248,12 @@ def do_sf_I(args):
     stat_file = sg_dir + '/stats.txt'
 
     #single node
-    run_cmd('python algorithm_SF.py -1 -I '+ sg_dir + ' -O ' + res_dir + \
+    run_cmd('python %s/algorithm_SF.py -1 -I '%ROOT + sg_dir + ' -O ' + res_dir + \
             ' -tr_name_tag ' + tr_name_tag + target_str + ' -F %f '%F_val + outputFasta_str)
 
     if N_jobs == 1:        
-        cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d %s'%(sg_dir, res_dir, tr_name_tag, target_str, F_val, -1, outputFasta_str)
+        cmd = 'python %s/sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d %s'%(
+            ROOT, sg_dir, res_dir, tr_name_tag, target_str, F_val, -1, outputFasta_str)
         run_cmd(cmd)
 
     elif N_jobs > 1:
@@ -259,10 +266,10 @@ def do_sf_I(args):
 
         cmds = []
         for si in scheduler_indice:
-            cmd = 'python sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d %s' \
-              %(sg_dir, res_dir, tr_name_tag, target_str, F_val, si, outputFasta_str)
+            cmd = 'python %s/sf.py -I %s -O %s -tr_name_tag %s %s -F %f -scheduler_index %d %s' \
+              %(ROOT, sg_dir, res_dir, tr_name_tag, target_str, F_val, si, outputFasta_str)
             cmds.append(cmd)
-        run_parallel_cmds.run_cmds(cmds, N_jobs)
+        run_cmds(cmds, N_jobs)
         
         cmd = 'rm %s/scheduler*.txt'%sg_dir
         run_cmd(cmd)
@@ -365,7 +372,7 @@ def do_eval_i(args):
     per_file = out_dir + '/%s_per.txt'%name_tag
     log_file = out_dir + '/%s_log.txt'%name_tag
 
-    run_cmd('python blat.py {} {} {}'.format(fa_file, ref_file, per_file))
+    run_cmd('python {}/blat.py {} {} {}'.format(ROOT, fa_file, ref_file, per_file))
     tester.analyzer_blat_noExp(per_file, log_file, '', 0)
 
     return

@@ -147,8 +147,24 @@ def do_extAssembler_i_g(args):
     elif assembler == 'strawberry':
         cmd = '%s -o %s --no-quant -p %d %s'%(
             extAssembler_paths["strawberry"], parent_dir(gtfFile), N_jobs, FileToUse)
+    elif assembler == 'ryuto':
+        ryuto_dir = parent_dir(gtfFile)
+        cmd = 'mkdir -p %s'%ryuto_dir
+        run_cmd(cmd)
 
+        cmd = '%s index %s'%(tool_paths["samtools"], FileToUse)
+        run_cmd(cmd)
+
+        cmd = '%s %s'%(
+            extAssembler_paths["ryuto"], FileToUse)
+
+    # pdb.set_trace()
     run_cmd(cmd)
+
+    if assembler == 'ryuto':
+      cmd = 'mv transcripts.gtf %s'%gtfFile
+      pdb.set_trace()
+      run_cmd(cmd)
 
     cmd = '%s -w %s -g %s %s'%(tool_paths["gffread"], fastaFile, genomeFile, gtfFile)
     run_cmd(cmd)

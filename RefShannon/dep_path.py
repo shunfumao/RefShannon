@@ -4,6 +4,7 @@ extAssembler_paths = {
   "TransComb": "/home/shunfu/software/TransComb_v.1.0/TransComb",
   # gunzip < CLASS-2.1.7.tar.gz | tar -xvf -
   "CLASS2": "/home/shunfu/software/CLASS-2.1.7/run_class.pl",
+  "ryuto": "/home/shunfu/software/ryuto28/ryuto",
   "strawberry" : "/home/shunfu/software/strawberry1.0.2/strawberry",
   "scallop": "/home/shunfu/software/scallop-0.10.2_linux_x86_64/scallop",
 }

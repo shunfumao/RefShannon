@@ -25,6 +25,11 @@ tool_paths = {
   "gffcompare": "/home/shunfu/software/gffcompare-0.10.4.Linux_x86_64/gffcompare",
   # trinity depends on bowtie2, jellyfish and salmon
   "bowtie2": "bowtie2", # export in bashrc: /home/shunfu/software/bowtie2/bowtie2-2.3.5.1-linux-x86_64/
+  "bowtie2-build": "bowtie2-build",
   "jellyfish": "jellyfish", # export in bashrc: /home/shunfu/software/jellyfish/bin/
   "salmon": "salmon", # export in bashrc: /home/shunfu/software/salmon/salmon-latest_linux_x86_64/bin/
+  # TOADD
+  "tophat2": "tophat2",
+  "hisat2": "hisat2", # export in bashrc: /home/shunfu/software/hisat2/hisat2-2.1.0/
+  "hisat2-build": "hisat2-build",
 }

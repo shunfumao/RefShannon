@@ -18,6 +18,8 @@ usage:
 #TransComb: need tophat2 bam
 #CLASS2: need path/to/run_class.pl; BAM format sorted by chromosome and position
 #scallop: need sorted bam file; need XS tag or library type.
+#strawberry: need sorted bam file
+#ryuto: need to move its default gtf to another location (-o does not work)
 
 python run_extAssembler.py [--assembler assemblerName] [--maxSens] (e.g. stringtie/cufflinks/TransComb/CLASS2/scallop. default stringtie) -i sam_file -g genomeFile [-O out_dir] [-N N_jobs] [-n name_tag] [-addHead] [-clear] [-NoSeperatedLines]
 
@@ -157,9 +159,18 @@ def do_extAssembler_i_g(args):
 
         cmd = '%s %s'%(
             extAssembler_paths["ryuto"], FileToUse)
+    elif assembler == 'trinity':
+        trinity_out_dir = parent_dir(gtfFile)
+        cmd = 'mkdir -p %s'%trinity_out_dir
+        run_cmd(cmd)
 
-    # pdb.set_trace()
+        cmd = '%s --genome_guided_bam %s '%(extAssembler_paths["trinity"], FileToUse)+\
+              '--genome_guided_max_intron 10000 '+\
+              '--max_memory 10G --CPU %d --output %s --full_cleanup'%(N_jobs, trinity_out_dir)
+
+    pdb.set_trace()
     run_cmd(cmd)
+    pdb.set_trace()
 
     if assembler == 'ryuto':
       cmd = 'mv transcripts.gtf %s'%gtfFile

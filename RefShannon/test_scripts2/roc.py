@@ -1,10 +1,14 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 from RefShannon.util import *
 import pdb, subprocess, os
 from RefShannon.run_parallel_cmds import run_cmds
 
-
 PATH = os.path.dirname(__file__)
 ROOT = parent_dir(PATH)
+
+pdb.set_trace()
 
 def exAssembler_roc(args):
   alignment, genomeFile, cases, resDir, reference, nJobs = args

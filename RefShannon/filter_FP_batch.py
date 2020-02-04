@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import sys, pdb, math, os
 #from filter_FP.filter_FP import *
 from RefShannon.util import run_cmd

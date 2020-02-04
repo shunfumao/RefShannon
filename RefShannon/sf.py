@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 #a wrapper to run sparse flow
 #python sf.py chrs_loc target scheduler_file_index python_path shannon_dir
 

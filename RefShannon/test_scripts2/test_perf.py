@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 """
 Performance Evaluation
 """
@@ -7,6 +10,11 @@ from RefShannon.test_scripts2.roc import \
 
 from RefShannon.test_scripts2.test_path import \
   path_test_exAssembler_roc, path_test_refShannon_roc
+
+def test_relative_path():
+  import pdb
+  pdb.set_trace()
+  return
 
 def test_refShannon_roc():
   args = (
@@ -35,5 +43,7 @@ def test_exAssembler_roc():
   return
 
 if __name__ == "__main__":
+  test_relative_path()
+
   # test_refShannon_roc()
-  test_exAssembler_roc()
+  # test_exAssembler_roc()

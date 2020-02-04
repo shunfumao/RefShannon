@@ -7,7 +7,8 @@ setup(
   description = 'RefShannon',
   url='https://github.com/shunfumao/RefShannon',
   author='Shunfu Mao',
-  install_requires=['pandas'
+  install_requires=['pandas',
+                    'pathlib'
                    ],
   packages = find_packages()
 )

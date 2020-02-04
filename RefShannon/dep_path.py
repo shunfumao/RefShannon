@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 extAssembler_paths = {
   "stringtie": "/home/shunfu/software/stringtie-1.3.4d.Linux_x86_64/stringtie",
   "cufflinks": "/home/shunfu/software/cufflinks-2.2.1.Linux_x86_64/cufflinks",

@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import sys, tester, random, os
 from RefShannon.util import *
 from RefShannon.run_parallel_cmds import run_cmds

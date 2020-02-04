@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import subprocess, re, time, sys, os, shutil, pdb
 
 def run_cmd(cmd, shell=True):

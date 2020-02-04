@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import sys, pdb, os
 from RefShannon.util import *
 from RefShannon.sf import load_stat_file, build_scheduler_files

@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import operator, pdb, os, sys
 #from Bio.Seq import Seq
 #from Bio.Alphabet import generic_dna

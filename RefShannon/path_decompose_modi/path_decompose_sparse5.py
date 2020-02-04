@@ -1,3 +1,6 @@
+from pathlib import Path
+print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+
 import pdb, heapq, copy, numpy
 from numpy import linalg as LA
 from cvxopt import matrix, solvers, spmatrix, printing

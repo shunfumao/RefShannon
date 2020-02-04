@@ -7,7 +7,7 @@ import os
 from RefShannon.util import run_cmd
 
 ROOT = os.path.dirname(__file__)
-pdb.set_trace()
+# pdb.set_trace()
 
 def load_stat_file(stat_file):
 

@@ -3,10 +3,10 @@ from RefShannon.util import *
 from RefShannon.sf import load_stat_file, build_scheduler_files
 import RefShannon.tester
 from RefShannon.run_parallel_cmds import run_cmds
-from memory_profiler import profile
+# from memory_profiler import profile
 
 ROOT = os.path.dirname(__file__)
-pdb.set_trace()
+# pdb.set_trace()
 
 '''
 reads --> sam

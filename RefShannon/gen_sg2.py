@@ -14,7 +14,7 @@ from pyfaidx import Fasta
 ALLOWED_HOLE = 10 # <= ALLOWED_HOLE, interpolate directly
 MAX_HOLE = 200 # >= MAX_HOLE, no interpolate
 
-outputFasta = False #if False, regardless of -g genome_file would disable fasta output
+outputFasta = True #if False, regardless of -g genome_file would disable fasta output
 
 '''
 

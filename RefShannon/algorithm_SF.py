@@ -74,7 +74,7 @@ else:
 
 outputGTF = True
 
-outputFasta = False #default False
+outputFasta = True #default False
 if '--outputFasta' in args:
     outputFasta = True
 
@@ -654,6 +654,7 @@ class Graph(object):    ## Graph object (used universally)
         overlap:  THe amount of bases of overlap between the last node in the path and the current node.
         prev_weight:  The wieght of thw last node in the path.  
         '''
+        # pdb.set_trace()
         if outputFasta==False:
             curr_str = str_till_now + '*' # *** (no START_)
         else:

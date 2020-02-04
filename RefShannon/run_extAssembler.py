@@ -103,11 +103,18 @@ def do_extAssembler_i_g(args):
 
     if assembler=='cufflinks':
         gtfFile = res_dir + '/transcripts.gtf'
+        fastaFile = res_dir + '/%s.fasta'%name_tag
     elif assembler=='strawberry':
         gtfFile = res_dir + '/assembled_transcripts.gtf'
+        fastaFile = res_dir + '/%s.fasta'%name_tag
+    elif assembler=='trinity':
+        gtfFile = None
+        fastaFile_original = res_dir + '/Trinity-GG.fasta' 
+        fastaFile = res_dir + '/%s.fasta'%name_tag
+        # pdb.set_trace()
     else:
         gtfFile = res_dir + '/%s.gtf'%name_tag
-    fastaFile = res_dir + '/%s.fasta'%name_tag
+        fastaFile = res_dir + '/%s.fasta'%name_tag
 
     if addHead==True:
         FileToUse = bamFileSorted
@@ -160,7 +167,7 @@ def do_extAssembler_i_g(args):
         cmd = '%s %s'%(
             extAssembler_paths["ryuto"], FileToUse)
     elif assembler == 'trinity':
-        trinity_out_dir = parent_dir(gtfFile)
+        trinity_out_dir = parent_dir(fastaFile)
         cmd = 'mkdir -p %s'%trinity_out_dir
         run_cmd(cmd)
 
@@ -168,17 +175,22 @@ def do_extAssembler_i_g(args):
               '--genome_guided_max_intron 10000 '+\
               '--max_memory 10G --CPU %d --output %s --full_cleanup'%(N_jobs, trinity_out_dir)
 
-    pdb.set_trace()
+    # pdb.set_trace()
     run_cmd(cmd)
-    pdb.set_trace()
+    # pdb.set_trace()
 
     if assembler == 'ryuto':
       cmd = 'mv transcripts.gtf %s'%gtfFile
-      pdb.set_trace()
+      # pdb.set_trace()
       run_cmd(cmd)
+    elif assembler == 'trinity':
+      cmd = 'cp %s %s'%(fastaFile_original, fastaFile)
+      run_cmd(cmd)
+      # pdb.set_trace()
 
-    cmd = '%s -w %s -g %s %s'%(tool_paths["gffread"], fastaFile, genomeFile, gtfFile)
-    run_cmd(cmd)
+    if assembler != 'trinity':  # trinity excluded
+      cmd = '%s -w %s -g %s %s'%(tool_paths["gffread"], fastaFile, genomeFile, gtfFile)
+      run_cmd(cmd)
 
     if NoSeperatedLines==True:
         fastaFile2 = res_dir + '/%s2.fasta'%name_tag

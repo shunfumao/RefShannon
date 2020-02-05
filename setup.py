@@ -8,7 +8,8 @@ setup(
   url='https://github.com/shunfumao/RefShannon',
   author='Shunfu Mao',
   install_requires=['pandas',
-                    'pathlib'
+                    'pathlib',
+                    'pysam'
                    ],
   packages = find_packages()
 )

@@ -43,7 +43,7 @@ def test_exAssembler_roc():
   return
 
 if __name__ == "__main__":
-  test_relative_path()
+  # test_relative_path()
 
   # test_refShannon_roc()
-  # test_exAssembler_roc()
+  test_exAssembler_roc()

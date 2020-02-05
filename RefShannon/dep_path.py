@@ -4,8 +4,10 @@ print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resol
 extAssembler_paths = {
   "stringtie": "/home/shunfu/software/stringtie-1.3.4d.Linux_x86_64/stringtie",
   "cufflinks": "/home/shunfu/software/cufflinks-2.2.1.Linux_x86_64/cufflinks",
+  # need to install boost (./b2 install --prefix=/home/shunfu/local/boost_1_72_0), Bamtools, samtools, 
   "TransComb": "/home/shunfu/software/TransComb_v.1.0/TransComb",
   # gunzip < CLASS-2.1.7.tar.gz | tar -xvf -
+  # need to use build.sh for dependency issues
   "CLASS2": "/home/shunfu/software/CLASS-2.1.7/run_class.pl",
   "ryuto": "/home/shunfu/software/ryuto28/ryuto",
   "strawberry" : "/home/shunfu/software/strawberry1.0.2/strawberry",

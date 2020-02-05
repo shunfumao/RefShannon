@@ -91,7 +91,7 @@ path_test_refShannon_roc = {
   "nJobs": 20,
 }
 
-# """ turing
+""" turing
 path_test_exAssembler_roc = {
   # "alignment": "/data/shunfu/ref_shannon_modi/snyderSimChr15/hits.sorted.bam",
   # "alignment": "/data/shunfu/ref_shannon_modi/snyderSimChr15/tophat2.bam",
@@ -119,15 +119,20 @@ path_test_exAssembler_roc = {
 
   "nJobs": 20,
 }
-# """
-""" ksreeram
-path_test_roc = {
-  "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/hisat2.sorted.bam",
+"""
+#""" ksreeram
+path_test_exAssembler_roc = {
+  "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.bam",
+  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
+  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/hisat2.sorted.bam",
   "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
 
   "cases": [
     # ['stringtie', '', 'stringtie_DefaultParam'],
-    ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001'],
+    # ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001'],
+    ['TransComb', '', 'TransComb_DefaultParam'],
+    # ['CLASS2', '', 'CLASS2_DefaultParam'],
+    # ['scallop', '', 'scallop_DefaultParam'],
     # ['cufflinks', '', 'cufflinks_DefaultParam'],
     # ['cufflinks', '--maxSens', 'cufflinks_F_0.001'],
     # ['strawberry', '', 'strawberry_DefaultParam'],
@@ -135,10 +140,12 @@ path_test_roc = {
     # ['trinity', '', 'trinity_DefaultParam']
   ],
 
-  "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
+  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
+  "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_tophat2/test_exAssembler_roc/", # + case[0]/case[2]
+  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
 
   "reference": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
 
   "nJobs": 20,
 }
-"""
+#"""

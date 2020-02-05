@@ -43,7 +43,7 @@ path_test_aligner_hisat2 = {
   "wwSimHg19Hisat2": [
     # ksreeram
     "-g", "/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa",
-    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/wwSimHg19/hisat2.sam",
+    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/wwSimHg19_2/hisat2.sam",
     "-r", "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/ww_snyderRef/sim_reads.fa",
     # small file for test
     # "-r", "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/test_sgRefShannon/reads_1.fa",
@@ -54,7 +54,7 @@ path_test_aligner_hisat2 = {
   "snyderSimHg19Hisat2": [
     # ksreeram
     "-g", "/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa",
-    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimHg19/hisat2.sam",
+    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimHg19_2/hisat2.sam",
     "-r1", 
     "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/snyder/sim_reads_1.fq",
     # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/snyder/lc_sim_reads_100k_1.fq",
@@ -67,11 +67,13 @@ path_test_aligner_hisat2 = {
   "kidneySimHg19Hisat2": [
     # ksreeram
     "-g", "/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa",
-    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/kidneySimHg19/hisat2.sam",
+    "-o", "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/kidneySimHg19_2/hisat2.sam",
     "-r1", 
     "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/kidney_snyderRef/sim_reads_1.fq",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/snyder/lc_sim_reads_100k_1.fq",
     "-r2", 
     "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/kidney_snyderRef/sim_reads_2.fq",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/sim_star/snyder/lc_sim_reads_100k_2.fq",
     "-N", "20",
     "-sorted_bam"
   ], 

@@ -38,5 +38,5 @@ def test_split_bam():
   return
 
 if __name__ == "__main__":
-  # test_aligner_hisat2()
-  test_split_bam()
+  test_aligner_hisat2()
+  # test_split_bam()

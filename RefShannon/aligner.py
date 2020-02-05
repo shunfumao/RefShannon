@@ -110,7 +110,7 @@ def aligner_hisat2(args):
         tool_paths["samtools"], numThread, bam_file, sorted_bam_file)
       run_cmd(cmd)
 
-      cmd = 'rm %s %s'%(sam_file, bam_file)
+      cmd = 'rm %s'%(sam_file)
       run_cmd(cmd)
 
     return

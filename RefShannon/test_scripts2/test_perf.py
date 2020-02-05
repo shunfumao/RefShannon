@@ -17,17 +17,19 @@ def test_relative_path():
   return
 
 def test_refShannon_roc():
-  args = (
-      path_test_refShannon_roc["rootResDir"],
-      path_test_refShannon_roc["T"],
-      path_test_refShannon_roc["sam_file"],
-      path_test_refShannon_roc["genomeFile"],
-      path_test_refShannon_roc["pairedStr"],
-      path_test_refShannon_roc["chrom"],
-      path_test_refShannon_roc["Tref"],
-      path_test_refShannon_roc["nJobs"]
-    )
-  refShannon_roc(args)
+  for case in path_test_refShannon_roc.keys():
+    case_args = path_test_refShannon_roc[case]
+    args = (
+        case_args["rootResDir"],
+        case_args["T"],
+        case_args["sam_file"],
+        case_args["genomeFile"],
+        case_args["pairedStr"],
+        case_args["chrom"],
+        case_args["Tref"],
+        case_args["nJobs"]
+      )
+    refShannon_roc(args)
   return
 
 def test_exAssembler_roc():

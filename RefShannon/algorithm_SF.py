@@ -1,7 +1,8 @@
+from __future__ import division
+
 from pathlib import Path
 print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
 
-from __future__ import division
 from cvxopt import matrix,spmatrix, solvers, spdiag, sparse
 import copy,random, numpy
 import pdb

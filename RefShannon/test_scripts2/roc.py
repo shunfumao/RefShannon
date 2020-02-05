@@ -8,8 +8,6 @@ from RefShannon.run_parallel_cmds import run_cmds
 PATH = os.path.dirname(__file__)
 ROOT = parent_dir(PATH)
 
-pdb.set_trace()
-
 def exAssembler_roc(args):
   alignment, genomeFile, cases, resDir, reference, nJobs = args
   
@@ -26,6 +24,7 @@ def exAssembler_roc(args):
           '-n %s '%case[0] + \
           '-NoSeperatedLines'
     print(cmd)
+    # pdb.set_trace()
     run_cmd(cmd)
 
     #eval
@@ -93,6 +92,7 @@ def gen_res(args):
     cmd = 'rm %s'%(Tref1)
     rm_ref_cmds.append(cmd)
 
+  pdb.set_trace()
   run_cmds(sg_cmds,noJobs=nJobs)
   # pdb.set_trace()
   run_cmds(sf_cmds,noJobs=nJobs)

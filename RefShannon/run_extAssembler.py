@@ -152,7 +152,8 @@ def do_extAssembler_i_g(args):
 
         else:
             cmd = 'perl %s -a %s -o %s -p %d'%(
-              extAssembler_paths["CLASS2"], FileToUse, gtfFile, N_jobs)        
+              extAssembler_paths["CLASS2"], FileToUse, gtfFile, N_jobs)   
+        cmd = cmd + ' --wd %s/class_tmp/ --clean'%(parent_dir(gtfFile))     
     elif assembler=='scallop':
         cmd = '%s -i %s -o %s'%(
           extAssembler_paths["scallop"] ,FileToUse, gtfFile)
@@ -180,7 +181,7 @@ def do_extAssembler_i_g(args):
 
     pdb.set_trace()
     run_cmd(cmd)
-    pdb.set_trace()
+    # pdb.set_trace()
 
     if assembler == 'ryuto':
       cmd = 'mv transcripts.gtf %s'%gtfFile

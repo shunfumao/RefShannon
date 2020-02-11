@@ -179,7 +179,8 @@ def do_extAssembler_i_g(args):
               '--genome_guided_max_intron 10000 '+\
               '--max_memory 10G --CPU %d --output %s --full_cleanup'%(N_jobs, trinity_out_dir)
 
-    pdb.set_trace()
+    # pdb.set_trace()
+    print(cmd)
     run_cmd(cmd)
     # pdb.set_trace()
 

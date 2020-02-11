@@ -99,17 +99,17 @@ path_test_split_bam = {
   #   'combine': False,
   #   'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/wwSimHg19_hisat2/',
   # },
-  "snyderSimHg19Star": {
-    # ksreeram, snyderSimHg19, STAR
-    # 'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam',
-    'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam', # unsorted
-    'chroms':'chr1,chr15',
-    'output_sam':False,
-    'nJobs':20,
-    'ratio': 0.05,
-    'combine': True,
-    'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05/',
-  },
+  # "snyderSimHg19Star": {
+  #   # ksreeram, snyderSimHg19, STAR
+  #   # 'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam',
+  #   'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam', # unsorted
+  #   'chroms':'chr1,chr15',
+  #   'output_sam':False,
+  #   'nJobs':20,
+  #   'ratio': 0.05,
+  #   'combine': True,
+  #   'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05/',
+  # },
   # "snyderSimHg19Hisat2": {
   #   # ksreeram, snyderSimHg19, hisat2
   #   # 'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimHg19/hisat2.sorted.bam',
@@ -121,6 +121,15 @@ path_test_split_bam = {
   #   'combine': False,
   #   'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/',
   # },
+  "snyderRealHg19Star": {
+    'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam', # unsorted
+    'chroms':'chr1,chr15',
+    'output_sam':False,
+    'nJobs':20,
+    'ratio': 0.05,
+    'combine': True,
+    'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/',
+  },
 }
 
 """
@@ -185,20 +194,52 @@ path_test_exAssembler_roc = {
 
 path_exAssembler_run = {
   'case': 
-    # ['stringtie', '', 'stringtie_DefaultParam'],
-    ['trinity', '', 'trinity_DefaultParam'],
+    ['stringtie', '', 'stringtie_DefaultParam'],
+    # ['trinity', '', 'trinity_DefaultParam'],
   'alignment': 
     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
-    '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+    '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/hits.sorted.bam', # dummy file
   'genomeFile':
     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
   'resDir':
     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
-    '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
+    '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
   'nJobs': 20,
+}
+
+path_test_gen_logs = {
+  'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+      'Trec':
+        # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie.fasta',
+      'resDir':
+        # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
+    },
+}
+
+path_test_gen_sens = {
+  'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+      'IM_list': [[1,100]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie_log.txt',
+      'cmpLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/snyder/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 101,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/sens_stringtie_trinity',
+      'ablist': '0.0,2.23,6.09,17.83,56.85,1e10',
+    },
 }
 
 #""" ksreeram

@@ -26,6 +26,84 @@ def exAssembler_run(args):
   run_cmd(cmd)
   return
 
+""" #########################################################################
+
+SENS for exAssembler and refShannon
+
+usually,
+- use exAssembler_run or refShannon_roc to generate fasta files
+- use gen_logs to generate logs (necessary for sim roc as well as real sens)
+- use gen_sens (need to first do gen_logs to get log files) for real sens analysis 
+
+""" #########################################################################
+
+def gen_logs(args):
+  """
+  a wrapper of filter_FP_batch.py (the blat will use MAX_PARALLEL_PROCESS processes)
+
+  Input:
+    Tref: ref transcriptome. Could be non-oracle (for Sim ROC) or oracle (for Real sens)
+    Trec: reconstructed transcriptome. e.g. path/to/[fn].fasta, from different assemblers
+  Output:
+    resDir/[fn]_log.txt ==> intermediate file useful for sens analysis
+          /[fn]_per.txt
+          /[fn]_fp_log.txt
+          /[fn]_res.txt ==> ROC perf
+  """
+
+  Tref, Trec, resDir = args
+  cmd = 'python %s/filter_FP_batch.py --eval1Job '%ROOT + \
+        '-t %s '%Tref + \
+        '-r %s '%Trec + \
+        '-O %s'%resDir
+  print(cmd)
+  run_cmd(cmd)
+  return
+
+def gen_sens(args):
+  """
+  a wrapper of analyze_realData_sensitivity.py
+
+  Input:
+    IM_list: list of [low, high] for isoform multiplicity
+    oracleFa: reference fasta file (well covered by reads)
+    numIsoFile: records 'tid gid cnt' to indicate the isoform multiplicity of transcripts
+    recLog: log file for assembler 1
+    cmpLog: log file for assembler 2
+    L:
+    S:
+    ablist: abundance list for grouping
+  Output:
+    outFileStem: will output [outFileStem]_isoL[d1]_isoH[d2].txt 
+  """
+  IM_list, oracleFa, numIsoFile, \
+  recLog, cmpLog, \
+  expFile, expFormat, L, S, outFileStem, ablist = args 
+
+  for iL, iH in IM_list:
+    print('---------- iL=%d, iH=%d ----------'%(iL, iH))
+    cmd = 'python %s/analyze_realData_sensitivity.py '%ROOT+\
+          '--performancePlotExpress '+\
+          '--oracleFa %s '%oracleFa+\
+          '--numIsoFile %s '%numIsoFile+\
+          '--recLog %s '%recLog+\
+          '--cmpLog %s '%cmpLog+\
+          '--expFile %s '%expFile+\
+          '--expFormat %s '%expFormat+\
+          '-L %d -S %d --isoLow %d --isoHigh %d '%(L,S,iL,iH)+\
+          '--o %s_isoL%d_isoH%d.txt '%(outFileStem, iL, iH)+\
+          '--ablist %s'%(ablist)
+    pdb.set_trace()
+    run_cmd(cmd)
+
+  return
+
+""" #########################################################################
+
+ROC specific for exAssembler
+
+""" #########################################################################
+
 def exAssembler_roc(args):
   alignment, genomeFile, cases, resDir, reference, nJobs = args
   
@@ -48,17 +126,20 @@ def exAssembler_roc(args):
     cmd = 'cp %s %s'%(reference, Tref1)
     run_cmd(cmd)
 
-    cmd = 'python %s/filter_FP_batch.py --eval1Job '%ROOT + \
-          '-t %s '%Tref1 + \
-          '-r %s '%Trec + \
-          '-O %s'%resDir2
-    run_cmd(cmd)
+    gen_logs_args = (Tref1, Trec, resDir2)
+    gen_logs(gen_logs_args)
 
     cmd = 'rm %s'%(Tref1)
     run_cmd(cmd)
 
     print('%s done'%resDir)
   return
+
+""" #########################################################################
+
+ROC specific for refShannon
+
+""" #########################################################################
 
 def gen_res(args):
   rootResDir, T, sam_file, genomeFile, pairedStr, chrom, Tref, nJobs = args

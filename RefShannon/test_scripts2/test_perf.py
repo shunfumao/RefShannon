@@ -5,11 +5,13 @@ print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resol
 Performance Evaluation
 """
 
-from RefShannon.test_scripts2.roc import \
-  exAssembler_run, exAssembler_roc, refShannon_roc
+from RefShannon.test_scripts2.roc_sens import \
+  exAssembler_run, gen_logs, gen_sens, \
+  exAssembler_roc, refShannon_roc
 
 from RefShannon.test_scripts2.test_path import \
-  path_exAssembler_run, path_test_exAssembler_roc, path_test_refShannon_roc
+  path_exAssembler_run, path_test_gen_logs, path_test_gen_sens, \
+  path_test_exAssembler_roc, path_test_refShannon_roc
 
 def test_relative_path():
   import pdb
@@ -42,6 +44,36 @@ def test_exAssembler_run():
   exAssembler_run(args) 
   return
 
+def test_gen_logs():
+  for case_key in path_test_gen_logs.keys():
+    case = path_test_gen_logs[case_key]
+    case_args = (
+      case['Tref'],
+      case['Trec'],
+      case['resDir']
+      )
+    gen_logs(case_args)
+  return
+
+def test_gen_sens():
+  for case_key in path_test_gen_sens.keys():
+    case = path_test_gen_sens[case_key]
+    case_args = (
+      case['IM_list'],
+      case['oracleFa'],
+      case['numIsoFile'],
+      case['recLog'],
+      case['cmpLog'],
+      case['expFile'],
+      case['expFormat'],
+      case['L'],
+      case['S'],
+      case['outFileStem'],
+      case['ablist']
+      )
+    gen_sens(case_args)
+  return
+
 def test_exAssembler_roc():
   args = (
     path_test_exAssembler_roc["alignment"],
@@ -57,7 +89,15 @@ def test_exAssembler_roc():
 if __name__ == "__main__":
   # test_relative_path()
 
-  test_exAssembler_run()
+  """
+  sens of exAssembler
+  """
+  # test_exAssembler_run()
+  # test_gen_logs()
+  test_gen_sens()
 
+  """
+  roc
+  """
   # test_refShannon_roc()
   # test_exAssembler_roc()

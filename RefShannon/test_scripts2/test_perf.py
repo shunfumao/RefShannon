@@ -6,10 +6,10 @@ Performance Evaluation
 """
 
 from RefShannon.test_scripts2.roc import \
-  exAssembler_roc, refShannon_roc
+  exAssembler_run, exAssembler_roc, refShannon_roc
 
 from RefShannon.test_scripts2.test_path import \
-  path_test_exAssembler_roc, path_test_refShannon_roc
+  path_exAssembler_run, path_test_exAssembler_roc, path_test_refShannon_roc
 
 def test_relative_path():
   import pdb
@@ -32,6 +32,16 @@ def test_refShannon_roc():
     refShannon_roc(args)
   return
 
+def test_exAssembler_run():
+  args = (
+    path_exAssembler_run['case'],
+    path_exAssembler_run['alignment'],
+    path_exAssembler_run['genomeFile'],
+    path_exAssembler_run['resDir'],
+    path_exAssembler_run['nJobs'])
+  exAssembler_run(args) 
+  return
+
 def test_exAssembler_roc():
   args = (
     path_test_exAssembler_roc["alignment"],
@@ -47,5 +57,7 @@ def test_exAssembler_roc():
 if __name__ == "__main__":
   # test_relative_path()
 
+  test_exAssembler_run()
+
   # test_refShannon_roc()
-  test_exAssembler_roc()
+  # test_exAssembler_roc()

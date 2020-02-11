@@ -8,24 +8,38 @@ from RefShannon.run_parallel_cmds import run_cmds
 PATH = os.path.dirname(__file__)
 ROOT = parent_dir(PATH)
 
+# case = e.g. ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001']
+def exAssembler_run(args):
+  case, alignment, genomeFile, resDir2, nJobs = args 
+
+  cmd = 'python %s/run_extAssembler.py '%ROOT + \
+        '--assembler %s '%case[0] + \
+        '%s '%case[1] + \
+        '-i %s '%alignment + \
+        '-g %s '%genomeFile + \
+        '-O %s '%resDir2 + \
+        '-N %d '%nJobs + \
+        '-n %s '%case[0] + \
+        '-NoSeperatedLines'
+  print(cmd)
+  # pdb.set_trace()
+  run_cmd(cmd)
+  return
+
 def exAssembler_roc(args):
   alignment, genomeFile, cases, resDir, reference, nJobs = args
   
   for case in cases:
     resDir2 = '%s/%s/%s/'%(resDir, case[0], case[2])
     run_cmd('mkdir -p %s'%resDir2)
-    cmd = 'python %s/run_extAssembler.py '%ROOT + \
-          '--assembler %s '%case[0] + \
-          '%s '%case[1] + \
-          '-i %s '%alignment + \
-          '-g %s '%genomeFile + \
-          '-O %s '%resDir2 + \
-          '-N %d '%nJobs + \
-          '-n %s '%case[0] + \
-          '-NoSeperatedLines'
-    print(cmd)
-    # pdb.set_trace()
-    run_cmd(cmd)
+    exAssembler_run_args = (
+      case,
+      alignment,
+      genomeFile,
+      resDir2,
+      nJobs
+      )
+    exAssembler_run(exAssembler_run_args)
 
     #eval
     Trec = '%s/%s.fasta'%(resDir2, case[0])
@@ -64,6 +78,7 @@ def gen_res(args):
       '-i %s '%sam_file+ \
       '-g %s '%genomeFile+ \
       '-O %s '%resDir+ \
+      '-F %s '%t+ \
       '%s -target %s'%(pairedStr, chrom)
     sg_cmds.append(cmd)
 
@@ -73,6 +88,7 @@ def gen_res(args):
           '-O %s '%resDir+ \
           '-N %d '%nJobs+ \
           '-target %s '%chrom+ \
+          '-F %s '%t+ \
           '--outputFasta '
     sf_cmds.append(cmd)
 

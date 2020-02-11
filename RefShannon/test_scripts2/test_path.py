@@ -85,32 +85,42 @@ path_test_split_bam = {
   # 'chroms':'all',
   # 'output_sam':True,
   # 'nJobs':20,
+  # 'ratio':None,
+  # 'combine': False,
   # 'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/',
   #
-  "wwSimHg19Hisat2": {
-    # ksreeram, snyderSimHg19, hisat2
-    'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSimHg19/hisat2.sorted.bam',
-    'chroms':'chr15',
-    'output_sam':True,
-    'nJobs':20,
-    'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/wwSimHg19_hisat2/',
-  },
-  # "snyderSimHg19Hisat2": {
+  # "wwSimHg19Hisat2": {
   #   # ksreeram, snyderSimHg19, hisat2
-  #   'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimHg19/hisat2.sorted.bam',
+  #   'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSimHg19/hisat2.sorted.bam',
   #   'chroms':'chr15',
   #   'output_sam':True,
   #   'nJobs':20,
+  #   'ratio': None,
+  #   'combine': False,
+  #   'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/wwSimHg19_hisat2/',
+  # },
+  "snyderSimHg19Star": {
+    # ksreeram, snyderSimHg19, STAR
+    # 'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam',
+    'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam', # unsorted
+    'chroms':'chr1,chr15',
+    'output_sam':False,
+    'nJobs':20,
+    'ratio': 0.05,
+    'combine': True,
+    'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05/',
+  },
+  # "snyderSimHg19Hisat2": {
+  #   # ksreeram, snyderSimHg19, hisat2
+  #   # 'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimHg19/hisat2.sorted.bam',
+  #   'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimHg19_2/hisat2.bam', # unsorted
+  #   'chroms':'chr15',
+  #   'output_sam':True,
+  #   'nJobs':20,
+  #   'ratio': None,
+  #   'combine': False,
   #   'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/',
   # },
-  "kidneySimHg19Hisat2": {
-    # ksreeram, snyderSimHg19, hisat2
-    'input_bam':'/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySimHg19/hisat2.sorted.bam',
-    'chroms':'chr15',
-    'output_sam':True,
-    'nJobs':20,
-    'outDir':'/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/kidneySimHg19_hisat2/',
-  },
 }
 
 """
@@ -134,7 +144,7 @@ path_test_refShannon_roc = {
   "snyderSimChr15_hisat2": {
     "rootResDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimChr15/hisat2/refShannon_roc/",
     "T": ['0', '0.25', '0.4', '0.96'],
-    "sam_file": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.sam",
+    "sam_file": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sam",
     "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
     "pairedStr": "-paired",
     "chrom": "chr15",
@@ -172,18 +182,38 @@ path_test_exAssembler_roc = {
   "nJobs": 20,
 }
 """
+
+path_exAssembler_run = {
+  'case': 
+    # ['stringtie', '', 'stringtie_DefaultParam'],
+    ['trinity', '', 'trinity_DefaultParam'],
+  'alignment': 
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
+    '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+  'genomeFile':
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
+    '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  'resDir':
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
+    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
+    '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
+  'nJobs': 20,
+}
+
 #""" ksreeram
 path_test_exAssembler_roc = {
+  # snyder  
   # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.bam",
-  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
-  "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.bam",
+  "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
+  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.bam",
   "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
 
   "cases": [
-    # ['stringtie', '', 'stringtie_DefaultParam'],
+    ['stringtie', '', 'stringtie_DefaultParam'],
     # ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001'],
     # ['TransComb', '', 'TransComb_DefaultParam'],
-    ['CLASS2', '--maxSens', 'CLASS2_F0'],
+    # ['CLASS2', '--maxSens', 'CLASS2_F0'],
     # ['CLASS2', '', 'CLASS2_DefaultParam'],
     # ['scallop', '', 'scallop_DefaultParam'],
     # ['cufflinks', '', 'cufflinks_DefaultParam'],
@@ -195,7 +225,8 @@ path_test_exAssembler_roc = {
 
   # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
   # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_tophat2/test_exAssembler_roc/", # + case[0]/case[2]
-  "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
+  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
+  "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_roc/cgmemtime/snyderSimChr15/", # + case[0]/case[2]
 
   "reference": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
 

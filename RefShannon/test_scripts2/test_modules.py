@@ -32,11 +32,13 @@ def test_split_bam():
       case_args['chroms'],
       case_args['output_sam'],
       case_args['nJobs'],
+      case_args['ratio'],
+      case_args['combine'],
       case_args['outDir']
       )
     split_bam(args)
   return
 
 if __name__ == "__main__":
-  test_aligner_hisat2()
-  # test_split_bam()
+  # test_aligner_hisat2()
+  test_split_bam()

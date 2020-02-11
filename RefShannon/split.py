@@ -5,6 +5,7 @@ import pysam
 import sys, os, pdb
 from RefShannon.util import *
 from RefShannon.dep_path import extAssembler_paths, tool_paths
+from numpy.random import uniform
 
 '''
 hits.sam --> chr1/hits.sam, chr2/hits.sam ...
@@ -65,10 +66,13 @@ def split_bam(args):
     chroms: e.g. 'chr1,chr15' or 'all'
     output_sam: whether put a sam copy
     nJobs: num of CPUs
+    ratio: default None (all alignments). percentage of reads to sample
+    combine: default False
   output:
-    [outDir]/[chrom]/[input_bam_fn].bam
+    [outDir]/[chrom]/[input_bam_fn].bam (if not combine) or
+    [outDir]/[input_bam_fn].bam (if combine)
   """
-  input_bam, chroms, output_sam, nJobs, outDir = args
+  input_bam, chroms, output_sam, nJobs, ratio, combine, outDir = args
 
   input_bam_fn = os.path.basename(input_bam)
   # pdb.set_trace()
@@ -85,15 +89,23 @@ def split_bam(args):
   # pdb.set_trace()
 
   with pysam.AlignmentFile(input_bam, 'rb') as fh_input_bam:
-    for chrom in chrom_list:
-      dir_path = '%s/%s/'%(outDir, chrom)
+    if not combine:
+      for chrom in chrom_list:
+        dir_path = '%s/%s/'%(outDir, chrom)
+        cmd = 'mkdir -p %s'%(dir_path)
+        run_cmd(cmd)
+
+        file_path = '%s/%s'%(dir_path, input_bam_fn)
+        fh = pysam.AlignmentFile(file_path, 'wb', header=fh_input_bam.header)
+        out_bams[chrom] = [file_path, fh]
+    else:
+      dir_path = outDir
       cmd = 'mkdir -p %s'%(dir_path)
       run_cmd(cmd)
-
       file_path = '%s/%s'%(dir_path, input_bam_fn)
       fh = pysam.AlignmentFile(file_path, 'wb', header=fh_input_bam.header)
-      out_bams[chrom] = [file_path, fh]
-    # pdb.set_trace()
+      out_bams['combine'] = [file_path, fh]
+      # pdb.set_trace()
 
     cnt = 0
     for line in fh_input_bam:
@@ -104,16 +116,21 @@ def split_bam(args):
       if line.reference_id==-1 or line.reference_start==-1: #invalid RNAME (e.g. chr name) or POS
         continue
       chrom = fh_input_bam.get_reference_name(line.reference_id)
-      if chrom in out_bams:
-        out_bams[chrom][1].write(line)
+      if chrom in chrom_list:
+        if ratio is None or uniform() < ratio:
+          # pdb.set_trace()
+          if not combine:
+            out_bams[chrom][1].write(line)
+          else:
+            out_bams['combine'][1].write(line)
 
-    for chrom in chrom_list:
+    for chrom in out_bams.keys():
       print('%s written'%out_bams[chrom][0])
       out_bams[chrom][1].close()
     # pdb.set_trace()
 
   if output_sam is True:
-    for chrom in chrom_list:
+    for chrom in out_bams.keys():
       bam_path = out_bams[chrom][0]
       bam_dir = os.path.dirname(bam_path)
       bam_fn = os.path.basename(bam_path)[:-3] + 'sam'

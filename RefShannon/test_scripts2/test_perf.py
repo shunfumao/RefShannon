@@ -104,7 +104,7 @@ if __name__ == "__main__":
   """
   sens of exAssembler
   """
-  test_exAssembler_run()
+  # test_exAssembler_run(sys.argv)
   # test_gen_logs()
   # test_gen_sens()
 
@@ -114,5 +114,5 @@ if __name__ == "__main__":
   # test_refShannon_roc()
 
   # test_exAssembler_roc()
-  # test_exAssembler_run(sys.argv) # [cgmemtime] python test_perf.py [example_key]
+  test_exAssembler_run(sys.argv) # [cgmemtime] python test_perf.py [example_key]
   # test_gen_logs() # sim roc when fasta is available

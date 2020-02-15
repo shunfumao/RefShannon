@@ -266,28 +266,28 @@ path_exAssembler_run = {
       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kineySim_Star_Hg19_All/trinity/',
     'nJobs': 20,
   },
-  'ww_real_star_all_ryuto': {
-    'case': 
-      ['ryuto', '', 'ryuto_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
-    'nJobs': 20,
-  },
-  'ww_real_star_all_trinity': {
-    'case': 
-      ['trinity', '', 'trinity_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
-    'nJobs': 20,
-  },
+  # 'ww_real_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
+  # 'ww_real_star_all_trinity': {
+  #   'case': 
+  #     ['trinity', '', 'trinity_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
+  #   'nJobs': 20,
+  # },
   'snyder_real_star_all_ryuto': {
     'case': 
       ['ryuto', '', 'ryuto_DefaultParam'],
@@ -402,10 +402,10 @@ path_test_exAssembler_roc = {
     # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/wwSimChr15/hits.sorted.bam",
     # snyder sim chr15
     # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.bam",
-    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
+    "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.bam",
     # kidney sim chr15
-    "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySimChr15/hits.sorted.bam",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySimChr15/hits.sorted.bam",
 
   "genomeFile":
     "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
@@ -414,25 +414,30 @@ path_test_exAssembler_roc = {
     # ['stringtie', '', 'stringtie_DefaultParam'],
     # ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001'],
     # ['TransComb', '', 'TransComb_DefaultParam'],
-    ['CLASS2', '--maxSens', 'CLASS2_F0'],
-    ['CLASS2', '', 'CLASS2_DefaultParam'],
-    ['scallop', '', 'scallop_DefaultParam'],
+    # ['CLASS2', '--maxSens', 'CLASS2_F0'],
+    # ['CLASS2', '', 'CLASS2_DefaultParam'],
+    # ['scallop', '', 'scallop_DefaultParam'],
     # ['cufflinks', '', 'cufflinks_DefaultParam'],
     # ['cufflinks', '--maxSens', 'cufflinks_F_0.001'],
-    ['strawberry', '', 'strawberry_DefaultParam'],
-    ['ryuto', '', 'ryuto_DefaultParam'],
-    ['trinity', '', 'trinity_DefaultParam']
+    # ['strawberry', '', 'strawberry_DefaultParam'],
+    # ['ryuto', '', 'ryuto_DefaultParam'],
+    # ['ryuto', '--no-trimming', 'ryuto_noTrimming'],
+    # ['ryuto', '--mean-filter 0.0', 'ryuto_mean_filter_0.0'],
+    # ['ryuto', '--score-filter 0.0', 'ryuto_score_filter_0.0'],
+    ['trinity', '', 'trinity_DefaultParam'],
   ],
 
   "resDir": 
+    # snyder sim chr15
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_tophat2/test_exAssembler_roc/", # + case[0]/case[2]
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_roc/cgmemtime/snyderSimChr15/", # + case[0]/case[2]
+    "/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Chr15_TuneForMaxSens/",
     # ww sim chr15
     # "/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Chr15/",
     # kidney sim chr15
-    "/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Chr15/",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Chr15/",
 
   "reference":
     # ww 7703 refs

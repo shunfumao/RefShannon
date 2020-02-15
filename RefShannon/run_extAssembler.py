@@ -168,8 +168,17 @@ def do_extAssembler_i_g(args):
         cmd = '%s index %s'%(tool_paths["samtools"], FileToUse)
         run_cmd(cmd)
 
-        cmd = '%s %s'%(
-            extAssembler_paths["ryuto"], FileToUse)
+        # tune
+        cmd = '%s '%extAssembler_paths["ryuto"]
+        if '--no-trimming' in args:
+          cmd += '--no-trimming '
+        if '--mean-filter' in args:
+          cmd += '--mean-filter %s '%args[args.index('--mean-filter')+1]
+        if '--score-filter' in args:
+          cmd += '--score-filter %s '%args[args.index('--score-filter')+1]
+        cmd += '%s '%FileToUse
+        print(cmd)
+        # pdb.set_trace()
     elif assembler == 'trinity':
         trinity_out_dir = parent_dir(fastaFile)
         cmd = 'mkdir -p %s'%trinity_out_dir

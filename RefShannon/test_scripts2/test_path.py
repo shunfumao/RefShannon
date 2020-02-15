@@ -150,15 +150,24 @@ path_test_refShannon_roc = {
 """
 # """ ksreeram
 path_test_refShannon_roc = {
-  "snyderSimChr15_hisat2": {
-    "rootResDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimChr15/hisat2/refShannon_roc/",
+  "snyderSimChr15_tophat2": {
+    "rootResDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimChr15/tophat2/refShannon_roc/",
     "T": ['0', '0.25', '0.4', '0.96'],
-    "sam_file": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sam",
+    "sam_file": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.sam",
     "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
     "pairedStr": "-paired",
     "chrom": "chr15",
     "Tref": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
     "nJobs": 20,}
+  # "snyderSimChr15_hisat2": {
+  #   "rootResDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSimChr15/hisat2/refShannon_roc/",
+  #   "T": ['0', '0.25', '0.4', '0.96'],
+  #   "sam_file": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sam",
+  #   "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
+  #   "pairedStr": "-paired",
+  #   "chrom": "chr15",
+  #   "Tref": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
+  #   "nJobs": 20,}
 }
 # """
 
@@ -193,37 +202,181 @@ path_test_exAssembler_roc = {
 """
 
 path_exAssembler_run = {
-  'case': 
-    ['stringtie', '', 'stringtie_DefaultParam'],
-    # ['trinity', '', 'trinity_DefaultParam'],
-  'alignment': 
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
-    '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/hits.sorted.bam', # dummy file
-  'genomeFile':
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
-    '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-  'resDir':
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
-    # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
-    '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
-  'nJobs': 20,
+  'dummy_run': {
+    'case': 
+      ['stringtie', '', 'stringtie_DefaultParam'],
+  #     # ['trinity', '', 'trinity_DefaultParam'],
+    'alignment': 
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/hits.sorted.bam', # dummy file
+    'genomeFile':
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
+  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
+    'nJobs': 20,
+  },
+  # 'ww_sim_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/wwSim_1122a/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
+  # 'snyder_sim_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
+  'kidney_sim_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kineySim_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
+  'kidney_sim_star_all_trinity': {
+    'case': 
+      ['trinity', '', 'trinity_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kineySim_Star_Hg19_All/trinity/',
+    'nJobs': 20,
+  },
+  'ww_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
+  'ww_real_star_all_trinity': {
+    'case': 
+      ['trinity', '', 'trinity_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
+    'nJobs': 20,
+  },
+  'snyder_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
+  'snyder_real_star_all_trinity': {
+    'case': 
+      ['trinity', '', 'trinity_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
+    'nJobs': 20,
+  },
+  'kidney_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
+  'kidney_real_star_all_trinity': {
+    'case': 
+      ['trinity', '', 'trinity_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
+    'nJobs': 20,
+  },
 }
 
 path_test_gen_logs = {
-  'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+  # 'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+  #     'Trec':
+  #       # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity.fasta',
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie.fasta',
+  #     'resDir':
+  #       # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
+  #   },
+  # 'case_ww_sim_all_trinity_default': { # ww, sim, star, all chroms, sample rate 100%
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/wwSim_Star_Hg19_All/trinity/trinity.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/trinity/',
+  # },
+  'case_ww_sim_all_ryuto_default': { # ww, sim, star, all chroms, sample rate 100%
       'Tref': 
         '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
       'Trec':
-        # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity.fasta',
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/ryuto.fasta',
       'resDir':
-        # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
-    },
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/',
+  },
+  # 'case_snyder_sim_all_trinity_default': { # snyder, sim, star, all chroms, sample rate 100%
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/trinity.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/trinity/',
+  # },
+  'case_snyder_sim_all_ryuto_default': { # snyder, sim, star, all chroms, sample rate 100%
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/ryuto.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/',
+  },
 }
 
 path_test_gen_sens = {
@@ -244,32 +397,48 @@ path_test_gen_sens = {
 
 #""" ksreeram
 path_test_exAssembler_roc = {
-  # snyder  
-  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.bam",
-  "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
-  # "alignment":  "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.bam",
-  "genomeFile": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
+  "alignment":
+    # ww sim chr15
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/wwSimChr15/hits.sorted.bam",
+    # snyder sim chr15
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/MoreExtAssemblers/SnyderSimChr15/tophat2/accepted_hits.bam",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/hits.sorted.bam",
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSimHg19_hisat2/chr15/hisat2.sorted.bam",
+    # kidney sim chr15
+    "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySimChr15/hits.sorted.bam",
+
+  "genomeFile":
+    "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa",
 
   "cases": [
-    ['stringtie', '', 'stringtie_DefaultParam'],
+    # ['stringtie', '', 'stringtie_DefaultParam'],
     # ['stringtie', '--maxSens -addHead', 'stringtie_f_0_c_0.001'],
     # ['TransComb', '', 'TransComb_DefaultParam'],
-    # ['CLASS2', '--maxSens', 'CLASS2_F0'],
-    # ['CLASS2', '', 'CLASS2_DefaultParam'],
-    # ['scallop', '', 'scallop_DefaultParam'],
+    ['CLASS2', '--maxSens', 'CLASS2_F0'],
+    ['CLASS2', '', 'CLASS2_DefaultParam'],
+    ['scallop', '', 'scallop_DefaultParam'],
     # ['cufflinks', '', 'cufflinks_DefaultParam'],
     # ['cufflinks', '--maxSens', 'cufflinks_F_0.001'],
-    # ['strawberry', '', 'strawberry_DefaultParam'],
-    # ['ryuto', '', 'ryuto_DefaultParam'],
-    # ['trinity', '', 'trinity_DefaultParam']
+    ['strawberry', '', 'strawberry_DefaultParam'],
+    ['ryuto', '', 'ryuto_DefaultParam'],
+    ['trinity', '', 'trinity_DefaultParam']
   ],
 
-  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
-  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_tophat2/test_exAssembler_roc/", # + case[0]/case[2]
-  # "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
-  "resDir": "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_roc/cgmemtime/snyderSimChr15/", # + case[0]/case[2]
+  "resDir": 
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15/test_exAssembler_roc/", # + case[0]/case[2]
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_tophat2/test_exAssembler_roc/", # + case[0]/case[2]
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_aligner_hisat2/snyderSimChr15_hisat2/test_exAssembler_roc/", # + case[0]/case[2]
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_roc/cgmemtime/snyderSimChr15/", # + case[0]/case[2]
+    # ww sim chr15
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Chr15/",
+    # kidney sim chr15
+    "/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Chr15/",
 
-  "reference": "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
+  "reference":
+    # ww 7703 refs
+    # "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/wwSimChr15/reference.fasta",
+    # snyder 7703 refs
+    "/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSimChr15/reference.fasta",
 
   "nJobs": 20,
 }

@@ -5,6 +5,8 @@ print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resol
 Performance Evaluation
 """
 
+import sys, pdb
+
 from RefShannon.test_scripts2.roc_sens import \
   exAssembler_run, gen_logs, gen_sens, \
   exAssembler_roc, refShannon_roc
@@ -34,14 +36,24 @@ def test_refShannon_roc():
     refShannon_roc(args)
   return
 
-def test_exAssembler_run():
-  args = (
-    path_exAssembler_run['case'],
-    path_exAssembler_run['alignment'],
-    path_exAssembler_run['genomeFile'],
-    path_exAssembler_run['resDir'],
-    path_exAssembler_run['nJobs'])
-  exAssembler_run(args) 
+def test_exAssembler_run(sys_args):
+  print(sys_args)
+  # pdb.set_trace()
+
+  if len(sys_args) == 1:
+    example_key_list = path_exAssembler_run.keys()
+  elif len(sys_args) == 2:
+    example_key_list = [sys_args[1]]
+
+  for example_key in example_key_list:
+    example_dic = path_exAssembler_run[example_key]
+    args = (
+      example_dic['case'],
+      example_dic['alignment'],
+      example_dic['genomeFile'],
+      example_dic['resDir'],
+      example_dic['nJobs'])
+    exAssembler_run(args) 
   return
 
 def test_gen_logs():
@@ -92,12 +104,15 @@ if __name__ == "__main__":
   """
   sens of exAssembler
   """
-  # test_exAssembler_run()
+  test_exAssembler_run()
   # test_gen_logs()
-  test_gen_sens()
+  # test_gen_sens()
 
   """
   roc
   """
   # test_refShannon_roc()
+
   # test_exAssembler_roc()
+  # test_exAssembler_run(sys.argv) # [cgmemtime] python test_perf.py [example_key]
+  # test_gen_logs() # sim roc when fasta is available

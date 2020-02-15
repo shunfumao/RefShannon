@@ -52,11 +52,14 @@ def gen_logs(args):
   """
 
   Tref, Trec, resDir = args
+  run_cmd('mkdir -p %s'%resDir)
+  
   cmd = 'python %s/filter_FP_batch.py --eval1Job '%ROOT + \
         '-t %s '%Tref + \
         '-r %s '%Trec + \
         '-O %s'%resDir
   print(cmd)
+  # pdb.set_trace()
   run_cmd(cmd)
   return
 

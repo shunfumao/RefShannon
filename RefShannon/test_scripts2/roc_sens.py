@@ -59,7 +59,7 @@ def gen_logs(args):
         '-r %s '%Trec + \
         '-O %s'%resDir
   print(cmd)
-  # pdb.set_trace()
+  pdb.set_trace()
   run_cmd(cmd)
   return
 

@@ -288,17 +288,17 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
   #   'nJobs': 20,
   # },
-  'snyder_real_star_all_ryuto': {
-    'case': 
-      ['ryuto', '', 'ryuto_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
-    'nJobs': 20,
-  },
+  # 'snyder_real_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
   'snyder_real_star_all_trinity': {
     'case': 
       ['trinity', '', 'trinity_DefaultParam'],
@@ -345,6 +345,8 @@ path_test_gen_logs = {
   #       # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
   #   },
+
+  # ---------- WW SIM ----------
   # 'case_ww_sim_all_trinity_default': { # ww, sim, star, all chroms, sample rate 100%
   #     'Tref': 
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
@@ -353,14 +355,34 @@ path_test_gen_logs = {
   #     'resDir':
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/trinity/',
   # },
-  'case_ww_sim_all_ryuto_default': { # ww, sim, star, all chroms, sample rate 100%
+  # 'case_ww_sim_all_ryuto_default': { # ww, sim, star, all chroms, sample rate 100%
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/ryuto.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/',
+  # },
+
+  # ---------- WW REAL ----------
+  'case_ww_real_all_ryuto_default': { # ww, sim, star, all chroms, sample rate 100%
       'Tref': 
-        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/ww_oracle_et25_ct100_cut0.fa',
       'Trec':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/ryuto.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/ryuto.fasta',
       'resDir':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwSim_Star_Hg19_All/ryuto/',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
   },
+  'case_ww_real_all_trinity_default': { # ww, sim, star, all chroms, sample rate 100%
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/ww_oracle_et25_ct100_cut0.fa',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/trinity.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
+  },
+
+  # ---------- SNYDER SIM ----------
   # 'case_snyder_sim_all_trinity_default': { # snyder, sim, star, all chroms, sample rate 100%
   #     'Tref': 
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
@@ -369,14 +391,50 @@ path_test_gen_logs = {
   #     'resDir':
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/trinity/',
   # },
-  'case_snyder_sim_all_ryuto_default': { # snyder, sim, star, all chroms, sample rate 100%
+  # 'case_snyder_sim_all_ryuto_default': { # snyder, sim, star, all chroms, sample rate 100%
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/ryuto.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/',
+  # },
+
+  # ---------- SNYDER REAL ----------
+  'case_snyder_sim_all_ryuto_default': {
       'Tref': 
-        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
       'Trec':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/ryuto.fasta',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/ryuto.fasta',
       'resDir':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/',
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
   },
+  'case_snyder_real_all_trinity_default': {
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/trinity.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
+  },
+
+  # ---------- SNYDER REAL ----------
+  'case_kidney_real_all_ryuto_default': {
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/ryuto.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
+  },
+  # 'case_kidney_real_all_trinity_default': {
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/trinity.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
+  # },
 }
 
 path_test_gen_sens = {

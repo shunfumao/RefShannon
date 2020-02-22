@@ -105,8 +105,8 @@ if __name__ == "__main__":
   """
   sens of exAssembler
   """
-  test_exAssembler_run(sys.argv)
-  # test_gen_logs()
+  # test_exAssembler_run(sys.argv)
+  test_gen_logs()
   # test_gen_sens()
 
   """

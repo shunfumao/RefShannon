@@ -96,7 +96,7 @@ def gen_sens(args):
           '-L %d -S %d --isoLow %d --isoHigh %d '%(L,S,iL,iH)+\
           '--o %s_isoL%d_isoH%d.txt '%(outFileStem, iL, iH)+\
           '--ablist %s'%(ablist)
-    pdb.set_trace()
+    # pdb.set_trace()
     run_cmd(cmd)
 
   return

@@ -36,6 +36,10 @@ def test_refShannon_roc():
     refShannon_roc(args)
   return
 
+"""
+usage:
+[cgmemtime] python test_perf.py [example_key] [--nJobs (nJobs)]
+"""
 def test_exAssembler_run(sys_args):
   print(sys_args)
   # pdb.set_trace()
@@ -47,12 +51,21 @@ def test_exAssembler_run(sys_args):
 
   for example_key in example_key_list:
     example_dic = path_exAssembler_run[example_key]
+
+    if '--nJobs' in sys_args:
+      nJobs = int(args[args.index('--nJobs')+1])
+      resDir = example_dic['resDir'] + '/nJobs%d/'%nJobs
+    else:
+      nJobs = example_dic['nJobs']
+      resDir = example_dic['resDir']
+    pdb.set_trace()
+
     args = (
       example_dic['case'],
       example_dic['alignment'],
       example_dic['genomeFile'],
-      example_dic['resDir'],
-      example_dic['nJobs'])
+      resDir,
+      nJobs)
     exAssembler_run(args) 
   return
 
@@ -105,8 +118,8 @@ if __name__ == "__main__":
   """
   sens of exAssembler
   """
-  # test_exAssembler_run(sys.argv)
-  test_gen_logs()
+  test_exAssembler_run(sys.argv)
+  # test_gen_logs()
   # test_gen_sens()
 
   """

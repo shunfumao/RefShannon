@@ -202,26 +202,26 @@ path_test_exAssembler_roc = {
 """
 
 path_exAssembler_run = {
-  'dummy_run': {
-    'case': 
-      ['stringtie', '', 'stringtie_DefaultParam'],
-  #     # ['trinity', '', 'trinity_DefaultParam'],
-    'alignment': 
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/hits.sorted.bam', # dummy file
-    'genomeFile':
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
-  #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
-    'nJobs': 20,
-  },
+  # 'dummy_run': {
+  #   'case': 
+  #     ['stringtie', '', 'stringtie_DefaultParam'],
+  # #     # ['trinity', '', 'trinity_DefaultParam'],
+  #   'alignment': 
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr15_Ratio0.05/hits.sorted.bam',
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_split_bam/snyderSim_Star_Chr1Chr3_Ratio0.05//hits.sorted.bam',
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyderSim_1018a/hits.sorted.bam',
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/hits.sorted.bam', # dummy file
+  #   'genomeFile':
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/genome/human/chr15.fa',
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Chr15_Ratio0.05/',
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/trinity/',
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/test_exAssembler_run/snyderSim_Star_Hg19_All/trinity/',
+  # #     # '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/',
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/',
+  #   'nJobs': 20,
+  # },
   # 'ww_sim_star_all_ryuto': {
   #   'case': 
   #     ['ryuto', '', 'ryuto_DefaultParam'],
@@ -244,17 +244,17 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderSim_Star_Hg19_All/ryuto/',
   #   'nJobs': 20,
   # },
-  'kidney_sim_star_all_ryuto': {
-    'case': 
-      ['ryuto', '', 'ryuto_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kineySim_Star_Hg19_All/ryuto/',
-    'nJobs': 20,
-  },
+  # 'kidney_sim_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
   'kidney_sim_star_all_trinity': {
     'case': 
       ['trinity', '', 'trinity_DefaultParam'],
@@ -263,7 +263,7 @@ path_exAssembler_run = {
     'genomeFile':
       '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
     'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kineySim_Star_Hg19_All/trinity/',
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/trinity/',
     'nJobs': 20,
   },
   # 'ww_real_star_all_ryuto': {
@@ -299,39 +299,39 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
   #   'nJobs': 20,
   # },
-  'snyder_real_star_all_trinity': {
-    'case': 
-      ['trinity', '', 'trinity_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
-    'nJobs': 20,
-  },
-  'kidney_real_star_all_ryuto': {
-    'case': 
-      ['ryuto', '', 'ryuto_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
-    'nJobs': 20,
-  },
-  'kidney_real_star_all_trinity': {
-    'case': 
-      ['trinity', '', 'trinity_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
-    'nJobs': 20,
-  },
+  # 'snyder_real_star_all_trinity': {
+  #   'case': 
+  #     ['trinity', '', 'trinity_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
+  #   'nJobs': 20,
+  # },
+  # 'kidney_real_star_all_ryuto': {
+  #   'case': 
+  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
+  #   'nJobs': 20,
+  # },
+  # 'kidney_real_star_all_trinity': {
+  #   'case': 
+  #     ['trinity', '', 'trinity_DefaultParam'],
+  #   'alignment': 
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
+  #   'genomeFile':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+  #   'resDir':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
+  #   'nJobs': 20,
+  # },
 }
 
 path_test_gen_logs = {
@@ -418,6 +418,24 @@ path_test_gen_logs = {
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
   # },
 
+  # ---------- KIDNEY SIM ----------
+  'case_kidney_sim_all_trinity_default': {
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/trinity/trinity.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/trinity/',
+  },
+  'case_kidney_sim_all_ryuto_default': {
+      'Tref': 
+        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/reference.fasta',
+      'Trec':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/ryuto/ryuto.fasta',
+      'resDir':
+        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/ryuto/',
+  },
+
   # ---------- KIDNEY REAL ----------
   # 'case_kidney_real_all_ryuto_default': {
   #     'Tref': 
@@ -427,30 +445,150 @@ path_test_gen_logs = {
   #     'resDir':
   #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
   # },
-  'case_kidney_real_all_trinity_default': {
-      'Tref': 
-        '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
-      'Trec':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/trinity.fasta',
-      'resDir':
-        '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
-  },
+  # 'case_kidney_real_all_trinity_default': {
+  #     'Tref': 
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+  #     'Trec':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/trinity.fasta',
+  #     'resDir':
+  #       '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/',
+  # },
 }
 
 path_test_gen_sens = {
-  'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+  # 'case_dummy' : { # snyder, real, star, chr1chr15, sample rate 5%
+  #     'IM_list': [[1,100]],
+  #     'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
+  #     'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+  #     'recLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie_log.txt',
+  #     'cmpLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity_log.txt',
+  #     'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/snyder/exp.isoforms.results',
+  #     'expFormat': 'RSEM',
+  #     'L': 101,
+  #     'S': 0,
+  #     'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/sens_stringtie_trinity',
+  #     'ablist': '0.0,2.23,6.09,17.83,56.85,1e10',
+  #   },
+  # 'case_sanity_check' : { # ww, real, star, all, sample rate 100%
+  #     'IM_list': [[1,100]],
+  #     'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/ww_oracle_et25_ct100_cut0.fa',
+  #     'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/geneIsoNum.txt',
+  #     'recLog': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/ww_1002a/refShannon_test_mergeII_approx4_SF_lessP/mergeII_approx4_SF_lessP/0/reconstructed_all_log.txt',
+  #     'cmpLog':
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/_res_0726b_stringtie_f_0_c_0.001/stringtie_log.txt',
+  #     'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/exp_kal_out/abundance.tsv',
+  #     'expFormat': 'KAL',
+  #     'L': 50,
+  #     'S': 0,
+  #     'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/sens',
+  #     'ablist': '0.0,46.4,99.4,191.5,470.4,1e10',
+  #   },
+  'case_wwReal_Star_Hg19_VaryIM' : {
+      'IM_list': [[1,1], [2,3], [4,8]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/ww_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/ryuto_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/ww/exp_kal_out/abundance.tsv',
+      'expFormat': 'KAL',
+      'L': 50,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/case_wwReal_Star_Hg19_VaryIM',
+      'ablist': '0.0,1e10',
+    },
+  'case_snyderReal_Star_Hg19_SanityCheck' : {
       'IM_list': [[1,100]],
       'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
       'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
-      'recLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/stringtie/stringtie_log.txt',
-      'cmpLog': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/trinity/trinity_log.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/snyder_0807b/refShannon_test_mergeII_approx4_SF_lessP/mergeII_approx4_SF_lessP/0/reconstructed_all_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/_res_stringtie_f_0_c_0.001/stringtie_log.txt',
       'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/snyder/exp.isoforms.results',
       'expFormat': 'RSEM',
       'L': 101,
       'S': 0,
-      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyder_real_star_chr1chr15_Ratio0.05/sens_stringtie_trinity',
-      'ablist': '0.0,2.23,6.09,17.83,56.85,1e10',
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/case_snyderReal_Star_Hg19_SanityCheck',
+      'ablist': '0.0,17.8,30.0,56.8,142.5,1e10',
     },
+  'case_snyderReal_Star_Hg19_VaryAb' : {
+      'IM_list': [[1,100]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/ryuto_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/snyder/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 101,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/case_snyderReal_Star_Hg19_VaryAb',
+      'ablist': '0.0,17.8,30.0,56.8,142.5,1e10',
+    },
+  'case_snyderReal_Star_Hg19_VaryIM' : {
+      'IM_list': [[1,7],[8,11],[12,15],[16,22],[23,77]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/oracle/snyder_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/ryuto_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/snyder/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 101,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/case_snyderReal_Star_Hg19_VaryIM',
+      'ablist': '0.0,1e10',
+    },
+  'case_kidneyReal_Star_Hg19_SanityCheck' : {
+      'IM_list': [[1,100]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidney_0916a/refShannon_test_mergeII_approx4_SF_lessP/mergeII_approx4_SF_lessP/0/reconstructed_all_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidney_0916a/stringtie/stringtie_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/kidney_snyderRef/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 100,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/case_kidneyReal_Star_Hg19_SanityCheck',
+      'ablist': '0.0,29.7,49.1,87.4,191.3,1e10',
+    },
+  'case_kidneyReal_Star_Hg19_VaryAb' : {
+      'IM_list': [[1,100]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/ryuto_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/kidney_snyderRef/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 100,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/case_kidneyReal_Star_Hg19_VaryAb',
+      'ablist': '0.0,29.7,49.1,87.4,191.3,1e10',
+    },
+  'case_kidneyReal_Star_Hg19_VaryIM' : {
+      'IM_list': [[1,4],[5,9],[10,13],[14,19],[20,77]],
+      'oracleFa': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/kidney/oracle/kidney_oracle_et25_ct100_cut0.fa',
+      'numIsoFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/reference/snyder/geneIsoNum.txt',
+      'recLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/ryuto_log.txt',
+      'cmpLog':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/trinity/trinity_log.txt',
+      'expFile': '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/rsem/exp_star/kidney_snyderRef/exp.isoforms.results',
+      'expFormat': 'RSEM',
+      'L': 100,
+      'S': 0,
+      'outFileStem': '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/case_kidneyReal_Star_Hg19_VaryIM',
+      'ablist': '0.0,1e10',
+    },
+
 }
 
 #""" ksreeram

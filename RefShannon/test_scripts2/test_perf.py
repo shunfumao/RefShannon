@@ -46,19 +46,19 @@ def test_exAssembler_run(sys_args):
 
   if len(sys_args) == 1:
     example_key_list = path_exAssembler_run.keys()
-  elif len(sys_args) == 2:
+  elif len(sys_args) >= 2:
     example_key_list = [sys_args[1]]
 
   for example_key in example_key_list:
     example_dic = path_exAssembler_run[example_key]
 
     if '--nJobs' in sys_args:
-      nJobs = int(args[args.index('--nJobs')+1])
+      nJobs = int(sys_args[sys_args.index('--nJobs')+1])
       resDir = example_dic['resDir'] + '/nJobs%d/'%nJobs
     else:
       nJobs = example_dic['nJobs']
       resDir = example_dic['resDir']
-    pdb.set_trace()
+    # pdb.set_trace()
 
     args = (
       example_dic['case'],

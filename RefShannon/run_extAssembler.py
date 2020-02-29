@@ -170,14 +170,18 @@ def do_extAssembler_i_g(args):
 
         # tune
         cmd = '%s '%extAssembler_paths["ryuto"]
+
+        cmd += '--ng %d '%N_jobs
+
         if '--no-trimming' in args:
           cmd += '--no-trimming '
         if '--mean-filter' in args:
           cmd += '--mean-filter %s '%args[args.index('--mean-filter')+1]
         if '--score-filter' in args:
           cmd += '--score-filter %s '%args[args.index('--score-filter')+1]
+
         cmd += '%s '%FileToUse
-        print(cmd)
+        # print(cmd)
         # pdb.set_trace()
     elif assembler == 'trinity':
         trinity_out_dir = parent_dir(fastaFile)
@@ -190,6 +194,7 @@ def do_extAssembler_i_g(args):
 
     # pdb.set_trace()
     print(cmd)
+    # pdb.set_trace()
     run_cmd(cmd)
     # pdb.set_trace()
 

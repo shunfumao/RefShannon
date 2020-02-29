@@ -255,28 +255,28 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/ryuto/',
   #   'nJobs': 20,
   # },
-  'kidney_sim_star_all_trinity': {
-    'case': 
-      ['trinity', '', 'trinity_DefaultParam'],
-    'alignment': 
-      '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
-    'genomeFile':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-    'resDir':
-      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/trinity/',
-    'nJobs': 20,
-  },
-  # 'ww_real_star_all_ryuto': {
+  # 'kidney_sim_star_all_trinity': {
   #   'case': 
-  #     ['ryuto', '', 'ryuto_DefaultParam'],
+  #     ['trinity', '', 'trinity_DefaultParam'],
   #   'alignment': 
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy2/sgRefShannon/kidneySim/hits.sorted.bam',
   #   'genomeFile':
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
   #   'resDir':
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
+  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneySim_Star_Hg19_All/trinity/',
   #   'nJobs': 20,
   # },
+  'ww_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/WingWongTest_K24_135M/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
   # 'ww_real_star_all_trinity': {
   #   'case': 
   #     ['trinity', '', 'trinity_DefaultParam'],
@@ -288,17 +288,17 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/wwReal_Star_Hg19_All/trinity/',
   #   'nJobs': 20,
   # },
-  # 'snyder_real_star_all_ryuto': {
-  #   'case': 
-  #     ['ryuto', '', 'ryuto_DefaultParam'],
-  #   'alignment': 
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
-  #   'genomeFile':
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-  #   'resDir':
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
-  #   'nJobs': 20,
-  # },
+  'snyder_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
   # 'snyder_real_star_all_trinity': {
   #   'case': 
   #     ['trinity', '', 'trinity_DefaultParam'],
@@ -310,17 +310,17 @@ path_exAssembler_run = {
   #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/snyderReal_Star_Hg19_All/trinity/',
   #   'nJobs': 20,
   # },
-  # 'kidney_real_star_all_ryuto': {
-  #   'case': 
-  #     ['ryuto', '', 'ryuto_DefaultParam'],
-  #   'alignment': 
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
-  #   'genomeFile':
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
-  #   'resDir':
-  #     '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
-  #   'nJobs': 20,
-  # },
+  'kidney_real_star_all_ryuto': {
+    'case': 
+      ['ryuto', '', 'ryuto_DefaultParam'],
+    'alignment': 
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/kidney_0916a/_whole_sam/hits.sorted.bam',
+    'genomeFile':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy/snyder_0729a/genome/hg19.fa',
+    'resDir':
+      '/data1/shunfu1/ref_shannon_modi/data/_copy3/kidneyReal_Star_Hg19_All/ryuto/',
+    'nJobs': 20,
+  },
   # 'kidney_real_star_all_trinity': {
   #   'case': 
   #     ['trinity', '', 'trinity_DefaultParam'],

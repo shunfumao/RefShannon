@@ -69,7 +69,7 @@ else:
 if '-target' in args: #used for GTF output
     target = args[args.index('-target')+1]
 else:
-    target = '.'
+    raise Exception('please specify -target <target> which refers to one of the chroms in sam file') # target = '.'
 
 if '-F' in args:
     F_val = float(args[args.index('-F')+1])
